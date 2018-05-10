@@ -85,7 +85,8 @@ Player.prototype.spawnMinion = function (minionId) {
     this.minions.push(deepcopy(minionInfo));
     this.game.sendPacket("addMinion", {
         playerId: this.id,
-        minionId: minionInfo.id
+        minionId: minionInfo.id,
+        hasAttack: minionInfo.attributes && ('charge' in minionInfo.attributes)
     });
     return true;
 };

@@ -23,6 +23,8 @@ function createMinion(minionInfo) {
             dropShadow: true,
             dropShadowDistance: 1
     }));
+    minion.interactive = true;
+    minion.buttonMode = true;
     minion.healthText = health;
     health.anchor.set(0.5);
     health.x = 70;
@@ -462,8 +464,9 @@ var game = {
             // TODO: render opponent cards
         }
     },
-    spawnMinion: function(playerId, minionId) {
+    spawnMinion: function(playerId, minionId, hasAttack) {
         var minion = createMinion(constants.minions[minionId]);
+        minion.hasAttack = hasAttack;
         if (game.playerId == playerId) {
             game.playerMinionContainer.addChild(minion);
             minion.x = 100 * game.playerArmy.length;
@@ -475,6 +478,24 @@ var game = {
             game.opponentArmy.push(minion);
         }
     },
+    refreshMinions: function() {
+        for (var i = 0; i < game.opponentArmy.length; i++) {
+            if (game.opponentArmy[i].hasAttack) {
+                game.opponentArmy[i].filters = [ new PIXI.filters.GlowFilter(2, 2, 2, 0x00ff00, 0.5) ];
+            }
+            else {
+                game.opponentArmy[i].filters = [];
+            }
+        }
+        for (var i = 0; i < game.playerArmy.length; i++) {
+            if (game.playerArmy[i].hasAttack) {
+                game.playerArmy[i].filters = [ new PIXI.filters.GlowFilter(2, 2, 2, 0x00ff00, 0.5) ];
+            }
+            else {
+                game.playerArmy[i].filters = [];
+            }
+        }
+    },
     reorderCards: function() {
         var order = [];
         for (var i = 0; i < 10; i++) {
@@ -483,11 +504,12 @@ var game = {
             temp.x = 80 * i;
             order.push(temp);
         }
+        var isPlayerTurn = game.turn == game.playerId;
         for (var i = 0; i < game.playerHand.length; i++) {
             var temp = order[5 + Math.floor((i + 1) / 2) * (i % 2 == 0 ? 1 : -1)];
             game.playerHand[i].x = temp.x;
             game.playerHand[i].y = temp.y;
-            if (game.playerHand[i].mana <= game.playerMana) {
+            if (game.playerHand[i].mana <= game.playerMana && isPlayerTurn) {
                 game.playerHand[i].filters = [ new PIXI.filters.GlowFilter(2, 2, 2, 0x00ff00, 0.5) ];
             }
             else {
@@ -533,6 +555,23 @@ var game = {
                 game.updateInfo("player_turn", game.playerId == game.turn);
                 game.updateInfo("player_mana", data.data[game.playerId].mana);
                 game.updateInfo("opponent_mana", data.data[game.opponentId].mana);
+                var min;
+                var oth;
+                if (game.playerId == game.turn) {
+                    min = game.playerArmy;
+                    oth = game.opponentArmy;
+                }
+                else {
+                    min = game.opponentArmy;
+                    oth = game.playerArmy;
+                }
+                for (var i = 0; i < min.length; i++) {
+                    min[i].hasAttack = data.data.minionAttack[i];
+                }
+                for (var i = 0; i < oth.length; i++) {
+                    oth[i].hasAttack = false;
+                }
+                game.refreshMinions();
                 game.reorderCards();
                 break;
             case 'gameEnd':
@@ -551,7 +590,7 @@ var game = {
                 game.reorderCards();
                 break;
             case 'addMinion':
-                game.spawnMinion(data.data.playerId, data.data.minionId);
+                game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack);
                 break;
             case 'error':
                 console.error(data.data);

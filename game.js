@@ -101,7 +101,8 @@ Game.prototype.switchTurns = function(playerId) {
     opponent.drawCard();
     this.turn = opponent.id;
     var info = {
-        turn: this.turn
+        turn: this.turn,
+        minionAttack: opponent.minions.map((x) => x.attack > 0)
     };
     info[currentPlayer.id] = {
         mana: currentPlayer.mana,
