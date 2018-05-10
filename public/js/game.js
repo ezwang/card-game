@@ -49,6 +49,7 @@ function createMinion(minionInfo) {
 function createCard(cardInfo) {
     var card = new PIXI.Container();
     card.id = cardInfo.id;
+    card.mana = cardInfo.mana;
     var background = PIXI.Sprite.fromImage('./img/card.png');
     var image = new PIXI.Graphics();
     image.beginFill(0xff00ff);
@@ -253,30 +254,46 @@ var game = {
         opponentPortrait.addChild(opponentHealth);
         playerPortrait.addChild(playerMana);
         opponentPortrait.addChild(opponentMana);
-        gameContainer.addChild(playerPortrait);
-        gameContainer.addChild(opponentPortrait);
-        gameContainer.addChild(playerInfo);
-        gameContainer.addChild(turnStatus);
 
         var endTurn = new PIXI.Text("End Turn", new PIXI.TextStyle({
             fontFamily: 'Arial',
             fontSize: 18,
             fill: '#ffffff'
         }));
+        game.statusText.endTurn = endTurn;
         endTurn.x = game.getScreenWidth() - 90;
-        endTurn.y = game.getScreenHeight() / 2 - 9;
+        endTurn.y = game.getScreenHeight() / 2 + 60;
         endTurn.interactive = true;
         endTurn.buttonMode = true;
         endTurn.on('click', function() {
             game.sendPacket('endTurn');
         });
-        gameContainer.addChild(endTurn);
 
         var playerCards = new PIXI.Container();
         playerCards.x = 5;
         playerCards.y = game.getScreenHeight() - 130;
         game.playerCardContainer = playerCards;
         gameContainer.addChild(playerCards);
+
+        var playerMinions = new PIXI.Container();
+        var minionBg = new PIXI.Graphics();
+        minionBg.beginFill(0xcccccc);
+        minionBg.drawRect(0, 0, 790, 100);
+        playerMinions.addChild(minionBg);
+        playerMinions.x = 5;
+        playerMinions.y = 250;
+        game.playerMinionContainer = playerMinions;
+        gameContainer.addChild(playerMinions);
+
+        var opponentMinions = new PIXI.Container();
+        minionBg = new PIXI.Graphics();
+        minionBg.beginFill(0xdddddd);
+        minionBg.drawRect(0, 0, 790, 100);
+        opponentMinions.addChild(minionBg);
+        opponentMinions.x = 5;
+        opponentMinions.y = 150;
+        game.opponentMinionContainer = opponentMinions;
+        gameContainer.addChild(opponentMinions);
 
         // victory screen
         var endContainer = new PIXI.Container();
@@ -299,7 +316,12 @@ var game = {
         endButton.y = game.getScreenHeight() / 2 + 100;
         endContainer.addChild(endButton);
 
+        gameContainer.addChild(playerPortrait);
+        gameContainer.addChild(opponentPortrait);
+        gameContainer.addChild(playerInfo);
+        gameContainer.addChild(turnStatus);
         gameContainer.addChild(endContainer);
+        gameContainer.addChild(endTurn);
 
         game.pixi.stage.addChild(gameContainer);
         game.containers.push(gameContainer);
@@ -358,18 +380,23 @@ var game = {
                 game.statusText.playerInfo.text = value[0] + ' vs. ' + value[1];
                 break;
             case 'player_health':
+                game.playerHealth = value;
                 game.statusText.playerHealth.text = value;
                 break;
             case 'opponent_health':
+                game.opponentHealth = value;
                 game.statusText.opponentHealth.text = value;
                 break;
             case 'player_mana':
+                game.playerMana = value;
                 game.statusText.playerMana.text = value;
                 break;
             case 'opponent_mana':
+                game.opponentMana = value;
                 game.statusText.opponentMana.text = value;
                 break;
             case 'player_turn':
+                game.statusText.endTurn.style.fill = value ? '#ffffff' : '#aaaaaa';
                 game.statusText.turnStatus.text = value ? 'Your Turn' : "Opponent's Turn";
                 break;
             default:
@@ -402,6 +429,7 @@ var game = {
                 game.playerCardContainer.addChild(card);
                 game.cardPreview.x = (game.getScreenWidth() - game.cardPreview.width) / 2;
                 game.cardPreview.y = (game.getScreenHeight() - game.cardPreview.height) / 2;
+                card.oldFilters = card.filters;
                 card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x00ff00, 0.5) ];
                 game.pixi.stage.addChild(game.cardPreview);
             });
@@ -414,14 +442,14 @@ var game = {
                 game.selectedCard = card;
             });
             card.on('mouseup', function() {
-                card.filters = [];
+                card.filters = card.oldFilters;
                 game.selectedCard = null;
             });
             card.on('mouseout', function() {
                 if (game.cardPreview && card.id == game.cardPreview.id) {
                     game.pixi.stage.removeChild(game.cardPreview);
                     game.cardPreview = null;
-                    card.filters = [];
+                    card.filters = card.oldFilters;
                 }
             });
             game.playerHand.push(card);
@@ -432,6 +460,19 @@ var game = {
         }
         else {
             // TODO: render opponent cards
+        }
+    },
+    spawnMinion: function(playerId, minionId) {
+        var minion = createMinion(constants.minions[minionId]);
+        if (game.playerId == playerId) {
+            game.playerMinionContainer.addChild(minion);
+            minion.x = 100 * game.playerArmy.length;
+            game.playerArmy.push(minion);
+        }
+        else {
+            game.opponentMinionContainer.addChild(minion);
+            minion.x = 100 * game.opponentArmy.length;
+            game.opponentArmy.push(minion);
         }
     },
     reorderCards: function() {
@@ -446,6 +487,12 @@ var game = {
             var temp = order[5 + Math.floor((i + 1) / 2) * (i % 2 == 0 ? 1 : -1)];
             game.playerHand[i].x = temp.x;
             game.playerHand[i].y = temp.y;
+            if (game.playerHand[i].mana <= game.playerMana) {
+                game.playerHand[i].filters = [ new PIXI.filters.GlowFilter(2, 2, 2, 0x00ff00, 0.5) ];
+            }
+            else {
+                game.playerHand[i].filters = [];
+            }
         }
     },
     receivePacket(data) {
@@ -457,6 +504,8 @@ var game = {
             case 'gameInit':
                 game.setGameState('game');
                 game.playerHand = [];
+                game.playerArmy = [];
+                game.opponentArmy = [];
                 game.playerId = data.data.player.id;
                 game.opponentId = data.data.opponent.id;
                 game.turn = data.data.turn;
@@ -469,6 +518,7 @@ var game = {
                 data.data.playerHand.forEach(function(card) {
                     game.addCard(game.playerId, card);
                 });
+                game.reorderCards();
                 break;
             case 'addCard':
                 if (data.data.player == game.playerId) {
@@ -483,6 +533,7 @@ var game = {
                 game.updateInfo("player_turn", game.playerId == game.turn);
                 game.updateInfo("player_mana", data.data[game.playerId].mana);
                 game.updateInfo("opponent_mana", data.data[game.opponentId].mana);
+                game.reorderCards();
                 break;
             case 'gameEnd':
                 game.statusText.endText.text = data.data.winner == game.playerId ? 'Winner!' : 'Loser!';
@@ -497,14 +548,10 @@ var game = {
                     game.updateInfo("opponent_mana", data.data.playerMana);
                     // TODO: handle opponent play card
                 }
+                game.reorderCards();
                 break;
             case 'addMinion':
-                if (game.playerId == data.data.playerId) {
-                    // TODO: spawn for player
-                }
-                else {
-                    // TODO: spawn for enemy
-                }
+                game.spawnMinion(data.data.playerId, data.data.minionId);
                 break;
             case 'error':
                 console.error(data.data);

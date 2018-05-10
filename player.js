@@ -79,11 +79,15 @@ Player.prototype.drawCard = function() {
 
 Player.prototype.spawnMinion = function (minionId) {
     var minionInfo = constants.minions[minionId];
+    if (this.minions.length >= constants.player.MAX_MINIONS) {
+        return false;
+    }
     this.minions.push(deepcopy(minionInfo));
-    game.sendPacket("addMinion", {
+    this.game.sendPacket("addMinion", {
         playerId: this.id,
         minionId: minionInfo.id
     });
+    return true;
 };
 
 Player.prototype.playCard = function(cardId, target) {
@@ -98,16 +102,16 @@ Player.prototype.playCard = function(cardId, target) {
             // TODO: tell player not enough mana
             return false;
         }
-        var playCard;
+        var playCard = true;
+        var plr = this;
+        var game = this.game;
         switch (cardInfo.type) {
             case 'minion':
-                var game = this.game;
                 cardInfo.spawn.forEach(function(minionId) {
-                    this.spawnMinion(minionId);
+                    plr.spawnMinion(minionId);
                 });
                 break;
             case 'spell':
-                var plr = this;
                 cardInfo.actions.forEach(function(action) {
                     if (Array.isArray(action)) {
                         switch (action[0]) {
