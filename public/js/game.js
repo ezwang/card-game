@@ -156,22 +156,27 @@ var game = {
         game.gameContainer = gameContainer;
 
         game.statusText = {};
-        var playerInfo = new PIXI.Text('Unknown vs. Unknown', new PIXI.TextStyle({
+        var infoFont = new PIXI.TextStyle({
             fontFamily: 'Arial',
             fontSize: 16,
             fill: '#ffffff'
-        }));
+        });
+        var playerInfo = new PIXI.Text('Unknown vs. Unknown', infoFont);
+        var turnStatus = new PIXI.Text('Unknown', infoFont);
+        turnStatus.y = 18;
         var playerPortrait = new PIXI.Graphics();
         playerPortrait.beginFill(0xffff00);
         playerPortrait.drawRect(0, 0, 100, 120);
         playerPortrait.x = game.getScreenWidth() / 2 - 50;
-        playerPortrait.y = 25;
+        playerPortrait.y = game.getScreenHeight() - 25 - playerPortrait.height - 100;
+        playerPortrait.interactive = true;
 
         var opponentPortrait = new PIXI.Graphics();
         opponentPortrait.beginFill(0xffff00);
         opponentPortrait.drawRect(0, 0, 100, 120);
         opponentPortrait.x = game.getScreenWidth() / 2 - 50;
-        opponentPortrait.y = game.getScreenHeight() - 25 - opponentPortrait.height - 100;
+        opponentPortrait.y = 25;
+        opponentPortrait.interactive = true;
 
         var playerHealth = new PIXI.Text('??', new PIXI.TextStyle({
             fontFamily: 'Arial',
@@ -201,6 +206,7 @@ var game = {
         }));
         opponentMana.x = -5;
         opponentMana.y = 105;
+        game.statusText.turnStatus = turnStatus;
         game.statusText.playerHealth = playerHealth;
         game.statusText.opponentHealth = opponentHealth;
         game.statusText.playerMana = playerMana;
@@ -213,6 +219,21 @@ var game = {
         gameContainer.addChild(playerPortrait);
         gameContainer.addChild(opponentPortrait);
         gameContainer.addChild(playerInfo);
+        gameContainer.addChild(turnStatus);
+
+        var endTurn = new PIXI.Text("End Turn", new PIXI.TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 18,
+            fill: '#ffffff'
+        }));
+        endTurn.x = game.getScreenWidth() - 90;
+        endTurn.y = game.getScreenHeight() / 2 - 9;
+        endTurn.interactive = true;
+        endTurn.buttonMode = true;
+        endTurn.on('click', function() {
+            game.sendPacket('endTurn');
+        });
+        gameContainer.addChild(endTurn);
 
         var playerCards = new PIXI.Container();
         playerCards.x = 5;
@@ -246,8 +267,11 @@ var game = {
         game.pixi.stage.addChild(gameContainer);
         game.containers.push(gameContainer);
     },
+    playCard: function(card, target) {
+        game.sendPacket("playCard", { card: card.id, target: target });
+    },
     resize: function() {
-        game.pixi.renderer.resize(getScreenWidth(), getScreenHeight());
+        game.pixi.renderer.resize(game.getScreenWidth(), game.getScreenHeight());
     },
     connect: function(username) {
         game.ws = new WebSocket("ws://" + window.location.host + window.location.pathname);
@@ -261,10 +285,15 @@ var game = {
         };
     },
     sendPacket(type, data) {
-        game.ws.send(JSON.stringify({
-            type: type,
-            data: data
-        }));
+        if (game.ws.readyState == 1) {
+            game.ws.send(JSON.stringify({
+                type: type,
+                data: data
+            }));
+        }
+        else {
+            console.warn("Failed to send packet " + type + " " + JSON.stringify(data) + ", socket not open.");
+        }
     },
     setGameState(state) {
         game.containers.forEach(function(e) {
@@ -303,6 +332,23 @@ var game = {
             case 'opponent_mana':
                 game.statusText.opponentMana.text = value;
                 break;
+            case 'player_turn':
+                game.statusText.turnStatus.text = value ? 'Your Turn' : "Opponent's Turn";
+                break;
+            default:
+                console.warn('No information update handler for ' + info + ' -> ' + value + '.');
+                break;
+        }
+    },
+    removeCard(player, card) {
+        if (player == game.playerId) {
+            var cardIndex = game.playerHand.map((x) => x.id).indexOf(card);
+            game.playerCardContainer.removeChild(game.playerHand[cardIndex]);
+            game.playerHand.splice(cardIndex, 1);
+            game.reorderCards();
+        }
+        else {
+            // TODO: implement
         }
     },
     addCard(player, card) {
@@ -315,9 +361,23 @@ var game = {
                 }
                 game.cardPreview = createCard(constants.cards[card.id]);
                 game.cardPreview.interactive = false;
+                game.playerCardContainer.removeChild(card);
+                game.playerCardContainer.addChild(card);
                 game.cardPreview.x = (game.getScreenWidth() - game.cardPreview.width) / 2;
                 game.cardPreview.y = (game.getScreenHeight() - game.cardPreview.height) / 2;
                 game.pixi.stage.addChild(game.cardPreview);
+            });
+            card.on('mousedown', function() {
+                if (game.cardPreview) {
+                    game.pixi.stage.removeChild(game.cardPreview);
+                    game.cardPreview = null;
+                }
+                card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x00ff00, 0.5) ];
+                game.selectedCard = card;
+            });
+            card.on('mouseup', function() {
+                card.filters = [];
+                game.selectedCard = null;
             });
             card.on('mouseout', function() {
                 if (game.cardPreview && card.id == game.cardPreview.id) {
@@ -329,22 +389,24 @@ var game = {
             card.width /= 2;
             card.height /= 2;
             game.playerCardContainer.addChild(card);
-
-            var order = [];
-            for (var i = 0; i < 10; i++) {
-                var temp = {};
-                temp.y = -15 * Math.abs(5 - i) + 50;
-                temp.x = 80 * i;
-                order.push(temp);
-            }
-            for (var i = 0; i < game.playerHand.length; i++) {
-                var temp = order[5 + Math.floor((i + 1) / 2) * (i % 2 == 0 ? 1 : -1)];
-                game.playerHand[i].x = temp.x;
-                game.playerHand[i].y = temp.y;
-            }
+            game.reorderCards();
         }
         else {
             // TODO: render opponent cards
+        }
+    },
+    reorderCards: function() {
+        var order = [];
+        for (var i = 0; i < 10; i++) {
+            var temp = {};
+            temp.y = -15 * Math.abs(5 - i) + 50;
+            temp.x = 80 * i;
+            order.push(temp);
+        }
+        for (var i = 0; i < game.playerHand.length; i++) {
+            var temp = order[5 + Math.floor((i + 1) / 2) * (i % 2 == 0 ? 1 : -1)];
+            game.playerHand[i].x = temp.x;
+            game.playerHand[i].y = temp.y;
         }
     },
     receivePacket(data) {
@@ -358,6 +420,8 @@ var game = {
                 game.playerHand = [];
                 game.playerId = data.data.player.id;
                 game.opponentId = data.data.opponent.id;
+                game.turn = data.data.turn;
+                game.updateInfo("player_turn", data.data.player.id == game.turn);
                 game.updateInfo("player_names", [data.data.player.name, data.data.opponent.name]);
                 game.updateInfo("player_health", data.data.player.health);
                 game.updateInfo("player_mana", data.data.player.mana);
@@ -367,9 +431,33 @@ var game = {
                     game.addCard(game.playerId, card);
                 });
                 break;
+            case 'nextTurn':
+                game.turn = data.data.turn;
+                game.updateInfo("player_turn", game.playerId == game.turn);
+                game.updateInfo("player_mana", data.data[game.playerId].mana);
+                game.updateInfo("opponent_mana", data.data[game.opponentId].mana);
+                break;
             case 'gameEnd':
                 game.statusText.endText.text = data.data.winner == game.playerId ? 'Winner!' : 'Loser!';
                 game.endContainer.visible = true;
+                break;
+            case 'playCard':
+                if (game.playerId == data.data.playerId) {
+                    game.updateInfo("player_mana", data.data.playerMana);
+                    game.removeCard(game.playerId, data.data.cardId);
+                }
+                else {
+                    game.updateInfo("opponent_mana", data.data.playerMana);
+                    // TODO: handle opponent play card
+                }
+                break;
+            case 'addMinion':
+                if (game.playerId == data.data.playerId) {
+                    // TODO: spawn for player
+                }
+                else {
+                    // TODO: spawn for enemy
+                }
                 break;
             case 'error':
                 console.error(data.data);
@@ -399,6 +487,13 @@ $(document).ready(function() {
         }
         else {
             $("#login .error").text("Please enter a username to play the game!");
+        }
+    });
+    $("body").mouseup(function() {
+        if (game.selectedCard) {
+            game.selectedCard.filters = [];
+            game.playCard(game.selectedCard);
+            game.selectedCard = null;
         }
     });
 

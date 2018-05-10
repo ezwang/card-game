@@ -12,8 +12,8 @@ function Player(ws) {
     id_incr++;
 }
 
-Player.get = function(id) {
-    return player_dict[id];
+Player.get = function(playerId) {
+    return player_dict[playerId];
 };
 
 Player.prototype.getId = function() {
@@ -61,6 +61,46 @@ Player.prototype.disconnect = function(errorMessage) {
 Player.prototype.getDeck = function() {
     return Object.keys(constants.cards).filter((k) => constants.cards[k].obtainable !== false).sort(() => 0.5 - Math.random()).slice(0, 30);
 }
+
+Player.prototype.playCard = function(cardId, target) {
+    if (this.game) {
+        this.hand.splice(this.hand.indexOf(cardId), 1);
+        var cardInfo = constants.cards[cardId];
+        if (this.game.turn != this.id) {
+            // TODO: tell player not their turn
+            return false;
+        }
+        if (cardInfo.mana > this.mana) {
+            // TODO: tell player not enough mana
+            return false;
+        }
+        this.mana -= cardInfo.mana;
+        switch (cardInfo.type) {
+            case 'minion':
+                var game = this.game;
+                cardInfo.spawn.forEach(function(minionId) {
+                    var minionInfo = constants.minions[minionId];
+                    game.sendPacket("addMinion", {
+                        playerId: this.id,
+                        minionId: minionInfo.id
+                    });
+                });
+                break;
+            case 'spell':
+                // TODO: implement
+                break;
+        }
+        this.game.sendPacket("playCard", {
+            playerMana: this.mana,
+            playerId: this.id,
+            cardId: cardId
+        });
+        return true;
+    }
+    else {
+        throw "Tried to play card while not in game!";
+    }
+};
 
 /*
  * Add a player to the queue of players searching for a game or start a new game with 2 players.

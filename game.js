@@ -1,3 +1,4 @@
+var Player = require('./player.js');
 var constants = require('./public/js/constants.js');
 
 function Game(player1, player2) {
@@ -13,6 +14,7 @@ Game.prototype.sendPacket = function(type, data) {
 function initPlayer(plr) {
     plr.health = constants.player.INITIAL_HEALTH;
     plr.mana = constants.player.INITIAL_MANA;
+    plr.maxMana = constants.player.INITIAL_MANA;
 }
 
 Game.prototype.init = function() {
@@ -32,6 +34,8 @@ Game.prototype.init = function() {
     this.p1.deck = this.p1.deck.slice(3);
     this.p2.deck = this.p2.deck.slice(3);
 
+    this.turn = Math.random() > 0.5 ? this.p1.id : this.p2.id;
+
     var p1info = {
         id: this.p1.id,
         name: this.p1.username,
@@ -50,7 +54,8 @@ Game.prototype.init = function() {
         playerHand: this.p1.hand,
         playerDeckSize: this.p1.deck.length,
         opponentDeckSize: this.p2.deck.length,
-        opponentHandSize: this.p2.hand.length
+        opponentHandSize: this.p2.hand.length,
+        turn: this.turn
     });
     this.p2.sendPacket('gameInit', {
         player: p2info,
@@ -58,7 +63,8 @@ Game.prototype.init = function() {
         playerHand: this.p2.hand,
         playerDeckSize: this.p2.deck.length,
         opponentDeckSize: this.p1.deck.length,
-        opponentHandSize: this.p1.hand.length
+        opponentHandSize: this.p1.hand.length,
+        turn: this.turn
     });
 };
 
@@ -74,5 +80,37 @@ Game.prototype.getOpponent = function(player) {
     }
     return this.p1;
 };
+
+Game.prototype.getPlayerById = function(player) {
+    if (player == this.p1.id) {
+        return this.p1;
+    }
+    return this.p2;
+};
+
+Game.prototype.switchTurns = function(playerId) {
+    if (playerId != this.turn) {
+        // TODO: send message indicating player cannot switch opponent's turn
+        return false;
+    }
+    var currentPlayer = this.getPlayerById(playerId);
+    currentPlayer.maxMana = Math.min(constants.player.MAX_MANA, currentPlayer.maxMana + 1);
+    currentPlayer.mana = currentPlayer.maxMana;
+    var opponent = this.getOpponent(currentPlayer);
+    this.turn = opponent.id;
+    var info = {
+        turn: this.turn
+    };
+    info[currentPlayer.id] = {
+        mana: currentPlayer.mana,
+        maxMana: currentPlayer.maxMana
+    };
+    info[opponent.id] = {
+        mana: opponent.mana,
+        maxMana: opponent.maxMana
+    };
+    this.sendPacket("nextTurn", info);
+    return true;
+}
 
 module.exports = Game;

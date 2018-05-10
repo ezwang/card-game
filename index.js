@@ -29,8 +29,14 @@ wss.on('connection', function(ws) {
                 player.setGameState("queued");
                 player.addToQueue();
                 break;
+            case 'endTurn':
+                player.game.switchTurns(player.id);
+                break;
+            case 'playCard':
+                player.playCard(data.data.card, data.data.target);
+                break;
             default:
-                console.log('Unknown Packet: ' + data);
+                console.log('Unknown Packet: ' + JSON.stringify(data));
                 break;
         }
     });
