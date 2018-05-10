@@ -15,6 +15,7 @@ function initPlayer(plr) {
     plr.health = constants.player.INITIAL_HEALTH;
     plr.mana = constants.player.INITIAL_MANA;
     plr.maxMana = constants.player.INITIAL_MANA;
+    plr.minions = [];
 }
 
 Game.prototype.init = function() {

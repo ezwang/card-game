@@ -1,4 +1,5 @@
 var Game = require('./game.js');
+var deepcopy = require('deepcopy');
 
 var id_incr = 0;
 var player_dict = {};
@@ -76,6 +77,15 @@ Player.prototype.drawCard = function() {
     }
 };
 
+Player.prototype.spawnMinion = function (minionId) {
+    var minionInfo = constants.minions[minionId];
+    this.minions.push(deepcopy(minionInfo));
+    game.sendPacket("addMinion", {
+        playerId: this.id,
+        minionId: minionInfo.id
+    });
+};
+
 Player.prototype.playCard = function(cardId, target) {
     if (this.game) {
         this.hand.splice(this.hand.indexOf(cardId), 1);
@@ -93,11 +103,7 @@ Player.prototype.playCard = function(cardId, target) {
             case 'minion':
                 var game = this.game;
                 cardInfo.spawn.forEach(function(minionId) {
-                    var minionInfo = constants.minions[minionId];
-                    game.sendPacket("addMinion", {
-                        playerId: this.id,
-                        minionId: minionInfo.id
-                    });
+                    this.spawnMinion(minionId);
                 });
                 break;
             case 'spell':
