@@ -9,6 +9,43 @@ function createButton(text, callback) {
     return button;
 }
 
+function createMinion(minionInfo) {
+    var minion = new PIXI.Container();
+    minion.id = minionInfo.id;
+    var background = PIXI.Sprite.fromImage('./img/minion.png');
+    background.width = 80;
+    background.height = 80;
+
+    var health = new PIXI.Text(minionInfo.health, new PIXI.TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 32,
+            fill: '#ff0000',
+            dropShadow: true,
+            dropShadowDistance: 1
+    }));
+    minion.healthText = health;
+    health.anchor.set(0.5);
+    health.x = 70;
+    health.y = 70;
+
+    var attack = new PIXI.Text(minionInfo.attack, new PIXI.TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 32,
+            fill: '#ffff00',
+            dropShadow: true,
+            dropShadowDistance: 1
+    }));
+    minion.attackText = attack;
+    attack.anchor.set(0.5);
+    attack.x = 15;
+    attack.y = 70;
+
+    minion.addChild(background);
+    minion.addChild(health);
+    minion.addChild(attack);
+    return minion;
+}
+
 function createCard(cardInfo) {
     var card = new PIXI.Container();
     card.id = cardInfo.id;
