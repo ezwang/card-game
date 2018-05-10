@@ -402,6 +402,7 @@ var game = {
                 game.playerCardContainer.addChild(card);
                 game.cardPreview.x = (game.getScreenWidth() - game.cardPreview.width) / 2;
                 game.cardPreview.y = (game.getScreenHeight() - game.cardPreview.height) / 2;
+                card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x00ff00, 0.5) ];
                 game.pixi.stage.addChild(game.cardPreview);
             });
             card.on('mousedown', function() {
@@ -409,7 +410,7 @@ var game = {
                     game.pixi.stage.removeChild(game.cardPreview);
                     game.cardPreview = null;
                 }
-                card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x00ff00, 0.5) ];
+                card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x0000ff, 0.5) ];
                 game.selectedCard = card;
             });
             card.on('mouseup', function() {
@@ -420,6 +421,7 @@ var game = {
                 if (game.cardPreview && card.id == game.cardPreview.id) {
                     game.pixi.stage.removeChild(game.cardPreview);
                     game.cardPreview = null;
+                    card.filters = [];
                 }
             });
             game.playerHand.push(card);
