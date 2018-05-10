@@ -59,8 +59,22 @@ Player.prototype.disconnect = function(errorMessage) {
  * Returns the current player deck for the game, with the cards in randomized order.
  */
 Player.prototype.getDeck = function() {
-    return Object.keys(constants.cards).filter((k) => constants.cards[k].obtainable !== false).sort(() => 0.5 - Math.random()).slice(0, 30);
+    var cardIds = Object.keys(constants.cards).filter((k) => constants.cards[k].obtainable !== false);
+    Array.prototype.push.apply(cardIds, cardIds);
+    return cardIds.sort(() => 0.5 - Math.random()).slice(0, 30);
 }
+
+/**
+ * Transfer a card from the player's deck to their hand.
+ */
+Player.prototype.drawCard = function() {
+    if (this.deck.length > 0) {
+        var newCard = this.deck.pop();
+        this.hand.push(newCard);
+        this.sendPacket("addCard", { player: this.id, card: newCard });
+        this.game.getOpponent(this).sendPacket("addCard", { player: this.id });
+    }
+};
 
 Player.prototype.playCard = function(cardId, target) {
     if (this.game) {
@@ -74,7 +88,7 @@ Player.prototype.playCard = function(cardId, target) {
             // TODO: tell player not enough mana
             return false;
         }
-        this.mana -= cardInfo.mana;
+        var playCard;
         switch (cardInfo.type) {
             case 'minion':
                 var game = this.game;
@@ -87,9 +101,32 @@ Player.prototype.playCard = function(cardId, target) {
                 });
                 break;
             case 'spell':
-                // TODO: implement
+                var plr = this;
+                cardInfo.actions.forEach(function(action) {
+                    if (Array.isArray(action)) {
+                        switch (action[0]) {
+                            case 'draw':
+                                for (var i = 0; i < action[1]; i++) {
+                                    plr.drawCard();
+                                }
+                                break;
+                            case 'damage':
+                                if (!target) {
+                                    playCard = false;
+                                    return false;
+                                }
+                                // TODO: implement damage
+                                break;
+                        }
+                    }
+                });
                 break;
         }
+        if (!playCard) {
+            // TODO: notify player conditions not met to play card
+            return false;
+        }
+        this.mana -= cardInfo.mana;
         this.game.sendPacket("playCard", {
             playerMana: this.mana,
             playerId: this.id,

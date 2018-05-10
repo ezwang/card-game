@@ -34,7 +34,16 @@ var constants = {
             mana: 3,
             type: 'spell',
             name: 'Card Search',
-            description: 'Draw two cards.'
+            description: 'Draw two cards.',
+            actions: [['draw', 2]]
+        },
+        '4': {
+            id: 4,
+            mana: 2,
+            type: 'spell',
+            name: 'Fireball',
+            description: 'Do one damage to some target.',
+            actions: [['damage', 1]]
         }
     },
     minions: {

@@ -97,12 +97,7 @@ Game.prototype.switchTurns = function(playerId) {
     currentPlayer.maxMana = Math.min(constants.player.MAX_MANA, currentPlayer.maxMana + 1);
     currentPlayer.mana = currentPlayer.maxMana;
     var opponent = this.getOpponent(currentPlayer);
-    if (opponent.deck.length > 0) {
-        var newCard = opponent.deck.pop();
-        opponent.hand.push(newCard);
-        opponent.sendPacket("addCard", { player: opponent.id, card: newCard });
-        currentPlayer.sendPacket("addCard", { player: opponent.id });
-    }
+    opponent.drawCard();
     this.turn = opponent.id;
     var info = {
         turn: this.turn
