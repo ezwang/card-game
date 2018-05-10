@@ -118,7 +118,7 @@ function createCard(cardInfo) {
             dropShadowDistance: 1
         }));
         health.anchor.set(0.5);
-        health.x = 30;
+        health.x = 180;
         health.y = 220;
         var attack = new PIXI.Text(minion.attack, new PIXI.TextStyle({
             fontFamily: 'Arial',
@@ -128,7 +128,7 @@ function createCard(cardInfo) {
             dropShadowDistance: 1
         }));
         attack.anchor.set(0.5);
-        attack.x = 180;
+        attack.x = 30;
         attack.y = 220;
         card.addChild(health);
         card.addChild(attack);
