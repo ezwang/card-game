@@ -431,6 +431,14 @@ var game = {
                     game.addCard(game.playerId, card);
                 });
                 break;
+            case 'addCard':
+                if (data.data.player == game.playerId) {
+                    game.addCard(game.playerId, data.data.card);
+                }
+                else {
+                    // TODO: implement showing opponent cards
+                }
+                break;
             case 'nextTurn':
                 game.turn = data.data.turn;
                 game.updateInfo("player_turn", game.playerId == game.turn);

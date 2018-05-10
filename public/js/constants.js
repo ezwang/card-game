@@ -28,6 +28,13 @@ var constants = {
             spawn: [1],
             name: 'Dummy',
             description: 'Spawn a distraction.'
+        },
+        '3': {
+            id: 3,
+            mana: 3,
+            type: 'spell',
+            name: 'Card Search',
+            description: 'Draw two cards.'
         }
     },
     minions: {
