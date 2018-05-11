@@ -12,14 +12,28 @@ function createButton(text, callback) {
 function createMinion(minionInfo, minionId) {
     var minion = new PIXI.Container();
     minion.id = minionInfo.id;
-    minion.attributes = minionInfo.attributes;
+    minion._health = minionInfo.health;
+    minion._attack = minionInfo.attack;
+    minion._attributes = minionInfo.attributes;
     minion.minionInstanceId = minionId;
     minion.attackData = minionId;
+    Object.defineProperty(minion, 'health', {
+        set: function(x) { this._health = x; this.healthText.text = x; },
+        get: function() { return this._health; }
+    });
+    Object.defineProperty(minion, 'attack', {
+        set: function(x) { this._attack = x; this.attackText.text = x; },
+        get: function() { return this._attack; }
+    });
+    Object.defineProperty(minion, 'attributes', {
+        set: function(x) { this._attributes = x; this.regenAttributes(); },
+        get: function() { return this._attributes }
+    });
     var background = PIXI.Sprite.fromImage('./img/minion.png');
     background.width = 80;
     background.height = 80;
 
-    var health = new PIXI.Text(minionInfo.health, new PIXI.TextStyle({
+    var health = new PIXI.Text(minion.health, new PIXI.TextStyle({
             fontFamily: 'Arial',
             fontSize: 32,
             fill: '#ff0000',
@@ -33,7 +47,7 @@ function createMinion(minionInfo, minionId) {
     health.x = 70;
     health.y = 70;
 
-    var attack = new PIXI.Text(minionInfo.attack, new PIXI.TextStyle({
+    var attack = new PIXI.Text(minion.attack, new PIXI.TextStyle({
             fontFamily: 'Arial',
             fontSize: 32,
             fill: '#ffff00',
@@ -56,21 +70,29 @@ function createMinion(minionInfo, minionId) {
     minion.addChild(background);
     minion.addChild(name);
 
-    if (minion.attributes) {
-        minion.attributeSprites = {};
-        [['taunt', './img/taunt.png'], ['deathrattle', './img/deathrattle.png'], ['shield', './img/shield.png']].forEach(function(attr) {
-            if (minion.attributes.indexOf(attr[0]) > -1) {
-                var attrSprite = PIXI.Sprite.fromImage(attr[1]);
-                attrSprite.anchor.set(0.5);
-                attrSprite.width = 20;
-                attrSprite.height = 20;
-                attrSprite.x = 40;
-                attrSprite.y = 60;
-                minion.attributeSprites[attr[0]] = attrSprite;
-                minion.addChild(attrSprite);
-            }
+    minion.attributeSprites = {};
+    minion.regenAttributes = function() {
+        Object.keys(minion.attributeSprites).forEach(function(attr) {
+            minion.removeChild(minion.attributeSprites[attr]);
         });
+        minion.attributeSprites = {};
+        if (minion.attributes) {
+            [['taunt', './img/taunt.png'], ['deathrattle', './img/deathrattle.png'], ['shield', './img/shield.png']].forEach(function(attr) {
+                if (minion.attributes.indexOf(attr[0]) > -1) {
+                    var attrSprite = PIXI.Sprite.fromImage(attr[1]);
+                    attrSprite.anchor.set(0.5);
+                    attrSprite.width = 20;
+                    attrSprite.height = 20;
+                    attrSprite.x = 40;
+                    attrSprite.y = 60;
+                    minion.attributeSprites[attr[0]] = attrSprite;
+                    minion.addChild(attrSprite);
+                }
+            });
+        }
     }
+    minion.regenAttributes();
+
     minion.addChild(health);
     minion.addChild(attack);
     return minion;
@@ -707,7 +729,9 @@ var game = {
                         }
                         if (typeof data.data.health !== 'undefined') {
                             minion.health = data.data.health;
-                            minion.healthText.text = data.data.health;
+                        }
+                        if (typeof data.data.attributes !== 'undefined') {
+                            minion.attributes = data.data.attributes;
                         }
                         return true;
                     }
