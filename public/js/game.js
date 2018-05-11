@@ -409,6 +409,7 @@ var game = {
         game.ws.onmessage = game.receivePacket;
         game.ws.onclose = function() {
             $("#login-container").fadeIn();
+            game.setGameState('empty');
             game.ws = null;
         };
     },
@@ -438,6 +439,8 @@ var game = {
             case 'game':
                 game.gameContainer.visible = true;
                 game.endContainer.visible = false;
+                break;
+            case 'empty':
                 break;
             default:
                 console.warn('Invalid game state requested: ' + state);
