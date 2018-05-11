@@ -386,7 +386,7 @@ var game = {
         game.endContainer = endContainer;
         game.statusText.endText = new PIXI.Text('Unknown!', new PIXI.TextStyle({
             fontFamily: 'Arial',
-            fontSize: 36,
+            fontSize: 72,
             fill: '#0000ff'
         }));
         game.statusText.endText.anchor.set(0.5);

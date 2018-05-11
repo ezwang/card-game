@@ -203,12 +203,18 @@ Player.prototype.doAttack = function(from, to) {
     }
     else {
         var toMinion = this.game.getOpponent(this).minions.find((x) => x.minionInstanceId == to);
-        if (hasTaunt && !toMinion.hasAttribute('taunt')) {
-            this.sendError("You must attack a minion with taunt!");
+        if (toMinion) {
+            if (hasTaunt && !toMinion.hasAttribute('taunt')) {
+                this.sendError("You must attack a minion with taunt!");
+                return false;
+            }
+            toMinion.health -= fromMinion.attack;
+            fromMinion.health -= toMinion.attack;
+        }
+        else {
+            this.sendError("Cannot attack that object!");
             return false;
         }
-        toMinion.health -= fromMinion.attack;
-        fromMinion.health -= toMinion.attack;
     }
     fromMinion.hasAttack = false;
     this.game.sendPacket("updateMinion", {
