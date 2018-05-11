@@ -83,6 +83,8 @@ Player.prototype.spawnMinion = function (minionId) {
         return false;
     }
     var copy = deepcopy(minionInfo);
+    copy._health = copy.health;
+    copy._attack = copy.attack;
     const plr = this;
     copy.hasAttribute = function(attr) {
         if (!copy.attributes) {
@@ -91,36 +93,66 @@ Player.prototype.spawnMinion = function (minionId) {
         return copy.attributes.indexOf(attr) > -1;
     };
     copy.hasAttack = copy.hasAttribute('charge');
-    copy.damage = function(amount) {
-        copy.health -= amount;
-        if (copy.health <= 0) {
-            if (copy.hasAttribute('deathrattle')) {
-                copy.deathrattle.forEach(function(action) {
-                    switch(action[0]) {
-                        case 'spawn':
-                            action[1].forEach(function(minionId) {
-                                plr.spawnMinion(minionId);
-                            });
-                            break;
-                        default:
-                            console.warn('Unknown deathrattle action: ' + action[0]);
-                    }
-                });
-            }
-            plr.minions.splice(plr.minions.indexOf(copy), 1);
-            plr.game.sendPacket("removeMinion", {
-                playerId: plr.id,
-                minionInstanceId: copy.minionInstanceId
-            });
-        }
-        else {
+    delete copy.health;
+    delete copy.attack;
+    Object.defineProperty(copy, 'attack', {
+        get: function() {
+            return this._attack;
+        },
+        set: function(amount) {
+            this._attack = amount;
             plr.game.sendPacket("updateMinion", {
                 playerId: plr.id,
-                minionInstanceId: copy.minionInstanceId,
-                health: copy.health
+                minionInstanceId: this.minionInstanceId,
+                attack: this.attack
             });
         }
-    };
+    });
+    Object.defineProperty(copy, 'health', {
+        get: function() {
+            return this._health;
+        },
+        set: function(amount) {
+            var doingDamage = false;
+            if (this._health > amount) {
+                doingDamage = true;
+            }
+            if (doingDamage && this.hasAttribute('shield')) {
+                this.attributes.splice(this.attributes.indexOf('shield'), 1);
+            }
+            else {
+                this._health = amount;
+            }
+            if (this.health <= 0) {
+                if (this.hasAttribute('deathrattle')) {
+                    this.deathrattle.forEach(function(action) {
+                        switch(action[0]) {
+                            case 'spawn':
+                                action[1].forEach(function(minionId) {
+                                    plr.spawnMinion(minionId);
+                                });
+                                break;
+                            default:
+                                console.warn('Unknown deathrattle action: ' + action[0]);
+                        }
+                    });
+                }
+                plr.minions.splice(plr.minions.indexOf(copy), 1);
+                plr.game.sendPacket("removeMinion", {
+                    playerId: plr.id,
+                    minionInstanceId: copy.minionInstanceId
+                });
+            }
+            else {
+                plr.game.sendPacket("updateMinion", {
+                    playerId: plr.id,
+                    minionInstanceId: this.minionInstanceId,
+                    health: this.health,
+                    attributes: this.attributes
+                });
+            }
+        }
+    });
     copy.minionInstanceId = this.game.minionIdCounter;
     this.game.minionIdCounter++;
     this.minions.push(copy);
@@ -175,30 +207,14 @@ Player.prototype.doAttack = function(from, to) {
             this.sendError("You must attack a minion with taunt!");
             return false;
         }
-        if (toMinion.hasAttribute('shield')) {
-            toMinion.attributes.splice(toMinion.attributes.indexOf('shield'), 1);
-            this.game.sendPacket("updateMinion", {
-                playerId: this.id,
-                minionInstanceId: toMinion.minionInstanceId,
-                attributes: toMinion.attributes
-            });
-        }
-        else {
-            toMinion.damage(fromMinion.attack);
-        }
-        if (fromMinion.hasAttribute('shield')) {
-            fromMinion.attributes.splice(fromMinion.attributes.indexOf('shield'), 1);
-        }
-        else {
-            fromMinion.damage(toMinion.attack);
-        }
+        toMinion.health -= fromMinion.attack;
+        fromMinion.health -= toMinion.attack;
     }
     fromMinion.hasAttack = false;
     this.game.sendPacket("updateMinion", {
         playerId: this.id,
         minionInstanceId: fromMinion.minionInstanceId,
-        hasAttack: false,
-        attributes: fromMinion.attributes
+        hasAttack: false
     });
 };
 
@@ -247,7 +263,7 @@ Player.prototype.playCard = function(cardId, target) {
                                     if (typeof toMinion === 'undefined') {
                                         toMinion = plr.minions.find((x) => x.minionInstanceId == target);
                                     }
-                                    toMinion.damage(action[1]);
+                                    toMinion.health -= action[1];
                                 }
                                 break;
                             case 'all_damage':
@@ -255,15 +271,25 @@ Player.prototype.playCard = function(cardId, target) {
                                 var opp = game.getOpponent(plr);
                                 opp.damage(action[1]);
                                 for (var i = plr.minions.length - 1; i >= 0; i--) {
-                                    plr.minions[i].damage(action[1]);
+                                    plr.minions[i].health -= action[1];
                                 }
                                 for (var i = opp.minions.length - 1; i >= 0; i--) {
-                                    opp.minions[i].damage(action[1]);
+                                    opp.minions[i].health -= action[1];
                                 }
                                 break;
                             case 'mana':
                                 plr.mana += action[1];
                                 game.sendPacket("updatePlayer", { playerId: plr.id, mana: plr.mana });
+                                break;
+                            case 'buff_attack_all':
+                                for (var i = plr.minions.length - 1; i >= 0; i--) {
+                                    plr.minions[i].attack += 2;
+                                }
+                                break;
+                            case 'buff_health_all':
+                                for (var i = plr.minions.length - 1; i >= 0; i--) {
+                                    plr.minions[i].health += 2;
+                                }
                                 break;
                             default:
                                 console.warn('Unknown spell card action: ' + action[0]);

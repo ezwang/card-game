@@ -735,6 +735,9 @@ var game = {
                         if (typeof data.data.health !== 'undefined') {
                             minion.health = data.data.health;
                         }
+                        if (typeof data.data.attack !== 'undefined') {
+                            minion.attack = data.data.attack;
+                        }
                         if (typeof data.data.attributes !== 'undefined') {
                             minion.attributes = data.data.attributes;
                         }

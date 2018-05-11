@@ -138,6 +138,22 @@ var constants = {
             description: 'Do four damage to some target.',
             actions: [['damage', 4]],
             target: true
+        },
+        '16': {
+            id: 16,
+            mana: 5,
+            type: 'spell',
+            name: 'Morale Boost',
+            description: 'Give all of your minions +2 attack.',
+            actions: [['buff_attack_all', 2]]
+        },
+        '17': {
+            id: 17,
+            mana: 5,
+            type: 'spell',
+            name: 'Medical Aid',
+            description: 'Give all of your minions +2 health.',
+            actions: [['buff_health_all', 2]]
         }
     },
     minions: {
