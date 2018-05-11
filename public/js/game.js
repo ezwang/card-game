@@ -387,8 +387,21 @@ var game = {
             fill: '#ffffff'
         });
         var playerInfo = new PIXI.Text('Unknown vs. Unknown', infoFont);
+        playerInfo.x = 5;
         var turnStatus = new PIXI.Text('Unknown', infoFont);
+        turnStatus.x = 5;
         turnStatus.y = 18;
+
+        var playerCardsLeft = new PIXI.Text('You have ? cards left', infoFont);
+        playerCardsLeft.x = 5;
+        playerCardsLeft.y = 36;
+        game.gameContainer.addChild(playerCardsLeft);
+
+        var opponentCardsLeft = new PIXI.Text('Your opponent has ? cards left', infoFont);
+        opponentCardsLeft.x = 5;
+        opponentCardsLeft.y = 54;
+        game.gameContainer.addChild(opponentCardsLeft);
+
         var playerPortrait = new PIXI.Graphics();
         playerPortrait.beginFill(0xffff00);
         playerPortrait.drawRect(0, 0, 100, 120);
@@ -463,6 +476,8 @@ var game = {
         game.statusText.playerMana = playerMana;
         game.statusText.opponentMana = opponentMana;
         game.statusText.playerInfo = playerInfo;
+        game.statusText.playerCardsLeft = playerCardsLeft;
+        game.statusText.opponentCardsLeft = opponentCardsLeft;
         playerPortrait.addChild(playerHealth);
         opponentPortrait.addChild(opponentHealth);
         playerPortrait.addChild(playerMana);
@@ -633,6 +648,12 @@ var game = {
         switch (info) {
             case 'player_names':
                 game.statusText.playerInfo.text = value[0] + ' vs. ' + value[1];
+                break;
+            case 'player_cards_left':
+                game.statusText.playerCardsLeft.text = 'You have ' + value + ' cards left';
+                break;
+            case 'opponent_cards_left':
+                game.statusText.opponentCardsLeft.text = 'Your opponent has ' + value + ' cards left';
                 break;
             case 'player_health':
                 if (game.playerHealth > value) {
@@ -859,6 +880,7 @@ var game = {
             fontSize: 18,
             fill: '#ff0000'
         }));
+        errorText.x = 5;
         errorText.y = 38;
         game.pixi.stage.addChild(errorText);
         setTimeout(function() {
@@ -927,6 +949,8 @@ var game = {
                 game.updateInfo("player_mana", data.data.player.mana);
                 game.updateInfo("opponent_health", data.data.opponent.health);
                 game.updateInfo("opponent_mana", data.data.opponent.mana);
+                game.updateInfo("player_cards_left", data.data.playerDeckSize);
+                game.updateInfo("opponent_cards_left", data.data.opponentDeckSize);
                 data.data.playerHand.forEach(function(card) {
                     game.addCard(game.playerId, card);
                 });
@@ -1008,9 +1032,11 @@ var game = {
                 break;
             case 'addCard':
                 if (data.data.player == game.playerId) {
+                    game.updateInfo("player_cards_left", data.data.cardsLeft);
                     game.addCard(game.playerId, data.data.card);
                 }
                 else {
+                    game.updateInfo("opponent_cards_left", data.data.cardsLeft);
                     game.opponentHand++;
                     game.reorderCards();
                 }

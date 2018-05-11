@@ -78,8 +78,8 @@ Player.prototype.drawCard = function() {
         var newCard = this.deck.pop();
         if (this.hand.length < constants.player.MAX_CARDS) {
             this.hand.push(parseInt(newCard));
-            this.sendPacket("addCard", { player: this.id, card: newCard });
-            this.game.getOpponent(this).sendPacket("addCard", { player: this.id });
+            this.sendPacket("addCard", { player: this.id, card: newCard, cardsLeft: this.deck.length });
+            this.game.getOpponent(this).sendPacket("addCard", { player: this.id, cardsLeft: this.deck.length });
         }
         else {
             this.sendPacket("discardCard", { playerId: this.id, cardId: newCard });
