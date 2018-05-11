@@ -522,6 +522,7 @@ var game = {
         game.refreshMinions();
     },
     refreshMinions: function() {
+        var opponentOffset = (constants.player.MAX_MINIONS - game.opponentArmy.length) * 50;
         for (var i = 0; i < game.opponentArmy.length; i++) {
             if (game.opponentArmy[i].hasAttack) {
                 game.opponentArmy[i].filters = [ new PIXI.filters.GlowFilter(2, 2, 2, 0x00ff00, 0.5) ];
@@ -529,8 +530,9 @@ var game = {
             else {
                 game.opponentArmy[i].filters = [];
             }
-            game.opponentArmy[i].x = 100 * i;
+            game.opponentArmy[i].x = 100 * i + opponentOffset;
         }
+        var playerOffset = (constants.player.MAX_MINIONS - game.playerArmy.length) * 50;
         for (var i = 0; i < game.playerArmy.length; i++) {
             if (game.playerArmy[i].hasAttack) {
                 game.playerArmy[i].filters = [ new PIXI.filters.GlowFilter(2, 2, 2, 0x00ff00, 0.5) ];
@@ -538,7 +540,7 @@ var game = {
             else {
                 game.playerArmy[i].filters = [];
             }
-            game.playerArmy[i].x = 100 * i;
+            game.playerArmy[i].x = 100 * i + playerOffset;
         }
     },
     reorderCards: function() {
