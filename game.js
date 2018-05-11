@@ -125,9 +125,15 @@ Game.prototype.switchTurns = function(playerId) {
         else {
             x.hasAttack = false;
         }
+        if (x.events && x.events.turn_start) {
+            opponent.processActions(x.events.turn_start, x.minionInstanceId).forEach((x) => x());
+        }
     });
     currentPlayer.minions.forEach(function(x) {
         x.hasAttack = false;
+        if (x.events && x.events.turn_end) {
+            currentPlayer.processActions(x.events.turn_end, x.minionInstanceId).forEach((x) => x());
+        }
     });
     var info = {
         turn: this.turn,

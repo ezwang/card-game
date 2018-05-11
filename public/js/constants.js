@@ -216,6 +216,14 @@ var constants = {
             name: 'Soul Sacrifice',
             description: 'Lose two health, gain two cards.',
             actions: [['damage_player', 2], ['draw', 2]]
+        },
+        '25': {
+            id: 25,
+            mana: 4,
+            type: 'minion',
+            name: 'The Giant',
+            description: 'Gains +1 health at the start of every turn.',
+            spawn: [14]
         }
     },
     minions: {
@@ -311,6 +319,15 @@ var constants = {
             name: 'Fallen Swordsman',
             events: {
                 minion_damage: [['buff_attack', 1]]
+            }
+        },
+        '14': {
+            id: 14,
+            health: 3,
+            attack: 1,
+            name: 'The Giant',
+            events: {
+                turn_start: [['buff_health', 1]]
             }
         }
     }

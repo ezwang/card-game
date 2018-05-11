@@ -141,7 +141,7 @@ Player.prototype.spawnMinion = function (minionId) {
             }
             if (doingDamage) {
                 function process(minion, plr) {
-                    var actions = processActions(minion.events.minion_damage, plr.game, plr, plr.game.getOpponent(plr), minion.minionInstanceId);
+                    var actions = plr.processActions(minion.events.minion_damage, minion.minionInstanceId);
                     if (actions !== false) {
                         actions.forEach((x) => x());
                     }
@@ -254,7 +254,10 @@ Player.prototype.doAttack = function(from, to) {
     });
 };
 
-function processActions(rawActions, game, plr, opp, target) {
+Player.prototype.processActions = function(rawActions, target) {
+    const game = this.game;
+    const plr = this;
+    const opp = game.getOpponent(plr);
     var playCard = true;
     var actions = [];
     if (rawActions) {
@@ -400,7 +403,7 @@ Player.prototype.playCard = function(cardId, target) {
         var plr = this;
         var game = this.game;
         var opp = game.getOpponent(plr);
-        var actions = processActions(cardInfo.actions, game, plr, opp, target);
+        var actions = plr.processActions(cardInfo.actions, target);
         if (actions === false) {
             this.sendError("Cannot play this card in this situation!");
             return false;
