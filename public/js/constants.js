@@ -338,6 +338,15 @@ var constants = {
     }
 };
 
+Object.values(constants.minions).forEach(function(x) {
+    if (x.events) {
+        if (!x.attributes) {
+            x.attributes = [];
+        }
+        x.attributes.push('special');
+    }
+});
+
 if (typeof module !== 'undefined') {
     module.exports = constants;
 }

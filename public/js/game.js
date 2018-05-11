@@ -24,9 +24,6 @@ function createMinion(minionInfo, minionId) {
     minion._attributes = minionInfo.attributes || [];
     minion.minionInstanceId = minionId;
     minion.attackData = minionId;
-    if (minionInfo.events) {
-        minion._attributes.push('special');
-    }
     Object.defineProperty(minion, 'health', {
         set: function(x) { this._health = x; this.healthText.text = x; },
         get: function() { return this._health; }
