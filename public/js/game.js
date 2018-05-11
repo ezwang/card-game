@@ -478,7 +478,6 @@ var game = {
         });
         switch (state) {
             case 'lobby':
-                game.sendPacket('queue'); // TODO: remove, debugging only
                 game.lobbyContainer.visible = true;
                 break;
             case 'queued':
@@ -610,9 +609,6 @@ var game = {
             card.height /= 2;
             game.playerCardContainer.addChild(card);
             game.reorderCards();
-        }
-        else {
-            // TODO: render opponent cards
         }
     },
     checkCanMove: function() {
