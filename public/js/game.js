@@ -680,14 +680,16 @@ var game = {
                 game.reorderCards();
                 break;
             case 'updatePlayer':
-                if (data.data.health) {
-                    if (data.data.playerId == game.playerId) {
-                        game.updateInfo('player_health', data.data.health);
+                ['health', 'mana'].forEach(function(item) {
+                    if (data.data[item]) {
+                        if (data.data.playerId == game.playerId) {
+                            game.updateInfo('player_' + item, data.data[item]);
+                        }
+                        else {
+                            game.updateInfo('opponent_' + item, data.data[item]);
+                        }
                     }
-                    else {
-                        game.updateInfo('opponent_health', data.data.health);
-                    }
-                }
+                });
                 break;
             case 'updateMinion':
                 var instId = data.data.minionInstanceId;

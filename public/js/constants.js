@@ -120,6 +120,15 @@ var constants = {
             name: 'The Field Mouse',
             description: 'Spawns more allies on death.',
             spawn: [9]
+        },
+        '14': {
+            id: 14,
+            mana: 0,
+            type: 'spell',
+            name: 'The Coin',
+            description: 'Gives you one extra mana this turn.',
+            obtainable: false,
+            actions: [['mana', 1]]
         }
     },
     minions: {

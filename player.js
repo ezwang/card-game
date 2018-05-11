@@ -239,6 +239,10 @@ Player.prototype.playCard = function(cardId, target) {
                                     opp.minions[i].damage(action[1]);
                                 }
                                 break;
+                            case 'mana':
+                                plr.mana += action[1];
+                                game.sendPacket("updatePlayer", { playerId: plr.id, mana: plr.mana });
+                                break;
                             default:
                                 console.warn('Unknown spell card action: ' + action[0]);
                                 break;

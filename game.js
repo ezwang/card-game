@@ -39,6 +39,14 @@ Game.prototype.init = function() {
 
     this.turn = Math.random() > 0.5 ? this.p1.id : this.p2.id;
 
+    // give the 2nd player to move a coin
+    if (this.turn == this.p1.id) {
+        this.p2.hand.push(14);
+    }
+    else {
+        this.p1.hand.push(14);
+    }
+
     var p1info = {
         id: this.p1.id,
         name: this.p1.username,
