@@ -514,7 +514,7 @@ var game = {
         }));
         game.statusText.endText.anchor.set(0.5);
         game.statusText.endText.x = game.getScreenWidth() / 2;
-        game.statusText.endText.y = game.getScreenHeight() / 2;
+        game.statusText.endText.y = game.getScreenHeight() / 2 - 100;
         var fadedBg = new PIXI.Graphics();
         fadedBg.beginFill(0x000000);
         fadedBg.drawRect(0, 0, game.getScreenWidth(), game.getScreenHeight());
@@ -528,7 +528,7 @@ var game = {
             game.setGameState('lobby');
         });
         endButton.x = game.getScreenWidth() / 2;
-        endButton.y = game.getScreenHeight() / 2 + 100;
+        endButton.y = game.getScreenHeight() / 2;
         endContainer.addChild(endButton);
 
         gameContainer.addChild(playerPortrait);
