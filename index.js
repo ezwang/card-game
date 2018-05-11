@@ -38,6 +38,9 @@ wss.on('connection', function(ws) {
             case 'doAttack':
                 player.doAttack(data.data.from, data.data.to);
                 break;
+            case 'loadCards':
+                player.sendPacket("loadCards", player.getCards());
+                break;
             default:
                 console.log('Unknown Packet: ' + JSON.stringify(data));
                 break;

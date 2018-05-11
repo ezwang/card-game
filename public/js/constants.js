@@ -8,6 +8,10 @@ var constants = {
         MAX_CARDS: 10,
         NO_MOVE_DELAY: 500
     },
+    cardcollection: {
+        CARDS_PER_ROW: 6,
+        CARDS_PER_PAGE: 18
+    },
     cards: {
         '0': {
             id: 0,

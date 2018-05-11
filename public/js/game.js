@@ -237,7 +237,7 @@ var game = {
         game.lobbyContainer = lobbyContainer;
         var gameTitle = new PIXI.Text('Card Game', new PIXI.TextStyle({
             fontFamily: 'Arial',
-            fontSize: 72,
+            fontSize: 84,
             fill: '#ffffff'
         }));
         gameTitle.anchor.set(0.5);
@@ -249,9 +249,45 @@ var game = {
         });
         playButton.x = game.getScreenWidth() / 2;
         playButton.y = 100 + 100;
+        var cardButton = createButton('Your Cards', function() {
+            game.setGameState('cards');
+        });
+        cardButton.x = game.getScreenWidth() / 2;
+        cardButton.y = 100 + 100 + 50;
+        lobbyContainer.addChild(cardButton);
         lobbyContainer.addChild(playButton);
         game.pixi.stage.addChild(lobbyContainer);
         game.containers.push(lobbyContainer);
+
+        // cards screen
+        var cardsContainer = new PIXI.Container();
+        game.cardsContainer = cardsContainer;
+        var backButton = createButton('Back', function() {
+            game.setGameState('lobby');
+        });
+        var prevPageButton = createButton('<<<', function() {
+            game.playerCardRenderOffset = Math.max(0, game.playerCardRenderOffset - 1);
+            game.renderCardCollection();
+        });
+        var nextPageButton = createButton('>>>', function() {
+            game.playerCardRenderOffset = Math.min(game.playerCardRenderOffset + 1, Math.floor(game.playerCardList.length / constants.cardcollection.CARDS_PER_PAGE));
+            game.renderCardCollection();
+        });
+        nextPageButton.anchor.set(0, 1);
+        prevPageButton.anchor.set(0, 1);
+        nextPageButton.x = 10 + 100;
+        prevPageButton.x = 10;
+        nextPageButton.y = game.getScreenHeight() - 5;
+        prevPageButton.y = game.getScreenHeight() - 5;
+        backButton.anchor.set(1);
+        backButton.x = game.getScreenWidth() - 5;
+        backButton.y = game.getScreenHeight() - 5;
+        cardsContainer.addChild(backButton);
+        cardsContainer.addChild(nextPageButton);
+        cardsContainer.addChild(prevPageButton);
+        game.pixi.stage.addChild(cardsContainer);
+
+        game.containers.push(cardsContainer);
 
         // game screen
         var gameContainer = new PIXI.Container();
@@ -493,6 +529,10 @@ var game = {
             case 'game':
                 game.gameContainer.visible = true;
                 game.endContainer.visible = false;
+                break;
+            case 'cards':
+                game.cardsContainer.visible = true;
+                game.sendPacket("loadCards");
                 break;
             case 'empty':
                 break;
@@ -737,6 +777,29 @@ var game = {
             });
         }, 1000);
     },
+    renderCardCollection: function() {
+        if (!game.playerCardRender) {
+            game.playerCardRender = [];
+            game.playerCardRenderOffset = 0;
+        }
+        else {
+            game.playerCardRender.forEach((x) => game.cardsContainer.removeChild(x));
+            game.playerCardRender = [];
+        }
+        for (var i = 0; i < constants.cardcollection.CARDS_PER_PAGE; i++) {
+            var cardIndex = i + game.playerCardRenderOffset * constants.cardcollection.CARDS_PER_PAGE;
+            if (cardIndex >= game.playerCardList.length) {
+                break;
+            }
+            var card = createCard(constants.cards[game.playerCardList[cardIndex]]);
+            card.width /= 1.6;
+            card.height /= 1.6;
+            card.x = 5 + (130 * (i % constants.cardcollection.CARDS_PER_ROW));
+            card.y = 75 + 5 + (160 * Math.floor(i / constants.cardcollection.CARDS_PER_ROW));
+            game.playerCardRender.push(card);
+            game.cardsContainer.addChild(card);
+        }
+    },
     receivePacket: function(data) {
         var data = JSON.parse(data.data);
         switch (data.type) {
@@ -873,6 +936,10 @@ var game = {
                 break;
             case 'addMinion':
                 game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack, data.data.minionInstanceId);
+                break;
+            case 'loadCards':
+                game.playerCardList = data.data;
+                game.renderCardCollection();
                 break;
             case 'error':
                 game.showError(data.data);

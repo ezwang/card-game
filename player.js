@@ -60,10 +60,15 @@ Player.prototype.disconnect = function(errorMessage) {
  * Returns the current player deck for the game, with the cards in randomized order.
  */
 Player.prototype.getDeck = function() {
-    var cardIds = Object.keys(constants.cards).map((k) => parseInt(k)).filter((k) => constants.cards[k].obtainable !== false);
+    var cardIds = this.getCards();
     Array.prototype.push.apply(cardIds, cardIds);
     return cardIds.sort(() => 0.5 - Math.random()).slice(0, 30);
 }
+
+Player.prototype.getCards = function() {
+    var cardIds = Object.keys(constants.cards).map((k) => parseInt(k)).filter((k) => constants.cards[k].obtainable !== false);
+    return cardIds;
+};
 
 /**
  * Transfer a card from the player's deck to their hand.
