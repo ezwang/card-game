@@ -21,9 +21,12 @@ function createMinion(minionInfo, minionId) {
     minion.id = minionInfo.id;
     minion._health = minionInfo.health;
     minion._attack = minionInfo.attack;
-    minion._attributes = minionInfo.attributes;
+    minion._attributes = minionInfo.attributes || [];
     minion.minionInstanceId = minionId;
     minion.attackData = minionId;
+    if (minionInfo.events) {
+        minion._attributes.push('special');
+    }
     Object.defineProperty(minion, 'health', {
         set: function(x) { this._health = x; this.healthText.text = x; },
         get: function() { return this._health; }
@@ -204,7 +207,7 @@ function createCard(cardInfo) {
 }
 
 var game = {
-    ATTRIBUTE_MAP: [['charge', './img/charge.png'], ['taunt', './img/taunt.png'], ['deathrattle', './img/deathrattle.png'], ['shield', './img/shield.png']],
+    ATTRIBUTE_MAP: [['charge', './img/charge.png'], ['taunt', './img/taunt.png'], ['deathrattle', './img/deathrattle.png'], ['shield', './img/shield.png'], ['special', './img/special.png']],
     getScreenWidth: function() {
         return 800;
     },
