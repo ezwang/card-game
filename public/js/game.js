@@ -1,7 +1,14 @@
 function createButton(text, callback) {
     var button = new PIXI.Text(text, new PIXI.TextStyle({
-        fill: '#ffffff'
+        fill: '#ffffff',
+        fontSize: 36
     }));
+    button.on('mouseover', function() {
+        button.style.fill = '#aaaaaa';
+    });
+    button.on('mouseout', function() {
+        button.style.fill = '#ffffff';
+    });
     button.interactive = true;
     button.buttonMode = true;
     button.on('pointerdown', callback);
@@ -230,7 +237,7 @@ var game = {
         game.lobbyContainer = lobbyContainer;
         var gameTitle = new PIXI.Text('Card Game', new PIXI.TextStyle({
             fontFamily: 'Arial',
-            fontSize: 36,
+            fontSize: 72,
             fill: '#ffffff'
         }));
         gameTitle.anchor.set(0.5);
