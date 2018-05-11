@@ -131,7 +131,7 @@ Player.prototype.doAttack = function(from, to) {
         return false;
     }
 
-    var hasTaunt = this.game.getOpponent(this).minions.filter((x) => x.attributes.indexOf('taunt') > -1).length > 0;
+    var hasTaunt = this.game.getOpponent(this).minions.filter((x) => x.attributes && x.attributes.indexOf('taunt') > -1).length > 0;
 
     // check if minion has attack
     if (!fromMinion.hasAttack) {
@@ -149,7 +149,7 @@ Player.prototype.doAttack = function(from, to) {
     }
     else {
         var toMinion = this.game.getOpponent(this).minions.find((x) => x.minionInstanceId == to);
-        if (hasTaunt && toMinion.attributes.indexOf('taunt') < 0) {
+        if (hasTaunt && (!toMinion.attributes || toMinion.attributes.indexOf('taunt') < 0)) {
             // TODO: tell player that minion has taunt
             return false;
         }

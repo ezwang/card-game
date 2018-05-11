@@ -45,6 +45,18 @@ function createMinion(minionInfo, minionId) {
     attack.y = 70;
 
     minion.addChild(background);
+
+    if (minionInfo.attributes) {
+        if (minionInfo.attributes.indexOf('taunt') > -1) {
+            var shield = PIXI.Sprite.fromImage('./img/shield.png');
+            shield.anchor.set(0.5);
+            shield.width = 20;
+            shield.height = 20;
+            shield.x = 40;
+            shield.y = 60;
+            minion.addChild(shield);
+        }
+    }
     minion.addChild(health);
     minion.addChild(attack);
     return minion;
