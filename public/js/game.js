@@ -26,7 +26,13 @@ function createMinion(minionInfo, minionId) {
     minion.minionInstanceId = minionId;
     minion.attackData = minionId;
     Object.defineProperty(minion, 'health', {
-        set: function(x) { this._health = x; this.healthText.text = x; },
+        set: function(x) {
+            if (this._health > x) {
+                createDamageEffect(minion, 40, 40);
+            }
+            this._health = x;
+            this.healthText.text = x;
+        },
         get: function() { return this._health; }
     });
     Object.defineProperty(minion, 'attack', {
@@ -104,6 +110,42 @@ function createMinion(minionInfo, minionId) {
     minion.addChild(health);
     minion.addChild(attack);
     return minion;
+}
+
+function createDamageEffect(item, x, y) {
+    var emitter = new PIXI.particles.Emitter(item, [PIXI.Texture.fromImage('./img/particle.png')], {
+        pos: {
+            x: x,
+            y: y
+        },
+        frequency: 0.01,
+        spawnChance: 1,
+        particlesPerWave: 1,
+        maxParticles: 1000,
+        lifetime: {
+            min: 0.5,
+            max: 0.5
+        },
+        startRotation: {
+            min: 0,
+            max: 360
+        },
+        alpha: {
+            list: [{ value: 0.5, time: 0 }, { value: 0.1, time: 1 }],
+            isStepped: false
+        },
+        color: {
+            list: [{value: "ff0000", time: 0}, {value: "cc0000", time: 1}],
+            isStepped: false
+        },
+        speed: {
+            list: [{value: 100, time: 0}, {value: 50, time: 1}],
+            isStepped: false
+        },
+        emitterLifetime: 0.1
+    });
+    emitter.emit = true;
+    emitter.playOnceAndDestroy();
 }
 
 function createCard(cardInfo) {
@@ -334,6 +376,7 @@ var game = {
         playerPortrait.y = game.getScreenHeight() - 25 - playerPortrait.height - 100;
         playerPortrait.interactive = true;
         playerPortrait.attackData = "player";
+        game.playerPortrait = playerPortrait;
 
         var opponentPortrait = new PIXI.Graphics();
         opponentPortrait.beginFill(0xffff00);
@@ -342,6 +385,7 @@ var game = {
         opponentPortrait.y = 25;
         opponentPortrait.interactive = true;
         opponentPortrait.attackData = "opponent";
+        game.opponentPortrait = opponentPortrait;
 
         playerPortrait.on('mouseup', function() {
             if (game.selectedMinion) {
@@ -571,10 +615,16 @@ var game = {
                 game.statusText.playerInfo.text = value[0] + ' vs. ' + value[1];
                 break;
             case 'player_health':
+                if (game.playerHealth > value) {
+                    createDamageEffect(game.playerPortrait, 50, 60);
+                }
                 game.playerHealth = value;
                 game.statusText.playerHealth.text = value;
                 break;
             case 'opponent_health':
+                if (game.opponentHealth > value) {
+                    createDamageEffect(game.opponentPortrait, 50, 60);
+                }
                 game.opponentHealth = value;
                 game.statusText.opponentHealth.text = value;
                 break;
@@ -901,21 +951,37 @@ var game = {
                 break;
             case 'removeMinion':
                 var instId = data.data.minionInstanceId;
-                game.playerArmy = game.playerArmy.filter(function(minion) {
+                var minionToRemove;
+                var callback;
+                game.playerArmy.forEach(function(minion) {
                     if (minion.minionInstanceId == instId) {
-                        game.playerMinionContainer.removeChild(minion);
+                        minionToRemove = minion;
+                        callback = function() {
+                            game.playerArmy.splice(game.playerArmy.indexOf(minion), 1);
+                            game.playerMinionContainer.removeChild(minion);
+                        };
                         return false;
                     }
                     return true;
                 });
-                game.opponentArmy = game.opponentArmy.filter(function(minion) {
+                game.opponentArmy.forEach(function(minion) {
                     if (minion.minionInstanceId == instId) {
-                        game.opponentMinionContainer.removeChild(minion);
+                        minionToRemove = minion;
+                        callback = function() {
+                            game.opponentArmy.splice(game.opponentArmy.indexOf(minion), 1);
+                            game.opponentMinionContainer.removeChild(minion);
+                        };
                         return false;
                     }
                     return true;
                 });
-                game.refreshMinions();
+                if (minionToRemove) {
+                    createDamageEffect(minionToRemove, 40, 40);
+                    setTimeout(function() {
+                        callback();
+                        game.refreshMinions();
+                    }, 600);
+                }
                 break;
             case 'addCard':
                 if (data.data.player == game.playerId) {
