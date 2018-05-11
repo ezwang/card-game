@@ -84,11 +84,17 @@ Player.prototype.spawnMinion = function (minionId) {
     }
     var copy = deepcopy(minionInfo);
     const plr = this;
-    copy.hasAttack = minionInfo.attributes && minionInfo.attributes.indexOf('charge') > -1;
+    copy.hasAttribute = function(attr) {
+        if (!copy.attributes) {
+            return false;
+        }
+        return copy.attributes.indexOf(attr) > -1;
+    };
+    copy.hasAttack = copy.hasAttribute('charge');
     copy.damage = function(amount) {
         copy.health -= amount;
         if (copy.health <= 0) {
-            if (copy.attributes && copy.attributes.indexOf('deathrattle') > -1) {
+            if (copy.hasAttribute('deathrattle')) {
                 copy.deathrattle.forEach(function(action) {
                     switch(action[0]) {
                         case 'spawn':
@@ -147,7 +153,7 @@ Player.prototype.doAttack = function(from, to) {
         return false;
     }
 
-    var hasTaunt = this.game.getOpponent(this).minions.filter((x) => x.attributes && x.attributes.indexOf('taunt') > -1).length > 0;
+    var hasTaunt = this.game.getOpponent(this).minions.filter((x) => x.hasAttribute('taunt')).length > 0;
 
     // check if minion has attack
     if (!fromMinion.hasAttack) {
@@ -165,18 +171,34 @@ Player.prototype.doAttack = function(from, to) {
     }
     else {
         var toMinion = this.game.getOpponent(this).minions.find((x) => x.minionInstanceId == to);
-        if (hasTaunt && (!toMinion.attributes || toMinion.attributes.indexOf('taunt') < 0)) {
+        if (hasTaunt && !toMinion.hasAttribute('taunt')) {
             this.sendError("You must attack a minion with taunt!");
             return false;
         }
-        toMinion.damage(fromMinion.attack);
-        fromMinion.damage(toMinion.attack);
+        if (toMinion.hasAttribute('shield')) {
+            toMinion.attributes.splice(toMinion.attributes.indexOf('shield'), 1);
+            this.game.sendPacket("updateMinion", {
+                playerId: this.id,
+                minionInstanceId: toMinion.minionInstanceId,
+                attributes: toMinion.attributes
+            });
+        }
+        else {
+            toMinion.damage(fromMinion.attack);
+        }
+        if (fromMinion.hasAttribute('shield')) {
+            fromMinion.attributes.splice(fromMinion.attributes.indexOf('shield'), 1);
+        }
+        else {
+            fromMinion.damage(toMinion.attack);
+        }
     }
     fromMinion.hasAttack = false;
     this.game.sendPacket("updateMinion", {
         playerId: this.id,
         minionInstanceId: fromMinion.minionInstanceId,
-        hasAttack: false
+        hasAttack: false,
+        attributes: fromMinion.attributes
     });
 };
 
