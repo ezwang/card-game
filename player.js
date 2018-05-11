@@ -178,7 +178,8 @@ Player.prototype.spawnMinion = function (minionId) {
                 plr.minions.splice(plr.minions.indexOf(copy), 1);
                 plr.game.sendPacket("removeMinion", {
                     playerId: plr.id,
-                    minionInstanceId: copy.minionInstanceId
+                    minionInstanceId: copy.minionInstanceId,
+                    health: this.health
                 });
             }
             else {

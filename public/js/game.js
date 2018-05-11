@@ -976,6 +976,9 @@ var game = {
                     return true;
                 });
                 if (minionToRemove) {
+                    if (typeof data.data.health !== 'undefined') {
+                        minionToRemove.health = data.data.health;
+                    }
                     createDamageEffect(minionToRemove, 40, 40);
                     setTimeout(function() {
                         callback();
