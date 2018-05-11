@@ -628,7 +628,7 @@ var game = {
     },
     removeCard: function(player, card, wasDiscarded) {
         if (player == game.playerId) {
-            var cardIndex = game.playerHand.map((x) => x.id).indexOf(card);
+            var cardIndex = game.playerHand.map((x) => parseInt(x.id)).indexOf(parseInt(card));
             if (cardIndex > -1) {
                 game.playerCardContainer.removeChild(game.playerHand[cardIndex]);
                 game.playerHand.splice(cardIndex, 1);
