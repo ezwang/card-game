@@ -365,12 +365,28 @@ var game = {
 
         game.pixi.stage.addChild(gameContainer);
         game.containers.push(gameContainer);
+
+        game.animations = [];
+        game.pixi.ticker.add(game.processAnimations);
     },
     playCard: function(card, target) {
         game.sendPacket("playCard", { card: card.id, target: target });
     },
     resize: function() {
         game.pixi.renderer.resize(game.getScreenWidth(), game.getScreenHeight());
+    },
+    processAnimations: function(delta) {
+        game.animations = game.animations.filter(function(anim) {
+            anim.obj.alpha += (anim.speed || 0.1) * delta;
+            if (anim.obj.alpha >= 1) {
+                anim.obj.alpha = 1;
+                if (anim.callback) {
+                    anim.callback();
+                }
+                return false;
+            }
+            return true;
+        });
     },
     connect: function(username) {
         game.ws = new WebSocket("ws://" + window.location.host + window.location.pathname);
@@ -531,6 +547,11 @@ var game = {
             game.opponentMinionContainer.addChild(minion);
             game.opponentArmy.push(minion);
         }
+        minion.alpha = 0;
+        game.animations.push({
+            obj: minion,
+            speed: 0.15
+        });
         game.refreshMinions();
     },
     refreshMinions: function() {
