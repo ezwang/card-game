@@ -210,6 +210,13 @@ var constants = {
             name: 'Annoy-o-matic',
             description: 'Has taunt and shield.',
             spawn: [15]
+        },
+        '27': {
+            mana: 8,
+            type: 'minion',
+            name: 'Dr. Boom',
+            description: 'Also spawns 2 explode bots.',
+            spawn: [17, 16, 17]
         }
     },
     minions: {
@@ -306,6 +313,18 @@ var constants = {
             attack: 1,
             name: 'Annoy-o-matic',
             attributes: ['taunt', 'shield']
+        },
+        '16': {
+            health: 7,
+            attack: 7,
+            name: 'Dr. Boom'
+        },
+        '17': {
+            health: 1,
+            attack: 1,
+            name: 'Explode Bot',
+            attributes: ['deathrattle'],
+            deathrattle: [['random_damage', 2], ['random_damage', 2]]
         }
     }
 };

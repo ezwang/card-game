@@ -160,17 +160,7 @@ Player.prototype.spawnMinion = function (minionId) {
             }
             if (this.health <= 0) {
                 if (this.hasAttribute('deathrattle')) {
-                    this.deathrattle.forEach(function(action) {
-                        switch(action[0]) {
-                            case 'spawn':
-                                action[1].forEach(function(minionId) {
-                                    plr.spawnMinion(minionId);
-                                });
-                                break;
-                            default:
-                                console.warn('Unknown deathrattle action: ' + action[0]);
-                        }
-                    });
+                    plr.processActions(this.deathrattle).forEach((x) => x());
                 }
                 plr.minions.splice(plr.minions.indexOf(copy), 1);
                 plr.game.sendPacket("removeMinion", {
@@ -314,6 +304,18 @@ Player.prototype.processActions = function(rawActions, target) {
                             }
                         });
                         break;
+                    case 'random_damage':
+                        actions.push(function() {
+                            var all = plr.minions.concat(opp.minions).concat([plr, opp]);
+                            var random = all[Math.floor(all.length * Math.random())];
+                            if (random instanceof Player) {
+                                random.damage(action[1]);
+                            }
+                            else {
+                                random.health -= action[1];
+                            }
+                        });
+                        break;
                     case 'mana':
                         actions.push(function() {
                             plr.mana += action[1];
@@ -374,6 +376,13 @@ Player.prototype.processActions = function(rawActions, target) {
                     case 'damage_player':
                         actions.push(function() {
                             plr.damage(action[1]);
+                        });
+                        break;
+                    case 'spawn':
+                        actions.push(function() {
+                            action[1].forEach(function(minionId) {
+                                plr.spawnMinion(minionId);
+                            });
                         });
                         break;
                     default:
