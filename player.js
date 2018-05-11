@@ -359,7 +359,7 @@ Player.prototype.processActions = function(rawActions, target) {
                                     var random = Math.floor(plr.hand.length * Math.random());
                                     var cardId = plr.hand.splice(random, 1)[0];
                                     game.sendPacket("discardCard", {
-                                        playerId: this.id,
+                                        playerId: plr.id,
                                         cardId: cardId
                                     });
                                 }
