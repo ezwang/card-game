@@ -3,7 +3,8 @@ var constants = {
         INITIAL_HEALTH: 30,
         INITIAL_MANA: 3, // TODO: revert to 1
         MAX_MANA: 10,
-        MAX_MINIONS: 8
+        MAX_MINIONS: 8,
+        NO_MOVE_DELAY: 500
     },
     cards: {
         '0': {

@@ -377,9 +377,9 @@ var game = {
     },
     processAnimations: function(delta) {
         game.animations = game.animations.filter(function(anim) {
-            anim.obj.alpha += (anim.speed || 0.1) * delta;
-            if (anim.obj.alpha >= 1) {
-                anim.obj.alpha = 1;
+            anim.obj[anim.field] += (anim.speed || 0.1) * delta;
+            if (anim.obj[anim.field] >= 1) {
+                anim.obj[anim.field] = 1;
                 if (anim.callback) {
                     anim.callback();
                 }
@@ -531,7 +531,7 @@ var game = {
     },
     doAttack: function(from, to) {
         game.sendPacket("doAttack", { from: from.attackData, to: to.attackData });
-        setTimeout(game.checkCanMove, 500);
+        setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
     },
     spawnMinion: function(playerId, minionId, hasAttack, minionInstanceId) {
         var minion = createMinion(constants.minions[minionId], minionInstanceId);
@@ -561,6 +561,7 @@ var game = {
         }
         minion.alpha = 0;
         game.animations.push({
+            field: 'alpha',
             obj: minion,
             speed: 0.15
         });
@@ -712,7 +713,7 @@ var game = {
                 }
                 game.refreshMinions();
                 game.reorderCards();
-                game.checkCanMove();
+                setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
                 break;
             case 'gameEnd':
                 game.statusText.endText.text = data.data.winner == game.playerId ? 'Winner!' : 'Loser!';
@@ -728,7 +729,7 @@ var game = {
                     // TODO: handle opponent play card
                 }
                 game.reorderCards();
-                game.checkCanMove();
+                setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
                 break;
             case 'addMinion':
                 game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack, data.data.minionInstanceId);
