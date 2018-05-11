@@ -14,7 +14,6 @@ var constants = {
     },
     cards: {
         '0': {
-            id: 0,
             mana: 3,
             type: 'minion',
             spawn: [0, 0, 0],
@@ -22,7 +21,6 @@ var constants = {
             description: 'Spawn a few soldiers. Not a very special card.'
         },
         '1': {
-            id: 1,
             mana: 5,
             type: 'minion',
             spawn: [0, 0, 0, 0, 0],
@@ -30,7 +28,6 @@ var constants = {
             description: 'Spawn a few more soldiers.'
         },
         '2': {
-            id: 2,
             mana: 2,
             type: 'minion',
             spawn: [1],
@@ -38,7 +35,6 @@ var constants = {
             description: 'Spawn a distraction.'
         },
         '3': {
-            id: 3,
             mana: 3,
             type: 'spell',
             name: 'Card Search',
@@ -46,7 +42,6 @@ var constants = {
             actions: [['draw', 2]]
         },
         '4': {
-            id: 4,
             mana: 2,
             type: 'spell',
             name: 'Fireball',
@@ -55,7 +50,6 @@ var constants = {
             target: true
         },
         '5': {
-            id: 5,
             mana: 2,
             type: 'minion',
             name: 'Charger',
@@ -63,7 +57,6 @@ var constants = {
             spawn: [2]
         },
         '6': {
-            id: 6,
             mana: 10,
             type: 'spell',
             name: 'Nuke',
@@ -72,7 +65,6 @@ var constants = {
             target: true
         },
         '7': {
-            id: 7,
             mana: 4,
             type: 'minion',
             name: 'Tank',
@@ -80,7 +72,6 @@ var constants = {
             spawn: [3]
         },
         '8': {
-            id: 8,
             mana: 3,
             type: 'minion',
             name: 'Knight',
@@ -88,7 +79,6 @@ var constants = {
             spawn: [4, 5]
         },
         '9': {
-            id: 9,
             mana: 5,
             type: 'spell',
             name: 'Explosion',
@@ -96,7 +86,6 @@ var constants = {
             actions: [['all_damage', 3]]
         },
         '10': {
-            id: 10,
             mana: 6,
             type: 'minion',
             name: 'The Red Panda',
@@ -104,7 +93,6 @@ var constants = {
             spawn: [6]
         },
         '11': {
-            id: 11,
             mana: 3,
             type: 'minion',
             name: 'The Bunny',
@@ -112,7 +100,6 @@ var constants = {
             spawn: [7]
         },
         '12': {
-            id: 12,
             mana: 3,
             type: 'minion',
             name: 'The Wombat',
@@ -120,7 +107,6 @@ var constants = {
             spawn: [8]
         },
         '13': {
-            id: 13,
             mana: 3,
             type: 'minion',
             name: 'The Field Mouse',
@@ -128,7 +114,6 @@ var constants = {
             spawn: [9]
         },
         '14': {
-            id: 14,
             mana: 0,
             type: 'spell',
             name: 'The Coin',
@@ -137,7 +122,6 @@ var constants = {
             actions: [['mana', 1]]
         },
         '15': {
-            id: 15,
             mana: 6,
             type: 'spell',
             name: 'Stronger Fireball',
@@ -146,7 +130,6 @@ var constants = {
             target: true
         },
         '16': {
-            id: 16,
             mana: 5,
             type: 'spell',
             name: 'Morale Boost',
@@ -154,7 +137,6 @@ var constants = {
             actions: [['buff_attack_all', 2]]
         },
         '17': {
-            id: 17,
             mana: 5,
             type: 'spell',
             name: 'Medical Aid',
@@ -162,7 +144,6 @@ var constants = {
             actions: [['buff_health_all', 2]]
         },
         '18': {
-            id: 18,
             mana: 5,
             type: 'minion',
             name: 'Ninja',
@@ -171,7 +152,6 @@ var constants = {
             spawn: [11]
         },
         '19': {
-            id: 19,
             mana: 1,
             type: 'minion',
             name: 'Lesser Demon',
@@ -180,7 +160,6 @@ var constants = {
             spawn: [12]
         },
         '20': {
-            id: 20,
             mana: 9,
             type: 'spell',
             name: 'Mass Heal',
@@ -189,7 +168,6 @@ var constants = {
             target: true
         },
         '21': {
-            id: 21,
             mana: 2,
             type: 'spell',
             name: 'Shield',
@@ -198,7 +176,6 @@ var constants = {
             target: true
         },
         '22': {
-            id: 22,
             mana: 2,
             type: 'spell',
             name: 'Taunt',
@@ -207,7 +184,6 @@ var constants = {
             target: true
         },
         '23': {
-            id: 23,
             mana: 4,
             type: 'minion',
             name: 'Fallen Swordsman',
@@ -215,7 +191,6 @@ var constants = {
             spawn: [13]
         },
         '24': {
-            id: 24,
             mana: 1,
             type: 'spell',
             name: 'Soul Sacrifice',
@@ -223,76 +198,72 @@ var constants = {
             actions: [['damage_player', 2], ['draw', 2]]
         },
         '25': {
-            id: 25,
             mana: 4,
             type: 'minion',
             name: 'The Giant',
             description: 'Gains +1 health at the start of every turn.',
             spawn: [14]
+        },
+        '26': {
+            mana: 2,
+            type: 'minion',
+            name: 'Annoy-o-matic',
+            description: 'Has taunt and shield.',
+            spawn: [15]
         }
     },
     minions: {
         '0': {
-            id: 0,
             health: 1,
             attack: 1,
             name: 'Tiny Soldier'
         },
         '1': {
-            id: 1,
             health: 3,
             attack: 0,
             name: 'Dummy',
             attributes: ['taunt']
         },
         '2': {
-            id: 2,
             health: 1,
             attack: 1,
             name: 'Charger',
             attributes: ['charge']
         },
         '3': {
-            id: 3,
             health: 4,
             attack: 3,
             name: 'Tank'
         },
         '4': {
-            id: 4,
             health: 1,
             attack: 2,
             name: 'Knight',
             attributes: ['shield']
         },
         '5': {
-            id: 5,
             health: 1,
             attack: 1,
             name: 'Squire'
         },
         '6': {
-            id: 6,
             health: 7,
             attack: 6,
             name: 'Red Panda'
         },
         '7': {
-            id: 7,
             health: 2,
             attack: 4,
             name: 'The Bunny',
             attributes: ['charge']
         },
         '8': {
-            id: 8,
             health: 3,
             attack: 3,
             name: 'The Wombat',
             attributes: ['taunt']
         },
         '9': {
-            id: 9,
             health: 2,
             attack: 1,
             name: 'The Field Mouse',
@@ -300,25 +271,21 @@ var constants = {
             deathrattle: [['spawn', [10, 10]]]
         },
         '10': {
-            id: 10,
             health: 1,
             attack: 1,
             name: 'Lesser Field Mice'
         },
         '11': {
-            id: 11,
             health: 4,
             attack: 4,
             name: 'Ninja'
         },
         '12': {
-            id: 12,
             health: 3,
             attack: 2,
             name: 'Lesser Demon'
         },
         '13': {
-            id: 13,
             health: 4,
             attack: 2,
             name: 'Fallen Swordsman',
@@ -327,16 +294,29 @@ var constants = {
             }
         },
         '14': {
-            id: 14,
             health: 3,
             attack: 1,
             name: 'The Giant',
             events: {
                 turn_start: [['buff_health', 1]]
             }
+        },
+        '15': {
+            health: 1,
+            attack: 1,
+            name: 'Annoy-o-matic',
+            attributes: ['taunt', 'shield']
         }
     }
 };
+
+Object.keys(constants.cards).forEach(function(id) {
+    constants.cards[id].id = id;
+});
+
+Object.keys(constants.minions).forEach(function(id) {
+    constants.minions[id].id = id;
+});
 
 Object.values(constants.minions).forEach(function(x) {
     if (x.events) {

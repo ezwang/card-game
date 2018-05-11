@@ -197,6 +197,23 @@ function createCard(cardInfo) {
         attack.y = 220;
         card.addChild(health);
         card.addChild(attack);
+
+        if (minion.attributes) {
+            var i = 0;
+            game.ATTRIBUTE_MAP.forEach(function(attr) {
+                if (minion.attributes.indexOf(attr[0]) > -1) {
+                    var attrSprite = PIXI.Sprite.fromImage(attr[1]);
+                    attrSprite.anchor.set(0.5);
+                    attrSprite.alpha = 0.8;
+                    attrSprite.width = 20;
+                    attrSprite.height = 20;
+                    attrSprite.x = background.width - 40 - 20 * i;
+                    attrSprite.y = background.height - 40;
+                    card.addChild(attrSprite);
+                    i++;
+                }
+            });
+        }
     }
     card.interactive = true;
     card.buttonMode = true;
