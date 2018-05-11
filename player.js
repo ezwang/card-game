@@ -131,20 +131,32 @@ Player.prototype.doAttack = function(from, to) {
         return false;
     }
 
+    var hasTaunt = this.game.getOpponent(this).minions.filter((x) => x.attributes.indexOf('taunt') > -1).length > 0;
+
     // check if minion has attack
     if (!fromMinion.hasAttack) {
         return;
     }
-    fromMinion.hasAttack = false;
 
     if (to == "opponent") {
-        this.game.getOpponent(this).damage(fromMinion.attack);
+        if (!hasTaunt) {
+            this.game.getOpponent(this).damage(fromMinion.attack);
+        }
+        else {
+            // TODO: tell player that minion has taunt
+            return false;
+        }
     }
     else {
         var toMinion = this.game.getOpponent(this).minions.find((x) => x.minionInstanceId == to);
+        if (hasTaunt && toMinion.attributes.indexOf('taunt') < 0) {
+            // TODO: tell player that minion has taunt
+            return false;
+        }
         toMinion.damage(fromMinion.attack);
         fromMinion.damage(toMinion.attack);
     }
+    fromMinion.hasAttack = false;
     this.game.sendPacket("updateMinion", {
         playerId: this.id,
         minionInstanceId: fromMinion.minionInstanceId,
