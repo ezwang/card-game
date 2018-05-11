@@ -101,7 +101,11 @@ function createMinion(minionInfo, minionId) {
 function createCard(cardInfo) {
     var card = new PIXI.Container();
     card.id = cardInfo.id;
-    card.mana = cardInfo.mana;
+    card._mana = cardInfo.mana;
+    Object.defineProperty(card, 'mana', {
+        set: function(x) { card._mana = x; card.manaText.text = x; },
+        get: function() { return card._mana; }
+    });
     var background = PIXI.Sprite.fromImage('./img/card.png');
     var image = new PIXI.Graphics();
     image.beginFill(0xff00ff);
@@ -149,6 +153,7 @@ function createCard(cardInfo) {
             dropShadow: true,
             dropShadowDistance: 1
     }));
+    card.manaText = mana;
     mana.y = 10;
     mana.x = 160;
     card.interative = true;
