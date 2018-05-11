@@ -363,6 +363,11 @@ function processActions(rawActions, game, plr, opp, target) {
                             opp.damage(action[1]);
                         });
                         break;
+                    case 'damage_player':
+                        actions.push(function() {
+                            plr.damage(action[1]);
+                        });
+                        break;
                     default:
                         console.warn('Unknown spell card action: ' + action[0]);
                         break;

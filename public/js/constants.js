@@ -208,6 +208,14 @@ var constants = {
             name: 'Fallen Swordsman',
             description: 'Any time a minion takes damage, this unit gains one attack.',
             spawn: [13]
+        },
+        '24': {
+            id: 24,
+            mana: 1,
+            type: 'spell',
+            name: 'Soul Sacrifice',
+            description: 'Lose two health, gain two cards.',
+            actions: [['damage_player', 2], ['draw', 2]]
         }
     },
     minions: {
