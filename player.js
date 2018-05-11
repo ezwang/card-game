@@ -206,10 +206,13 @@ Player.prototype.spawnMinion = function (minionId) {
 
 Player.prototype.damage = function(amount) {
     this.health -= amount;
+    if (this.health > constants.player.MAX_HEALTH) {
+        this.health = constants.player.MAX_HEALTH;
+    }
+    this.game.sendPacket("updatePlayer", { playerId: this.id, health: this.health });
     if (this.health <= 0) {
         this.game.end(this.game.getOpponent(this));
     }
-    this.game.sendPacket("updatePlayer", { playerId: this.id, health: this.health });
 };
 
 Player.prototype.sendError = function(errorMsg) {
