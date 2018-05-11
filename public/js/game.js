@@ -44,7 +44,16 @@ function createMinion(minionInfo, minionId) {
     attack.x = 15;
     attack.y = 70;
 
+    var name = new PIXI.Text(minionInfo.name, new PIXI.TextStyle({
+        fontFamily: 'Arial',
+        fontSize: 12
+    }));
+    name.anchor.set(0.5);
+    name.x = 40;
+    name.y = 10;
+
     minion.addChild(background);
+    minion.addChild(name);
 
     if (minionInfo.attributes) {
         if (minionInfo.attributes.indexOf('taunt') > -1) {
