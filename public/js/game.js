@@ -356,6 +356,11 @@ var game = {
         game.playerCardContainer = playerCards;
         gameContainer.addChild(playerCards);
 
+        var opponentCards = new PIXI.Container();
+        opponentCards.x = 500;
+        game.opponentCardsContainer = opponentCards;
+        gameContainer.addChild(opponentCards);
+
         var playerMinions = new PIXI.Container();
         var minionBg = new PIXI.Graphics();
         minionBg.beginFill(0xcccccc);
@@ -519,16 +524,17 @@ var game = {
                 break;
         }
     },
-    removeCard(player, card) {
+    removeCard: function(player, card) {
         if (player == game.playerId) {
             var cardIndex = game.playerHand.map((x) => x.id).indexOf(card);
             game.playerCardContainer.removeChild(game.playerHand[cardIndex]);
             game.playerHand.splice(cardIndex, 1);
-            game.reorderCards();
         }
         else {
-            // TODO: implement
+            game.opponentHand--;
+            // TODO: implement showing played card
         }
+        game.reorderCards();
     },
     addCard(player, card) {
         if (player == game.playerId) {
@@ -668,6 +674,14 @@ var game = {
                 game.playerHand[i].filters = [];
             }
         }
+        game.opponentCardsContainer.children.forEach((x) => game.opponentCardsContainer.removeChild(x));
+        for (var i = 0; i < game.opponentHand; i++) {
+            var cardBack = PIXI.Sprite.fromImage('./img/card_back.png');
+            cardBack.width = 100;
+            cardBack.height = 125;
+            cardBack.x = i * 25;
+            game.opponentCardsContainer.addChild(cardBack);
+        }
     },
     showError: function(errorMsg) {
         var errorText = new PIXI.Text(errorMsg, new PIXI.TextStyle({
@@ -697,6 +711,7 @@ var game = {
             case 'gameInit':
                 game.setGameState('game');
                 game.playerHand = [];
+                game.opponentHand = 0;
                 game.playerArmy = [];
                 game.opponentArmy = [];
                 game.playerId = data.data.player.id;
@@ -711,6 +726,7 @@ var game = {
                 data.data.playerHand.forEach(function(card) {
                     game.addCard(game.playerId, card);
                 });
+                game.opponentHand = data.data.opponentHandSize;
                 game.reorderCards();
                 break;
             case 'updatePlayer':
@@ -772,7 +788,8 @@ var game = {
                     game.addCard(game.playerId, data.data.card);
                 }
                 else {
-                    // TODO: implement showing opponent cards
+                    game.opponentHand++;
+                    game.reorderCards();
                 }
                 break;
             case 'nextTurn':
@@ -807,13 +824,11 @@ var game = {
             case 'playCard':
                 if (game.playerId == data.data.playerId) {
                     game.updateInfo("player_mana", data.data.playerMana);
-                    game.removeCard(game.playerId, data.data.cardId);
                 }
                 else {
                     game.updateInfo("opponent_mana", data.data.playerMana);
-                    // TODO: handle opponent play card
                 }
-                game.reorderCards();
+                game.removeCard(data.data.playerId, data.data.cardId);
                 setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
                 break;
             case 'addMinion':
