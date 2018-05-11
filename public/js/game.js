@@ -492,6 +492,8 @@ var game = {
 
         game.animations = [];
         game.pixi.ticker.add(game.processAnimations);
+
+        game.setGameState('empty');
     },
     playCard: function(card, target) {
         game.sendPacket("playCard", { card: card.id, target: target });
