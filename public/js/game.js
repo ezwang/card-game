@@ -84,7 +84,7 @@ function createMinion(minionInfo, minionId) {
         });
         minion.attributeSprites = {};
         if (minion.attributes) {
-            [['taunt', './img/taunt.png'], ['deathrattle', './img/deathrattle.png'], ['shield', './img/shield.png']].forEach(function(attr) {
+            game.ATTRIBUTE_MAP.forEach(function(attr) {
                 if (minion.attributes.indexOf(attr[0]) > -1) {
                     var attrSprite = PIXI.Sprite.fromImage(attr[1]);
                     attrSprite.anchor.set(0.5);
@@ -204,6 +204,7 @@ function createCard(cardInfo) {
 }
 
 var game = {
+    ATTRIBUTE_MAP: [['charge', './img/charge.png'], ['taunt', './img/taunt.png'], ['deathrattle', './img/deathrattle.png'], ['shield', './img/shield.png']],
     getScreenWidth: function() {
         return 800;
     },
