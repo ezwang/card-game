@@ -60,7 +60,7 @@ Player.prototype.disconnect = function(errorMessage) {
  * Returns the current player deck for the game, with the cards in randomized order.
  */
 Player.prototype.getDeck = function() {
-    var cardIds = Object.keys(constants.cards).filter((k) => constants.cards[k].obtainable !== false);
+    var cardIds = Object.keys(constants.cards).map((k) => parseInt(k)).filter((k) => constants.cards[k].obtainable !== false);
     Array.prototype.push.apply(cardIds, cardIds);
     return cardIds.sort(() => 0.5 - Math.random()).slice(0, 30);
 }
@@ -386,8 +386,8 @@ Player.prototype.processActions = function(rawActions, target) {
 
 Player.prototype.playCard = function(cardId, target) {
     if (this.game) {
-        this.hand.splice(this.hand.indexOf(cardId), 1);
         var cardInfo = constants.cards[cardId];
+        var cardIndex = this.hand.indexOf(cardId);
         if (this.game.turn != this.id) {
             this.sendError("It is not currently your turn!");
             return false;
@@ -398,6 +398,11 @@ Player.prototype.playCard = function(cardId, target) {
         }
         if (cardInfo.target && !target) {
             this.sendError("This card requires a target to be played on!");
+            return false;
+        }
+        if (cardIndex <= -1) {
+            console.warn('Player tried playing nonexistent card: ' + cardId + ' (' + cardInfo.name + ', index: ' + cardIndex + '), only has ' + this.hand);
+            this.sendError("You do not have this card!");
             return false;
         }
         var plr = this;
@@ -426,6 +431,7 @@ Player.prototype.playCard = function(cardId, target) {
                 console.warn('Unknown card type: ' + cardInfo.type);
                 break;
         }
+        this.hand.splice(cardIndex, 1);
         actions.forEach((x) => x());
         this.mana -= cardInfo.mana;
         this.game.sendPacket("playCard", {
