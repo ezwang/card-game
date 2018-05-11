@@ -624,7 +624,7 @@ var game = {
                     }
                 }
             });
-        }, 1500);
+        }, constants.game.LAST_CARD_DELAY);
     },
     removeCard: function(player, card, wasDiscarded) {
         if (player == game.playerId) {
@@ -633,7 +633,7 @@ var game = {
                 game.playerCardContainer.removeChild(game.playerHand[cardIndex]);
                 game.playerHand.splice(cardIndex, 1);
             }
-            else {
+            if (wasDiscarded) {
                 game.showPlayedCard(card, wasDiscarded);
             }
         }

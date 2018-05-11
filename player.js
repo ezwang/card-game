@@ -410,7 +410,7 @@ Player.prototype.playCard = function(cardId, target) {
             this.sendError("You do not have enough mana to play this card!");
             return false;
         }
-        if (cardInfo.target && (typeof target !== 'number' || typeof target !== 'string')) {
+        if (cardInfo.target && typeof target !== 'number' && typeof target !== 'string') {
             this.sendError("This card requires a target to be played on!");
             return false;
         }

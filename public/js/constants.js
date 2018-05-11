@@ -8,6 +8,9 @@ var constants = {
         MAX_CARDS: 10,
         NO_MOVE_DELAY: 500
     },
+    game: {
+        LAST_CARD_DELAY: 2000
+    },
     cardcollection: {
         CARDS_PER_ROW: 6,
         CARDS_PER_PAGE: 18
