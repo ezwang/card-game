@@ -41,10 +41,10 @@ Game.prototype.init = function() {
 
     // give the 2nd player to move a coin
     if (this.turn == this.p1.id) {
-        this.p2.hand.push(14);
+        this.p2.hand.push(constants.player.COIN_ID);
     }
     else {
-        this.p1.hand.push(14);
+        this.p1.hand.push(constants.player.COIN_ID);
     }
 
     var p1info = {
