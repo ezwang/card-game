@@ -432,7 +432,7 @@ var game = {
     processAnimations: function(delta) {
         game.animations = game.animations.filter(function(anim) {
             anim.obj[anim.field] += (anim.speed || 0.1) * delta;
-            if (anim.obj[anim.field] >= 1) {
+            if (anim.obj[anim.field] > 1) {
                 anim.obj[anim.field] = 1;
                 if (anim.callback) {
                     anim.callback();
@@ -532,7 +532,25 @@ var game = {
         }
         else {
             game.opponentHand--;
-            // TODO: implement showing played card
+            var card = createCard(constants.cards[card]);
+            card.interactive = false;
+            card.buttonMode = false;
+            card.width /= 2;
+            card.height /= 2;
+            card.x = game.getScreenWidth() - 235;
+            card.y = 5;
+            card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0xaaaaaa, 0.5) ];
+            game.gameContainer.addChild(card);
+            setTimeout(function() {
+                game.animations.push({
+                    obj: card,
+                    field: 'alpha',
+                    speed: -0.1,
+                    callback: function() {
+                        game.gameContainer.removeChild(card);
+                    }
+                });
+            }, 1000);
         }
         game.reorderCards();
     },
