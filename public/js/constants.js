@@ -87,6 +87,14 @@ var constants = {
             name: 'Explosion',
             description: 'Do 3 damage to everything.',
             actions: [['all_damage', 3]]
+        },
+        '10': {
+            id: 10,
+            mana: 6,
+            type: 'minion',
+            name: 'The Red Panda',
+            description: 'Very tanky unit.',
+            spawn: [6]
         }
     },
     minions: {
@@ -127,6 +135,12 @@ var constants = {
             health: 1,
             attack: 1,
             name: 'Squire'
+        },
+        '6': {
+            id: 6,
+            health: 7,
+            attack: 6,
+            name: 'Red Panda'
         }
     }
 };
