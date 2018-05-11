@@ -4,6 +4,7 @@ var constants = {
         INITIAL_MANA: 3, // TODO: revert to 1
         MAX_MANA: 10,
         MAX_MINIONS: 8,
+        MAX_CARDS: 10,
         NO_MOVE_DELAY: 500
     },
     cards: {
@@ -199,6 +200,14 @@ var constants = {
             description: 'Give a minion taunt status.',
             actions: [['attribute', 'taunt']],
             target: true
+        },
+        '23': {
+            id: 23,
+            mana: 4,
+            type: 'minion',
+            name: 'Fallen Swordsman',
+            description: 'Any time a minion takes damage, this unit gains one attack.',
+            spawn: [13]
         }
     },
     minions: {
@@ -286,6 +295,15 @@ var constants = {
             health: 3,
             attack: 2,
             name: 'Lesser Demon'
+        },
+        '13': {
+            id: 13,
+            health: 4,
+            attack: 2,
+            name: 'Fallen Swordsman',
+            events: {
+                minion_damage: [['buff_attack', 1]]
+            }
         }
     }
 };

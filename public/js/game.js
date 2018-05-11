@@ -524,39 +524,47 @@ var game = {
                 break;
         }
     },
+    showPlayedCard: function(card, wasDiscarded) {
+        var card = createCard(constants.cards[card]);
+        card.interactive = false;
+        card.buttonMode = false;
+        card.width /= 2;
+        card.height /= 2;
+        card.x = game.getScreenWidth() - 235 - 100 * game.cardDisplayMax;
+        game.cardDisplayIncr++;
+        game.cardDisplayMax++;
+        card.y = 5;
+        card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, wasDiscarded ? 0xff0000 : 0xaaaaaa, 0.5) ];
+        game.gameContainer.addChild(card);
+        setTimeout(function() {
+            game.animations.push({
+                obj: card,
+                field: 'alpha',
+                speed: -0.1,
+                callback: function() {
+                    game.gameContainer.removeChild(card);
+                    game.cardDisplayIncr--;
+                    if (game.cardDisplayIncr <= 0) {
+                        game.cardDisplayMax = 0;
+                    }
+                }
+            });
+        }, 1500);
+    },
     removeCard: function(player, card, wasDiscarded) {
         if (player == game.playerId) {
             var cardIndex = game.playerHand.map((x) => x.id).indexOf(card);
-            game.playerCardContainer.removeChild(game.playerHand[cardIndex]);
-            game.playerHand.splice(cardIndex, 1);
+            if (cardIndex > -1) {
+                game.playerCardContainer.removeChild(game.playerHand[cardIndex]);
+                game.playerHand.splice(cardIndex, 1);
+            }
+            else {
+                game.showPlayedCard(card, wasDiscarded);
+            }
         }
         else {
             game.opponentHand--;
-            var card = createCard(constants.cards[card]);
-            card.interactive = false;
-            card.buttonMode = false;
-            card.width /= 2;
-            card.height /= 2;
-            card.x = game.getScreenWidth() - 235 - 100 * game.cardDisplayMax;
-            game.cardDisplayIncr++;
-            game.cardDisplayMax++;
-            card.y = 5;
-            card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, wasDiscarded ? 0xff0000 : 0xaaaaaa, 0.5) ];
-            game.gameContainer.addChild(card);
-            setTimeout(function() {
-                game.animations.push({
-                    obj: card,
-                    field: 'alpha',
-                    speed: -0.1,
-                    callback: function() {
-                        game.gameContainer.removeChild(card);
-                        game.cardDisplayIncr--;
-                        if (game.cardDisplayIncr <= 0) {
-                            game.cardDisplayMax = 0;
-                        }
-                    }
-                });
-            }, 1500);
+            game.showPlayedCard(card, wasDiscarded);
         }
         game.reorderCards();
     },

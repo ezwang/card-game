@@ -71,9 +71,14 @@ Player.prototype.getDeck = function() {
 Player.prototype.drawCard = function() {
     if (this.deck.length > 0) {
         var newCard = this.deck.pop();
-        this.hand.push(newCard);
-        this.sendPacket("addCard", { player: this.id, card: newCard });
-        this.game.getOpponent(this).sendPacket("addCard", { player: this.id });
+        if (this.hand.length < constants.player.MAX_CARDS) {
+            this.hand.push(newCard);
+            this.sendPacket("addCard", { player: this.id, card: newCard });
+            this.game.getOpponent(this).sendPacket("addCard", { player: this.id });
+        }
+        else {
+            this.sendPacket("discardCard", { playerId: this.id, cardId: newCard });
+        }
     }
 };
 
@@ -134,6 +139,20 @@ Player.prototype.spawnMinion = function (minionId) {
             else {
                 this._health = amount;
             }
+            if (doingDamage) {
+                function process(minion, plr) {
+                    var actions = processActions(minion.events.minion_damage, plr.game, plr, plr.game.getOpponent(plr), minion.minionInstanceId);
+                    if (actions !== false) {
+                        actions.forEach((x) => x());
+                    }
+                    else {
+                        console.warn('Failed when processing minion events, this should not happen!');
+                    }
+                }
+                plr.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, plr));
+                var opp = plr.game.getOpponent(plr);
+                opp.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, opp));
+            }
             if (this.health <= 0) {
                 if (this.hasAttribute('deathrattle')) {
                     this.deathrattle.forEach(function(action) {
@@ -192,7 +211,7 @@ Player.prototype.doAttack = function(from, to) {
     var fromMinion = this.minions.find((x) => x.minionInstanceId == from);
 
     if (!fromMinion) {
-        // TODO: handle case where minion is not attacking
+        this.sendError('No minion found to perform attack!');
         return false;
     }
 
@@ -231,7 +250,7 @@ Player.prototype.doAttack = function(from, to) {
     this.game.sendPacket("updateMinion", {
         playerId: this.id,
         minionInstanceId: fromMinion.minionInstanceId,
-        hasAttack: false
+        hasAttack: fromMinion.hasAttack
     });
 };
 
@@ -268,7 +287,7 @@ function processActions(rawActions, game, plr, opp, target) {
                         if (typeof toMinion === 'undefined') {
                             playCard = false;
                         }
-                        else if (toMinion.hasAttribute(target)) {
+                        else if (toMinion.hasAttribute(action[1])) {
                             playCard = false;
                         }
                         actions.push(function() {
@@ -293,11 +312,29 @@ function processActions(rawActions, game, plr, opp, target) {
                             game.sendPacket("updatePlayer", { playerId: plr.id, mana: plr.mana });
                         });
                         break;
+                    case 'buff_attack':
+                        var toMinion = game.findMinion(target);
+                        if (typeof toMinion === 'undefined') {
+                            playCard = false;
+                        }
+                        actions.push(function() {
+                            toMinion.attack += action[1];
+                        });
+                        break;
                     case 'buff_attack_all':
                         actions.push(function() {
                             for (var i = plr.minions.length - 1; i >= 0; i--) {
                                 plr.minions[i].attack += action[1];
                             }
+                        });
+                        break;
+                    case 'buff_health':
+                        var toMinion = game.findMinion(target);
+                        if (typeof toMinion === 'undefined') {
+                            playCard = false;
+                        }
+                        actions.push(function() {
+                            toMinion.health += action[1];
                         });
                         break;
                     case 'buff_health_all':
