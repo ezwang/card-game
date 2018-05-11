@@ -1,5 +1,6 @@
 function createButton(text, callback) {
     var button = new PIXI.Text(text, new PIXI.TextStyle({
+        fontFamily: 'Pangolin',
         fill: '#ffffff',
         fontSize: 36
     }));
@@ -41,7 +42,7 @@ function createMinion(minionInfo, minionId) {
     background.height = 80;
 
     var health = new PIXI.Text(minion.health, new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 32,
             fill: '#ff0000',
             dropShadow: true,
@@ -55,7 +56,7 @@ function createMinion(minionInfo, minionId) {
     health.y = 70;
 
     var attack = new PIXI.Text(minion.attack, new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 32,
             fill: '#ffff00',
             dropShadow: true,
@@ -67,7 +68,7 @@ function createMinion(minionInfo, minionId) {
     attack.y = 70;
 
     var name = new PIXI.Text(minionInfo.name, new PIXI.TextStyle({
-        fontFamily: 'Arial',
+        fontFamily: 'Pangolin',
         fontSize: 12
     }));
     name.anchor.set(0.5);
@@ -120,14 +121,14 @@ function createCard(cardInfo) {
     image.x = 15;
     image.y = 15;
     var title = new PIXI.Text(cardInfo.name || 'Untitled Card', new PIXI.TextStyle({
-        fontFamily: 'Arial',
+        fontFamily: 'Pangolin',
         fontSize: 20
     }));
     title.anchor.set(0.5);
     title.x = 100;
     title.y = 120;
     var description = new PIXI.Text(cardInfo.description, new PIXI.TextStyle({
-        fontFamily: 'Arial',
+        fontFamily: 'Pangolin',
         fontSize: 14,
         wordWrap: true,
         wordWrapWidth: 150
@@ -145,7 +146,7 @@ function createCard(cardInfo) {
         type = 'Spell';
     }
     type = new PIXI.Text(type, new PIXI.TextStyle({
-        fontFamily: 'Arial',
+        fontFamily: 'Pangolin',
         fontSize: 14,
         wordWrap: true,
         wordWrapWidth: 150
@@ -154,7 +155,7 @@ function createCard(cardInfo) {
     type.x = 100;
     type.y = 210;
     var mana = new PIXI.Text(cardInfo.mana, new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 32,
             fill: '#0000ff',
             dropShadow: true,
@@ -176,7 +177,7 @@ function createCard(cardInfo) {
     if (cardInfo.spawn) {
         var minion = constants.minions[cardInfo.spawn[0]];
         var health = new PIXI.Text(minion.health, new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 32,
             fill: '#ff0000',
             dropShadow: true,
@@ -186,7 +187,7 @@ function createCard(cardInfo) {
         health.x = 180;
         health.y = 220;
         var attack = new PIXI.Text(minion.attack, new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 32,
             fill: '#cccc00',
             dropShadow: true,
@@ -239,7 +240,7 @@ var game = {
         var queuedContainer = new PIXI.Container();
         game.queuedContainer = queuedContainer;
         var loadingMessage = new PIXI.Text('Finding an opponent...', new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 36,
             fill: '#ffffff'
         }));
@@ -253,25 +254,21 @@ var game = {
         // main menu screen
         var lobbyContainer = new PIXI.Container();
         game.lobbyContainer = lobbyContainer;
-        var gameTitle = new PIXI.Text('Card Game', new PIXI.TextStyle({
-            fontFamily: 'Arial',
-            fontSize: 84,
-            fill: '#ffffff'
-        }));
+        var gameTitle = PIXI.Sprite.fromImage('./img/logo.png');
         gameTitle.anchor.set(0.5);
         gameTitle.x = game.getScreenWidth() / 2;
-        gameTitle.y = 100;
+        gameTitle.y = 125;
         lobbyContainer.addChild(gameTitle);
         var playButton = createButton('Play', function() {
             game.sendPacket('queue');
         });
         playButton.x = game.getScreenWidth() / 2;
-        playButton.y = 100 + 100;
+        playButton.y = 125 + 140;
         var cardButton = createButton('Your Cards', function() {
             game.setGameState('cards');
         });
         cardButton.x = game.getScreenWidth() / 2;
-        cardButton.y = 100 + 100 + 50;
+        cardButton.y = 125 + 140 + 50;
         lobbyContainer.addChild(cardButton);
         lobbyContainer.addChild(playButton);
         game.pixi.stage.addChild(lobbyContainer);
@@ -283,7 +280,8 @@ var game = {
 
         var cardCollectionTitle = new PIXI.Text('Your Cards', new PIXI.TextStyle({
             fill: '#ffffff',
-            fontSize: 48
+            fontSize: 48,
+            fontFamily: 'Pangolin'
         }));
         cardCollectionTitle.x = 10;
         cardCollectionTitle.y = 10;
@@ -322,7 +320,7 @@ var game = {
 
         game.statusText = {};
         var infoFont = new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 16,
             fill: '#ffffff'
         });
@@ -368,28 +366,28 @@ var game = {
         });
 
         var playerHealth = new PIXI.Text('??', new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 32,
             fill: '#ff0000'
         }));
         playerHealth.x = 85;
         playerHealth.y = 105;
         var playerMana = new PIXI.Text('??', new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 32,
             fill: '#0000ff'
         }));
         playerMana.x = -5;
         playerMana.y = 105;
         var opponentHealth = new PIXI.Text('??', new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 32,
             fill: '#ff0000'
         }));
         opponentHealth.x = 85;
         opponentHealth.y = 105;
         var opponentMana = new PIXI.Text('??', new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 32,
             fill: '#0000ff'
         }));
@@ -407,7 +405,7 @@ var game = {
         opponentPortrait.addChild(opponentMana);
 
         var endTurn = new PIXI.Text("End Turn", new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 18,
             fill: '#ffffff'
         }));
@@ -455,7 +453,7 @@ var game = {
         var endContainer = new PIXI.Container();
         game.endContainer = endContainer;
         game.statusText.endText = new PIXI.Text('Unknown!', new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 72,
             fill: '#0000ff'
         }));
@@ -787,7 +785,7 @@ var game = {
     },
     showError: function(errorMsg) {
         var errorText = new PIXI.Text(errorMsg, new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Pangolin',
             fontSize: 18,
             fill: '#ff0000'
         }));
