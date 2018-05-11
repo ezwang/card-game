@@ -138,7 +138,7 @@ Player.prototype.spawnMinion = function (minionId) {
         },
         set: function(amount) {
             // if already dead, don't do further processing
-            if (this._health < 0) {
+            if (this._health <= 0) {
                 return;
             }
 
@@ -231,6 +231,7 @@ Player.prototype.doAttack = function(from, to) {
 
     // check if minion has attack
     if (!fromMinion.hasAttack) {
+        this.sendError("This minion does not have an attack!");
         return;
     }
 
