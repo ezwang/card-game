@@ -518,8 +518,20 @@ var game = {
             // TODO: render opponent cards
         }
     },
+    checkCanMove: function() {
+        if (game.turn == game.playerId) {
+            if (game.playerHand.filter((x) => x.mana <= game.playerMana).length > 0) {
+                return true;
+            }
+            if (game.playerArmy.filter((x) => x.hasAttack).length > 0) {
+                return true;
+            }
+            game.sendPacket('endTurn');
+        }
+    },
     doAttack: function(from, to) {
         game.sendPacket("doAttack", { from: from.attackData, to: to.attackData });
+        setTimeout(game.checkCanMove, 500);
     },
     spawnMinion: function(playerId, minionId, hasAttack, minionInstanceId) {
         var minion = createMinion(constants.minions[minionId], minionInstanceId);
@@ -700,6 +712,7 @@ var game = {
                 }
                 game.refreshMinions();
                 game.reorderCards();
+                game.checkCanMove();
                 break;
             case 'gameEnd':
                 game.statusText.endText.text = data.data.winner == game.playerId ? 'Winner!' : 'Loser!';
@@ -715,6 +728,7 @@ var game = {
                     // TODO: handle opponent play card
                 }
                 game.reorderCards();
+                game.checkCanMove();
                 break;
             case 'addMinion':
                 game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack, data.data.minionInstanceId);
