@@ -392,7 +392,7 @@ Player.prototype.processActions = function(rawActions, target) {
 Player.prototype.playCard = function(cardId, target) {
     if (this.game) {
         var cardInfo = constants.cards[cardId];
-        var cardIndex = this.hand.indexOf(cardId);
+        var cardIndex = this.hand.indexOf(parseInt(cardId));
         if (this.game.turn != this.id) {
             this.sendError("It is not currently your turn!");
             return false;
