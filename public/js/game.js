@@ -881,7 +881,7 @@ var game = {
             fill: '#ff0000'
         }));
         errorText.x = 5;
-        errorText.y = 38;
+        errorText.y = 72;
         game.pixi.stage.addChild(errorText);
         setTimeout(function() {
             game.animations.push({
