@@ -200,6 +200,17 @@ Player.prototype.playCard = function(cardId, target) {
                                     toMinion.damage(action[1]);
                                 }
                                 break;
+                            case 'all_damage':
+                                plr.damage(action[1]);
+                                var opp = game.getOpponent(plr);
+                                opp.damage(action[1]);
+                                for (var i = plr.minions.length - 1; i >= 0; i--) {
+                                    plr.minions[i].damage(action[1]);
+                                }
+                                for (var i = opp.minions.length - 1; i >= 0; i--) {
+                                    opp.minions[i].damage(action[1]);
+                                }
+                                break;
                         }
                     }
                 });
