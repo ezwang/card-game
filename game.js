@@ -92,11 +92,11 @@ Game.prototype.getPlayerById = function(player) {
 };
 
 Game.prototype.switchTurns = function(playerId) {
+    var currentPlayer = this.getPlayerById(playerId);
     if (playerId != this.turn) {
-        // TODO: send message indicating player cannot switch opponent's turn
+        currentPlayer.sendError("It is not currently your turn!");
         return false;
     }
-    var currentPlayer = this.getPlayerById(playerId);
     currentPlayer.maxMana = Math.min(constants.player.MAX_MANA, currentPlayer.maxMana + 1);
     currentPlayer.mana = currentPlayer.maxMana;
     var opponent = this.getOpponent(currentPlayer);

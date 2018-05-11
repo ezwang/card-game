@@ -123,6 +123,10 @@ Player.prototype.damage = function(amount) {
     this.game.sendPacket("updatePlayer", { playerId: this.id, health: this.health });
 };
 
+Player.prototype.sendError = function(errorMsg) {
+    this.sendPacket("error", errorMsg);
+};
+
 Player.prototype.doAttack = function(from, to) {
     var fromMinion = this.minions.find((x) => x.minionInstanceId == from);
 
@@ -143,14 +147,14 @@ Player.prototype.doAttack = function(from, to) {
             this.game.getOpponent(this).damage(fromMinion.attack);
         }
         else {
-            // TODO: tell player that minion has taunt
+            this.sendError("You must attack a minion with taunt!");
             return false;
         }
     }
     else {
         var toMinion = this.game.getOpponent(this).minions.find((x) => x.minionInstanceId == to);
         if (hasTaunt && (!toMinion.attributes || toMinion.attributes.indexOf('taunt') < 0)) {
-            // TODO: tell player that minion has taunt
+            this.sendError("You must attack a minion with taunt!");
             return false;
         }
         toMinion.damage(fromMinion.attack);
@@ -169,15 +173,15 @@ Player.prototype.playCard = function(cardId, target) {
         this.hand.splice(this.hand.indexOf(cardId), 1);
         var cardInfo = constants.cards[cardId];
         if (this.game.turn != this.id) {
-            // TODO: tell player not their turn
+            this.sendError("It is not currently your turn!");
             return false;
         }
         if (cardInfo.mana > this.mana) {
-            // TODO: tell player not enough mana
+            this.sendError("You do not have enough mana to play this card!");
             return false;
         }
         if (cardInfo.target && !target) {
-            // TODO: tell player needs target
+            this.sendError("This card requires a target to be played on!");
             return false;
         }
         var plr = this;
