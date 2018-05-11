@@ -129,6 +129,15 @@ var constants = {
             description: 'Gives you one extra mana this turn.',
             obtainable: false,
             actions: [['mana', 1]]
+        },
+        '15': {
+            id: 15,
+            mana: 6,
+            type: 'spell',
+            name: 'Stronger Fireball',
+            description: 'Do four damage to some target.',
+            actions: [['damage', 4]],
+            target: true
         }
     },
     minions: {
