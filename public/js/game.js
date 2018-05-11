@@ -710,7 +710,7 @@ $(document).ready(function() {
     });
     $("body").mouseup(function() {
         if (game.selectedCard) {
-            game.selectedCard.filters = [];
+            game.selectedCard.filters = game.selectedCard.oldFilters;
             game.playCard(game.selectedCard);
             game.selectedCard = null;
         }
