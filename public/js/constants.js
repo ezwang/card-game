@@ -311,11 +311,11 @@ var constants = {
 };
 
 Object.keys(constants.cards).forEach(function(id) {
-    constants.cards[id].id = id;
+    constants.cards[id].id = parseInt(id);
 });
 
 Object.keys(constants.minions).forEach(function(id) {
-    constants.minions[id].id = id;
+    constants.minions[id].id = parseInt(id);
 });
 
 Object.values(constants.minions).forEach(function(x) {
