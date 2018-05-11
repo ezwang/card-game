@@ -227,7 +227,9 @@ var game = {
                 game.doAttack(game.selectedMinion, playerPortrait);
             }
             else if (game.selectedCard) {
-                // TODO: do card -> player interaction
+                game.selectedCard.filters = game.selectedCard.oldFilters;
+                game.playCard(game.selectedCard, playerPortrait.attackData);
+                game.selectedCard = null;
             }
         });
 
@@ -236,7 +238,9 @@ var game = {
                 game.doAttack(game.selectedMinion, opponentPortrait);
             }
             else if (game.selectedCard) {
-                // TODO: do card -> player interaction
+                game.selectedCard.filters = game.selectedCard.oldFilters;
+                game.playCard(game.selectedCard, opponentPortrait.attackData);
+                game.selectedCard = null;
             }
         });
 
@@ -501,7 +505,9 @@ var game = {
                 game.doAttack(game.selectedMinion, minion);
             }
             else if (game.selectedCard) {
-                // TODO: do card -> minion interaction
+                game.selectedCard.filters = game.selectedCard.oldFilters;
+                game.playCard(game.selectedCard, minion.minionInstanceId);
+                game.selectedCard = null;
             }
         });
         minion.hasAttack = hasAttack;

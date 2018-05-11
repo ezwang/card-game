@@ -164,7 +164,10 @@ Player.prototype.playCard = function(cardId, target) {
             // TODO: tell player not enough mana
             return false;
         }
-        var playCard = true;
+        if (cardInfo.target && !target) {
+            // TODO: tell player needs target
+            return false;
+        }
         var plr = this;
         var game = this.game;
         switch (cardInfo.type) {
@@ -183,20 +186,24 @@ Player.prototype.playCard = function(cardId, target) {
                                 }
                                 break;
                             case 'damage':
-                                if (!target) {
-                                    playCard = false;
-                                    return false;
+                                if (target == "opponent") {
+                                    game.getOpponent(plr).damage(action[1]);
                                 }
-                                // TODO: implement damage
+                                else if (target == "player") {
+                                    plr.damage(action[1]);
+                                }
+                                else {
+                                    var toMinion = game.getOpponent(plr).minions.find((x) => x.minionInstanceId == target);
+                                    if (!toMinion) {
+                                        toMinion = plr.minions.find((x) => x.minionInstanceId == target);
+                                    }
+                                    toMinion.damage(action[1]);
+                                }
                                 break;
                         }
                     }
                 });
                 break;
-        }
-        if (!playCard) {
-            // TODO: notify player conditions not met to play card
-            return false;
         }
         this.mana -= cardInfo.mana;
         this.game.sendPacket("playCard", {

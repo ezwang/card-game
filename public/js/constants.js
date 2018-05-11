@@ -44,7 +44,8 @@ var constants = {
             type: 'spell',
             name: 'Fireball',
             description: 'Do one damage to some target.',
-            actions: [['damage', 1]]
+            actions: [['damage', 1]],
+            target: true
         },
         '5': {
             id: 5,
