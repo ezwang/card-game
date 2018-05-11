@@ -45,6 +45,14 @@ var constants = {
             name: 'Fireball',
             description: 'Do one damage to some target.',
             actions: [['damage', 1]]
+        },
+        '5': {
+            id: 5,
+            mana: 2,
+            type: 'minion',
+            type: 'minion',
+            name: 'Charger',
+            spawn: [2]
         }
     },
     minions: {
@@ -60,6 +68,13 @@ var constants = {
             attack: 0,
             name: 'Dummy',
             attributes: ['taunt']
+        },
+        '2': {
+            id: 2,
+            health: 1,
+            attack: 1,
+            name: 'Charger',
+            attributes: ['charge']
         }
     }
 };

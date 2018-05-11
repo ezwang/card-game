@@ -82,13 +82,74 @@ Player.prototype.spawnMinion = function (minionId) {
     if (this.minions.length >= constants.player.MAX_MINIONS) {
         return false;
     }
-    this.minions.push(deepcopy(minionInfo));
+    var copy = deepcopy(minionInfo);
+    const plr = this;
+    copy.hasAttack = minionInfo.attributes && minionInfo.attributes.indexOf('charge') > -1;
+    copy.damage = function(amount) {
+        copy.health -= amount;
+        if (copy.health <= 0) {
+            // TODO: implement deathrattle
+            plr.minions.splice(plr.minions.indexOf(copy), 1);
+            plr.game.sendPacket("removeMinion", {
+                playerId: plr.id,
+                minionInstanceId: copy.minionInstanceId
+            });
+        }
+        else {
+            plr.game.sendPacket("updateMinion", {
+                playerId: plr.id,
+                minionInstanceId: copy.minionInstanceId,
+                health: copy.health
+            });
+        }
+    };
+    copy.minionInstanceId = this.game.minionIdCounter;
+    this.game.minionIdCounter++;
+    this.minions.push(copy);
     this.game.sendPacket("addMinion", {
         playerId: this.id,
+        minionInstanceId: copy.minionInstanceId,
         minionId: minionInfo.id,
-        hasAttack: minionInfo.attributes && ('charge' in minionInfo.attributes)
+        hasAttack: copy.hasAttack
     });
     return true;
+};
+
+Player.prototype.damage = function(amount) {
+    this.health -= amount;
+    if (this.health <= 0) {
+        this.game.end(this.game.getOpponent(this));
+    }
+    this.game.sendPacket("updatePlayer", { playerId: this.id, health: this.health });
+};
+
+Player.prototype.doAttack = function(from, to) {
+    var fromMinion = this.minions.find((x) => x.minionInstanceId == from);
+
+    if (!fromMinion) {
+        // TODO: handle case where minion is not attacking
+        return false;
+    }
+
+    // check if minion has attack
+    if (!fromMinion.hasAttack) {
+        return;
+    }
+    fromMinion.hasAttack = false;
+
+    if (to == "opponent") {
+        this.game.getOpponent(this).damage(fromMinion.attack);
+    }
+    else {
+        var toMinion = this.game.getOpponent(this).minions.find((x) => x.minionInstanceId == to);
+        toMinion.damage(fromMinion.attack);
+        fromMinion.damage(toMinion.attack);
+    }
+    this.game.sendPacket("updateMinion", {
+        playerId: this.id,
+        minionInstanceId: fromMinion.minionInstanceId,
+        hasAttack: false
+    });
 };
 
 Player.prototype.playCard = function(cardId, target) {

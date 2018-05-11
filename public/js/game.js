@@ -9,9 +9,11 @@ function createButton(text, callback) {
     return button;
 }
 
-function createMinion(minionInfo) {
+function createMinion(minionInfo, minionId) {
     var minion = new PIXI.Container();
     minion.id = minionInfo.id;
+    minion.minionInstanceId = minionId;
+    minion.attackData = minionId;
     var background = PIXI.Sprite.fromImage('./img/minion.png');
     background.width = 80;
     background.height = 80;
@@ -210,6 +212,7 @@ var game = {
         playerPortrait.x = game.getScreenWidth() / 2 - 50;
         playerPortrait.y = game.getScreenHeight() - 25 - playerPortrait.height - 100;
         playerPortrait.interactive = true;
+        playerPortrait.attackData = "player";
 
         var opponentPortrait = new PIXI.Graphics();
         opponentPortrait.beginFill(0xffff00);
@@ -217,6 +220,25 @@ var game = {
         opponentPortrait.x = game.getScreenWidth() / 2 - 50;
         opponentPortrait.y = 25;
         opponentPortrait.interactive = true;
+        opponentPortrait.attackData = "opponent";
+
+        playerPortrait.on('mouseup', function() {
+            if (game.selectedMinion) {
+                game.doAttack(game.selectedMinion, playerPortrait);
+            }
+            else if (game.selectedCard) {
+                // TODO: do card -> player interaction
+            }
+        });
+
+        opponentPortrait.on('mouseup', function() {
+            if (game.selectedMinion) {
+                game.doAttack(game.selectedMinion, opponentPortrait);
+            }
+            else if (game.selectedCard) {
+                // TODO: do card -> player interaction
+            }
+        });
 
         var playerHealth = new PIXI.Text('??', new PIXI.TextStyle({
             fontFamily: 'Arial',
@@ -464,19 +486,34 @@ var game = {
             // TODO: render opponent cards
         }
     },
-    spawnMinion: function(playerId, minionId, hasAttack) {
-        var minion = createMinion(constants.minions[minionId]);
+    doAttack: function(from, to) {
+        game.sendPacket("doAttack", { from: from.attackData, to: to.attackData });
+    },
+    spawnMinion: function(playerId, minionId, hasAttack, minionInstanceId) {
+        var minion = createMinion(constants.minions[minionId], minionInstanceId);
+        minion.on('mousedown', function() {
+            game.selectedMinion = minion;
+            minion.oldFilters = minion.filters;
+            minion.filters = [new PIXI.filters.GlowFilter(2, 2, 2, 0x0000ff, 0.5)];
+        });
+        minion.on('mouseup', function() {
+            if (game.selectedMinion && game.selectedMinion != minion) {
+                game.doAttack(game.selectedMinion, minion);
+            }
+            else if (game.selectedCard) {
+                // TODO: do card -> minion interaction
+            }
+        });
         minion.hasAttack = hasAttack;
         if (game.playerId == playerId) {
             game.playerMinionContainer.addChild(minion);
-            minion.x = 100 * game.playerArmy.length;
             game.playerArmy.push(minion);
         }
         else {
             game.opponentMinionContainer.addChild(minion);
-            minion.x = 100 * game.opponentArmy.length;
             game.opponentArmy.push(minion);
         }
+        game.refreshMinions();
     },
     refreshMinions: function() {
         for (var i = 0; i < game.opponentArmy.length; i++) {
@@ -486,6 +523,7 @@ var game = {
             else {
                 game.opponentArmy[i].filters = [];
             }
+            game.opponentArmy[i].x = 100 * i;
         }
         for (var i = 0; i < game.playerArmy.length; i++) {
             if (game.playerArmy[i].hasAttack) {
@@ -494,6 +532,7 @@ var game = {
             else {
                 game.playerArmy[i].filters = [];
             }
+            game.playerArmy[i].x = 100 * i;
         }
     },
     reorderCards: function() {
@@ -541,6 +580,53 @@ var game = {
                     game.addCard(game.playerId, card);
                 });
                 game.reorderCards();
+                break;
+            case 'updatePlayer':
+                if (data.data.health) {
+                    if (data.data.playerId == game.playerId) {
+                        game.updateInfo('player_health', data.data.health);
+                    }
+                    else {
+                        game.updateInfo('opponent_health', data.data.health);
+                    }
+                }
+                break;
+            case 'updateMinion':
+                var instId = data.data.minionInstanceId;
+                var process = function(minion) {
+                    if (minion.minionInstanceId == instId) {
+                        if (typeof data.data.hasAttack !== 'undefined') {
+                            minion.hasAttack = data.data.hasAttack;
+                        }
+                        if (typeof data.data.health !== 'undefined') {
+                            minion.health = data.data.health;
+                            minion.healthText.text = data.data.health;
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+                game.playerArmy.find(process);
+                game.opponentArmy.find(process);
+                game.refreshMinions();
+                break;
+            case 'removeMinion':
+                var instId = data.data.minionInstanceId;
+                game.playerArmy = game.playerArmy.filter(function(minion) {
+                    if (minion.minionInstanceId == instId) {
+                        game.playerMinionContainer.removeChild(minion);
+                        return false;
+                    }
+                    return true;
+                });
+                game.opponentArmy = game.opponentArmy.filter(function(minion) {
+                    if (minion.minionInstanceId == instId) {
+                        game.opponentMinionContainer.removeChild(minion);
+                        return false;
+                    }
+                    return true;
+                });
+                game.refreshMinions();
                 break;
             case 'addCard':
                 if (data.data.player == game.playerId) {
@@ -590,7 +676,7 @@ var game = {
                 game.reorderCards();
                 break;
             case 'addMinion':
-                game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack);
+                game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack, data.data.minionInstanceId);
                 break;
             case 'error':
                 console.error(data.data);
@@ -627,6 +713,10 @@ $(document).ready(function() {
             game.selectedCard.filters = [];
             game.playCard(game.selectedCard);
             game.selectedCard = null;
+        }
+        if (game.selectedMinion) {
+            game.selectedMinion.filters = game.selectedMinion.oldFilters;
+            game.selectedMinion = null;
         }
     });
 

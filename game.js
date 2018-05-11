@@ -22,6 +22,8 @@ Game.prototype.init = function() {
     initPlayer(this.p1);
     initPlayer(this.p2);
 
+    this.minionIdCounter = 0;
+
     this.p1.game = this;
     this.p2.game = this;
 
@@ -100,9 +102,20 @@ Game.prototype.switchTurns = function(playerId) {
     var opponent = this.getOpponent(currentPlayer);
     opponent.drawCard();
     this.turn = opponent.id;
+    opponent.minions.forEach(function(x) {
+        if (x.attack > 0) {
+            x.hasAttack = true;
+        }
+        else {
+            x.hasAttack = false;
+        }
+    });
+    currentPlayer.minions.forEach(function(x) {
+        x.hasAttack = false;
+    });
     var info = {
         turn: this.turn,
-        minionAttack: opponent.minions.map((x) => x.attack > 0)
+        minionAttack: opponent.minions.map((x) => x.hasAttack)
     };
     info[currentPlayer.id] = {
         mana: currentPlayer.mana,
