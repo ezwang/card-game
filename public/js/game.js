@@ -56,15 +56,17 @@ function createMinion(minionInfo, minionId) {
     minion.addChild(name);
 
     if (minionInfo.attributes) {
-        if (minionInfo.attributes.indexOf('taunt') > -1) {
-            var shield = PIXI.Sprite.fromImage('./img/shield.png');
-            shield.anchor.set(0.5);
-            shield.width = 20;
-            shield.height = 20;
-            shield.x = 40;
-            shield.y = 60;
-            minion.addChild(shield);
-        }
+        [['taunt', './img/shield.png'], ['deathrattle', './img/deathrattle.png']].forEach(function(attr) {
+            if (minionInfo.attributes.indexOf(attr[0]) > -1) {
+                var shield = PIXI.Sprite.fromImage(attr[1]);
+                shield.anchor.set(0.5);
+                shield.width = 20;
+                shield.height = 20;
+                shield.x = 40;
+                shield.y = 60;
+                minion.addChild(shield);
+            }
+        });
     }
     minion.addChild(health);
     minion.addChild(attack);
