@@ -524,7 +524,7 @@ var game = {
                 break;
         }
     },
-    removeCard: function(player, card) {
+    removeCard: function(player, card, wasDiscarded) {
         if (player == game.playerId) {
             var cardIndex = game.playerHand.map((x) => x.id).indexOf(card);
             game.playerCardContainer.removeChild(game.playerHand[cardIndex]);
@@ -537,9 +537,11 @@ var game = {
             card.buttonMode = false;
             card.width /= 2;
             card.height /= 2;
-            card.x = game.getScreenWidth() - 235;
+            card.x = game.getScreenWidth() - 235 - 100 * game.cardDisplayMax;
+            game.cardDisplayIncr++;
+            game.cardDisplayMax++;
             card.y = 5;
-            card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0xaaaaaa, 0.5) ];
+            card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, wasDiscarded ? 0xff0000 : 0xaaaaaa, 0.5) ];
             game.gameContainer.addChild(card);
             setTimeout(function() {
                 game.animations.push({
@@ -548,9 +550,13 @@ var game = {
                     speed: -0.1,
                     callback: function() {
                         game.gameContainer.removeChild(card);
+                        game.cardDisplayIncr--;
+                        if (game.cardDisplayIncr == 0) {
+                            game.cardDisplayMax = 0;
+                        }
                     }
                 });
-            }, 1000);
+            }, 1500);
         }
         game.reorderCards();
     },
@@ -735,6 +741,8 @@ var game = {
                 game.playerId = data.data.player.id;
                 game.opponentId = data.data.opponent.id;
                 game.turn = data.data.turn;
+                game.cardDisplayIncr = 0;
+                game.cardDisplayMax = 0;
                 game.updateInfo("player_turn", data.data.player.id == game.turn);
                 game.updateInfo("player_names", [data.data.player.name, data.data.opponent.name]);
                 game.updateInfo("player_health", data.data.player.health);
@@ -839,6 +847,9 @@ var game = {
                 game.statusText.endText.text = data.data.winner == game.playerId ? 'Winner!' : 'Loser!';
                 game.endContainer.visible = true;
                 break;
+            case 'discardCard':
+                game.removeCard(data.data.playerId, data.data.cardId, true);
+                break;
             case 'playCard':
                 if (game.playerId == data.data.playerId) {
                     game.updateInfo("player_mana", data.data.playerMana);
@@ -846,7 +857,7 @@ var game = {
                 else {
                     game.updateInfo("opponent_mana", data.data.playerMana);
                 }
-                game.removeCard(data.data.playerId, data.data.cardId);
+                game.removeCard(data.data.playerId, data.data.cardId, false);
                 setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
                 break;
             case 'addMinion':

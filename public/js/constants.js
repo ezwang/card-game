@@ -163,6 +163,15 @@ var constants = {
             description: 'Do 2 damage to the opponent.',
             actions: [['damage_opponent', 2]],
             spawn: [11]
+        },
+        '19': {
+            id: 19,
+            mana: 1,
+            type: 'minion',
+            name: 'Lesser Demon',
+            description: 'Discard a random card.',
+            actions: [['discard', 1]],
+            spawn: [12]
         }
     },
     minions: {
@@ -244,6 +253,12 @@ var constants = {
             health: 4,
             attack: 4,
             name: 'Ninja'
+        },
+        '12': {
+            id: 12,
+            health: 3,
+            attack: 2,
+            name: 'Lesser Demon'
         }
     }
 };

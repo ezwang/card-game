@@ -303,6 +303,18 @@ Player.prototype.playCard = function(cardId, target) {
                                 plr.minions[i].health += action[1];
                             }
                             break;
+                        case 'discard':
+                            for (var i = 0; i < action[1]; i++) {
+                                if (plr.hand.length > 0) {
+                                    var random = Math.floor(plr.hand.length * Math.random());
+                                    var cardId = plr.hand.splice(random, 1)[0];
+                                    game.sendPacket("discardCard", {
+                                        playerId: this.id,
+                                        cardId: cardId
+                                    });
+                                }
+                            }
+                            break;
                         case 'damage_opponent':
                             opp.damage(action[1]);
                             break;
