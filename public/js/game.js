@@ -296,6 +296,17 @@ var game = {
         // main menu screen
         var lobbyContainer = new PIXI.Container();
         game.lobbyContainer = lobbyContainer;
+
+        var cardBack = PIXI.Sprite.fromImage('./img/card_back.png');
+        cardBack.anchor.set(0.5);
+        cardBack.alpha = 0.3;
+        cardBack.width = 400;
+        cardBack.height = 500;
+        cardBack.x = game.getScreenWidth() / 2;
+        cardBack.y = game.getScreenHeight() / 2;
+        cardBack.rotation = 15;
+        lobbyContainer.addChild(cardBack);
+
         var gameTitle = PIXI.Sprite.fromImage('./img/logo.png');
         gameTitle.anchor.set(0.5);
         gameTitle.x = game.getScreenWidth() / 2;
