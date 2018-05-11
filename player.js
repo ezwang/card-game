@@ -93,6 +93,9 @@ Player.prototype.spawnMinion = function (minionId) {
         return copy.attributes.indexOf(attr) > -1;
     };
     copy.addAttribute = function(attr) {
+        if (!this.attributes) {
+            this.attributes = [];
+        }
         this.attributes.push(attr);
         plr.game.sendPacket("updateMinion", {
             playerId: plr.id,
@@ -251,10 +254,14 @@ Player.prototype.playCard = function(cardId, target) {
         var plr = this;
         var game = this.game;
         var opp = game.getOpponent(plr);
+        var playCard = true;
+        var actions = [];
         switch (cardInfo.type) {
             case 'minion':
-                cardInfo.spawn.forEach(function(minionId) {
-                    plr.spawnMinion(minionId);
+                actions.push(function() {
+                    cardInfo.spawn.forEach(function(minionId) {
+                        plr.spawnMinion(minionId);
+                    });
                 });
                 break;
             case 'spell':
@@ -268,64 +275,85 @@ Player.prototype.playCard = function(cardId, target) {
                 if (Array.isArray(action)) {
                     switch (action[0]) {
                         case 'draw':
-                            for (var i = 0; i < action[1]; i++) {
-                                plr.drawCard();
-                            }
+                            actions.push(function() {
+                                for (var i = 0; i < action[1]; i++) {
+                                    plr.drawCard();
+                                }
+                            });
                             break;
                         case 'damage':
-                            if (target == "opponent") {
-                                opp.damage(action[1]);
-                            }
-                            else if (target == "player") {
-                                plr.damage(action[1]);
-                            }
-                            else {
-                                var toMinion = game.findMinion(target);
-                                toMinion.health -= action[1];
-                            }
+                            actions.push(function() {
+                                if (target == "opponent") {
+                                    opp.damage(action[1]);
+                                }
+                                else if (target == "player") {
+                                    plr.damage(action[1]);
+                                }
+                                else {
+                                    var toMinion = game.findMinion(target);
+                                    toMinion.health -= action[1];
+                                }
+                            });
                             break;
                         case 'attribute':
                             var toMinion = game.findMinion(target);
-                            toMinion.addAttribute(action[1]);
+                            if (typeof toMinion === 'undefined') {
+                                playCard = false;
+                            }
+                            actions.push(function() {
+                                toMinion.addAttribute(action[1]);
+                            });
                             break;
                         case 'all_damage':
-                            plr.damage(action[1]);
-                            opp.damage(action[1]);
-                            for (var i = plr.minions.length - 1; i >= 0; i--) {
-                                plr.minions[i].health -= action[1];
-                            }
-                            for (var i = opp.minions.length - 1; i >= 0; i--) {
-                                opp.minions[i].health -= action[1];
-                            }
+                            actions.push(function() {
+                                plr.damage(action[1]);
+                                opp.damage(action[1]);
+                                for (var i = plr.minions.length - 1; i >= 0; i--) {
+                                    plr.minions[i].health -= action[1];
+                                }
+                                for (var i = opp.minions.length - 1; i >= 0; i--) {
+                                    opp.minions[i].health -= action[1];
+                                }
+                            });
                             break;
                         case 'mana':
-                            plr.mana += action[1];
-                            game.sendPacket("updatePlayer", { playerId: plr.id, mana: plr.mana });
+                            actions.push(function() {
+                                plr.mana += action[1];
+                                game.sendPacket("updatePlayer", { playerId: plr.id, mana: plr.mana });
+                            });
                             break;
                         case 'buff_attack_all':
-                            for (var i = plr.minions.length - 1; i >= 0; i--) {
-                                plr.minions[i].attack += action[1];
-                            }
+                            actions.push(function() {
+                                for (var i = plr.minions.length - 1; i >= 0; i--) {
+                                    plr.minions[i].attack += action[1];
+                                }
+                            });
                             break;
                         case 'buff_health_all':
-                            for (var i = plr.minions.length - 1; i >= 0; i--) {
-                                plr.minions[i].health += action[1];
-                            }
+                            actions.push(function() {
+                                for (var i = plr.minions.length - 1; i >= 0; i--) {
+                                    plr.minions[i].health += action[1];
+                                }
+                            });
                             break;
                         case 'discard':
-                            for (var i = 0; i < action[1]; i++) {
-                                if (plr.hand.length > 0) {
-                                    var random = Math.floor(plr.hand.length * Math.random());
-                                    var cardId = plr.hand.splice(random, 1)[0];
-                                    game.sendPacket("discardCard", {
-                                        playerId: this.id,
-                                        cardId: cardId
-                                    });
+                            actions.push(function() {
+                                for (var i = 0; i < action[1]; i++) {
+                                    if (plr.hand.length > 0) {
+                                        var random = Math.floor(plr.hand.length * Math.random());
+                                        var cardId = plr.hand.splice(random, 1)[0];
+                                        game.sendPacket("discardCard", {
+                                            playerId: this.id,
+                                            cardId: cardId
+                                        });
+                                    }
                                 }
-                            }
+                            });
                             break;
                         case 'damage_opponent':
-                            opp.damage(action[1]);
+                            actions.push(function() {
+                                opp.damage(action[1]);
+                            });
                             break;
                         default:
                             console.warn('Unknown spell card action: ' + action[0]);
@@ -334,6 +362,11 @@ Player.prototype.playCard = function(cardId, target) {
                 }
             });
         }
+        if (!playCard) {
+            this.sendError("Cannot play this card in this situation!");
+            return false;
+        }
+        actions.forEach((x) => x());
         this.mana -= cardInfo.mana;
         this.game.sendPacket("playCard", {
             playerMana: this.mana,
