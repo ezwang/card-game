@@ -88,7 +88,19 @@ Player.prototype.spawnMinion = function (minionId) {
     copy.damage = function(amount) {
         copy.health -= amount;
         if (copy.health <= 0) {
-            // TODO: implement deathrattle
+            if (copy.attributes && copy.attributes.indexOf('deathrattle') > -1) {
+                copy.deathrattle.forEach(function(action) {
+                    switch(action[0]) {
+                        case 'spawn':
+                            action[1].forEach(function(minionId) {
+                                plr.spawnMinion(minionId);
+                            });
+                            break;
+                        default:
+                            console.warn('Unknown deathrattle action: ' + action[0]);
+                    }
+                });
+            }
             plr.minions.splice(plr.minions.indexOf(copy), 1);
             plr.game.sendPacket("removeMinion", {
                 playerId: plr.id,
@@ -226,6 +238,9 @@ Player.prototype.playCard = function(cardId, target) {
                                 for (var i = opp.minions.length - 1; i >= 0; i--) {
                                     opp.minions[i].damage(action[1]);
                                 }
+                                break;
+                            default:
+                                console.warn('Unknown spell card action: ' + action[0]);
                                 break;
                         }
                     }

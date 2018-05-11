@@ -67,7 +67,7 @@ var constants = {
         },
         '7': {
             id: 7,
-            mana: 6,
+            mana: 4,
             type: 'minion',
             name: 'Tank',
             description: 'A pretty good unit.',
@@ -96,6 +96,30 @@ var constants = {
             name: 'The Red Panda',
             description: 'Very tanky unit.',
             spawn: [6]
+        },
+        '11': {
+            id: 11,
+            mana: 3,
+            type: 'minion',
+            name: 'The Bunny',
+            description: 'Good for quick attacks.',
+            spawn: [7]
+        },
+        '12': {
+            id: 12,
+            mana: 3,
+            type: 'minion',
+            name: 'The Wombat',
+            description: 'Good as a temporary shield.',
+            spawn: [8]
+        },
+        '13': {
+            id: 13,
+            mana: 3,
+            type: 'minion',
+            name: 'The Field Mouse',
+            description: 'Spawns more allies on death.',
+            spawn: [9]
         }
     },
     minions: {
@@ -142,6 +166,34 @@ var constants = {
             health: 7,
             attack: 6,
             name: 'Red Panda'
+        },
+        '7': {
+            id: 7,
+            health: 2,
+            attack: 4,
+            name: 'The Bunny',
+            attributes: ['charge']
+        },
+        '8': {
+            id: 8,
+            health: 3,
+            attack: 3,
+            name: 'The Wombat',
+            attributes: ['taunt']
+        },
+        '9': {
+            id: 9,
+            health: 2,
+            attack: 1,
+            name: 'The Field Mouse',
+            attributes: ['deathrattle'],
+            deathrattle: [['spawn', [10, 10]]]
+        },
+        '10': {
+            id: 10,
+            health: 1,
+            attack: 1,
+            name: 'Lesser Field Mice'
         }
     }
 };
