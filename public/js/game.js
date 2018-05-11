@@ -391,6 +391,13 @@ var game = {
                 }
                 return false;
             }
+            else if (anim.obj[anim.field] <= 0) {
+                anim.obj[anim.field] = 0;
+                if (anim.callback) {
+                    anim.callback();
+                }
+                return false;
+            }
             return true;
         });
     },
@@ -616,7 +623,26 @@ var game = {
             }
         }
     },
-    receivePacket(data) {
+    showError: function(errorMsg) {
+        var errorText = new PIXI.Text(errorMsg, new PIXI.TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 18,
+            fill: '#ff0000'
+        }));
+        errorText.y = 38;
+        game.pixi.stage.addChild(errorText);
+        setTimeout(function() {
+            game.animations.push({
+                field: 'alpha',
+                obj: errorText,
+                speed: -0.1,
+                callback: function() {
+                    game.pixi.stage.removeChild(errorText);
+                }
+            });
+        }, 1000);
+    },
+    receivePacket: function(data) {
         var data = JSON.parse(data.data);
         switch (data.type) {
             case 'gameState':
@@ -741,7 +767,7 @@ var game = {
                 game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack, data.data.minionInstanceId);
                 break;
             case 'error':
-                console.error(data.data);
+                game.showError(data.data);
                 break;
             default:
                 console.warn("Unknown packet: " + JSON.stringify(data));
