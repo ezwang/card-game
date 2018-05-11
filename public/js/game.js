@@ -346,6 +346,12 @@ var game = {
         game.statusText.endText.anchor.set(0.5);
         game.statusText.endText.x = game.getScreenWidth() / 2;
         game.statusText.endText.y = game.getScreenHeight() / 2;
+        var fadedBg = new PIXI.Graphics();
+        fadedBg.beginFill(0x000000);
+        fadedBg.drawRect(0, 0, game.getScreenWidth(), game.getScreenHeight());
+        fadedBg.alpha = 0.5;
+        fadedBg.interactive = true;
+        endContainer.addChild(fadedBg);
         endContainer.addChild(game.statusText.endText);
 
         var endButton = createButton('End Game', function() {
@@ -395,12 +401,12 @@ var game = {
         };
         game.ws.onmessage = game.receivePacket;
         game.ws.onclose = function() {
-            $("#login").fadeIn();
+            $("#login-container").fadeIn();
             game.ws = null;
         };
     },
     sendPacket(type, data) {
-        if (game.ws.readyState == 1) {
+        if (game.ws && game.ws.readyState == 1) {
             game.ws.send(JSON.stringify({
                 type: type,
                 data: data
@@ -410,7 +416,7 @@ var game = {
             console.warn("Failed to send packet " + type + " " + JSON.stringify(data) + ", socket not open.");
         }
     },
-    setGameState(state) {
+    setGameState: function(state) {
         game.containers.forEach(function(e) {
             e.visible = false;
         });
