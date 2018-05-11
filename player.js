@@ -206,7 +206,7 @@ Player.prototype.playCard = function(cardId, target) {
                                 }
                                 else {
                                     var toMinion = game.getOpponent(plr).minions.find((x) => x.minionInstanceId == target);
-                                    if (!toMinion) {
+                                    if (typeof toMinion === 'undefined') {
                                         toMinion = plr.minions.find((x) => x.minionInstanceId == target);
                                     }
                                     toMinion.damage(action[1]);
