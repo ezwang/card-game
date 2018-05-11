@@ -522,7 +522,7 @@ var game = {
         });
     },
     connect: function(username) {
-        game.ws = new WebSocket("ws://" + window.location.host + window.location.pathname);
+        game.ws = new WebSocket(window.location.protocol.replace('http', 'ws') + "//" + window.location.host + window.location.pathname);
         game.ws.onopen = function() {
             game.sendPacket("auth", username);
         };
