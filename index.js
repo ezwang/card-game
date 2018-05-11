@@ -9,6 +9,7 @@ const server = http.createServer(app);
 const wss = new ws.Server({ server });
 
 const Player = require('./player.js');
+const constants = require('./public/js/constants.js');
 
 wss.on('connection', function(ws) {
     var player;
@@ -39,7 +40,7 @@ wss.on('connection', function(ws) {
                 player.doAttack(data.data.from, data.data.to);
                 break;
             case 'loadCards':
-                player.sendPacket("loadCards", player.getCards());
+                player.sendPacket("loadCards", player.getCards().sort((x, y) => constants.cards[x].mana - constants.cards[y].mana));
                 break;
             default:
                 console.log('Unknown Packet: ' + JSON.stringify(data));
