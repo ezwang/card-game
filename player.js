@@ -242,6 +242,7 @@ Player.prototype.playCard = function(cardId, target) {
         }
         var plr = this;
         var game = this.game;
+        var opp = game.getOpponent(plr);
         switch (cardInfo.type) {
             case 'minion':
                 cardInfo.spawn.forEach(function(minionId) {
@@ -249,61 +250,68 @@ Player.prototype.playCard = function(cardId, target) {
                 });
                 break;
             case 'spell':
-                cardInfo.actions.forEach(function(action) {
-                    if (Array.isArray(action)) {
-                        switch (action[0]) {
-                            case 'draw':
-                                for (var i = 0; i < action[1]; i++) {
-                                    plr.drawCard();
-                                }
-                                break;
-                            case 'damage':
-                                if (target == "opponent") {
-                                    game.getOpponent(plr).damage(action[1]);
-                                }
-                                else if (target == "player") {
-                                    plr.damage(action[1]);
-                                }
-                                else {
-                                    var toMinion = game.getOpponent(plr).minions.find((x) => x.minionInstanceId == target);
-                                    if (typeof toMinion === 'undefined') {
-                                        toMinion = plr.minions.find((x) => x.minionInstanceId == target);
-                                    }
-                                    toMinion.health -= action[1];
-                                }
-                                break;
-                            case 'all_damage':
-                                plr.damage(action[1]);
-                                var opp = game.getOpponent(plr);
-                                opp.damage(action[1]);
-                                for (var i = plr.minions.length - 1; i >= 0; i--) {
-                                    plr.minions[i].health -= action[1];
-                                }
-                                for (var i = opp.minions.length - 1; i >= 0; i--) {
-                                    opp.minions[i].health -= action[1];
-                                }
-                                break;
-                            case 'mana':
-                                plr.mana += action[1];
-                                game.sendPacket("updatePlayer", { playerId: plr.id, mana: plr.mana });
-                                break;
-                            case 'buff_attack_all':
-                                for (var i = plr.minions.length - 1; i >= 0; i--) {
-                                    plr.minions[i].attack += 2;
-                                }
-                                break;
-                            case 'buff_health_all':
-                                for (var i = plr.minions.length - 1; i >= 0; i--) {
-                                    plr.minions[i].health += 2;
-                                }
-                                break;
-                            default:
-                                console.warn('Unknown spell card action: ' + action[0]);
-                                break;
-                        }
-                    }
-                });
                 break;
+            default:
+                console.warn('Unknown card type: ' + cardInfo.type);
+                break;
+        }
+        if (cardInfo.actions) {
+            cardInfo.actions.forEach(function(action) {
+                if (Array.isArray(action)) {
+                    switch (action[0]) {
+                        case 'draw':
+                            for (var i = 0; i < action[1]; i++) {
+                                plr.drawCard();
+                            }
+                            break;
+                        case 'damage':
+                            if (target == "opponent") {
+                                opp.damage(action[1]);
+                            }
+                            else if (target == "player") {
+                                plr.damage(action[1]);
+                            }
+                            else {
+                                var toMinion = game.getOpponent(plr).minions.find((x) => x.minionInstanceId == target);
+                                if (typeof toMinion === 'undefined') {
+                                    toMinion = plr.minions.find((x) => x.minionInstanceId == target);
+                                }
+                                toMinion.health -= action[1];
+                            }
+                            break;
+                        case 'all_damage':
+                            plr.damage(action[1]);
+                            opp.damage(action[1]);
+                            for (var i = plr.minions.length - 1; i >= 0; i--) {
+                                plr.minions[i].health -= action[1];
+                            }
+                            for (var i = opp.minions.length - 1; i >= 0; i--) {
+                                opp.minions[i].health -= action[1];
+                            }
+                            break;
+                        case 'mana':
+                            plr.mana += action[1];
+                            game.sendPacket("updatePlayer", { playerId: plr.id, mana: plr.mana });
+                            break;
+                        case 'buff_attack_all':
+                            for (var i = plr.minions.length - 1; i >= 0; i--) {
+                                plr.minions[i].attack += action[1];
+                            }
+                            break;
+                        case 'buff_health_all':
+                            for (var i = plr.minions.length - 1; i >= 0; i--) {
+                                plr.minions[i].health += action[1];
+                            }
+                            break;
+                        case 'damage_opponent':
+                            opp.damage(action[1]);
+                            break;
+                        default:
+                            console.warn('Unknown spell card action: ' + action[0]);
+                            break;
+                    }
+                }
+            });
         }
         this.mana -= cardInfo.mana;
         this.game.sendPacket("playCard", {

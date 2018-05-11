@@ -154,6 +154,15 @@ var constants = {
             name: 'Medical Aid',
             description: 'Give all of your minions +2 health.',
             actions: [['buff_health_all', 2]]
+        },
+        '18': {
+            id: 18,
+            mana: 5,
+            type: 'minion',
+            name: 'Ninja',
+            description: 'Do 2 damage to the opponent.',
+            actions: [['damage_opponent', 2]],
+            spawn: [11]
         }
     },
     minions: {
@@ -229,6 +238,12 @@ var constants = {
             health: 1,
             attack: 1,
             name: 'Lesser Field Mice'
+        },
+        '11': {
+            id: 11,
+            health: 4,
+            attack: 4,
+            name: 'Ninja'
         }
     }
 };
