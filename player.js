@@ -134,17 +134,26 @@ Player.prototype.spawnMinion = function (minionId) {
             return this._health;
         },
         set: function(amount) {
+            // if already dead, don't do further processing
+            if (this._health < 0) {
+                return;
+            }
+
             var doingDamage = false;
             if (this._health > amount) {
                 doingDamage = true;
             }
+
+            // check if minion has shield
             if (doingDamage && this.hasAttribute('shield')) {
                 this.attributes.splice(this.attributes.indexOf('shield'), 1);
             }
             else {
                 this._health = amount;
             }
+
             if (doingDamage) {
+                // process minion_damage event
                 function process(minion, plr) {
                     var actions = plr.processActions(minion.events.minion_damage, minion.minionInstanceId);
                     if (actions !== false) {
@@ -159,6 +168,7 @@ Player.prototype.spawnMinion = function (minionId) {
                 opp.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, opp));
             }
             if (this.health <= 0) {
+                // process deathrattle events
                 if (this.hasAttribute('deathrattle')) {
                     plr.processActions(this.deathrattle).forEach((x) => x());
                 }
@@ -296,12 +306,8 @@ Player.prototype.processActions = function(rawActions, target) {
                         actions.push(function() {
                             plr.damage(action[1]);
                             opp.damage(action[1]);
-                            for (var i = plr.minions.length - 1; i >= 0; i--) {
-                                plr.minions[i].health -= action[1];
-                            }
-                            for (var i = opp.minions.length - 1; i >= 0; i--) {
-                                opp.minions[i].health -= action[1];
-                            }
+                            plr.minions.slice().forEach((x) => x.health -= action[1]);
+                            opp.minions.slice().forEach((x) => x.health -= action[1]);
                         });
                         break;
                     case 'random_damage':
