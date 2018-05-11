@@ -122,6 +122,9 @@ Player.prototype.spawnMinion = function (minionId) {
         },
         set: function(amount) {
             this._attack = amount;
+            if (this._attack < 0) {
+                this._attack = 0;
+            }
             plr.game.sendPacket("updateMinion", {
                 playerId: plr.id,
                 minionInstanceId: this.minionInstanceId,
@@ -339,9 +342,7 @@ Player.prototype.processActions = function(rawActions, target) {
                         break;
                     case 'buff_attack_all':
                         actions.push(function() {
-                            for (var i = plr.minions.length - 1; i >= 0; i--) {
-                                plr.minions[i].attack += action[1];
-                            }
+                            plr.minions.slice().forEach((x) => x.attack += action[1]);
                         });
                         break;
                     case 'buff_health':
@@ -355,9 +356,7 @@ Player.prototype.processActions = function(rawActions, target) {
                         break;
                     case 'buff_health_all':
                         actions.push(function() {
-                            for (var i = plr.minions.length - 1; i >= 0; i--) {
-                                plr.minions[i].health += action[1];
-                            }
+                            plr.minions.slice().forEach((x) => x.health += action[1]);
                         });
                         break;
                     case 'discard':
