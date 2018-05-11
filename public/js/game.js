@@ -472,8 +472,6 @@ var game = {
 
         var endButton = createButton('End Game', function() {
             endContainer.visible = false;
-            game.playerArmy.forEach((x) => game.playerMinionContainer.removeChild(x));
-            game.opponentArmy.forEach((x) => game.opponentMinionContainer.removeChild(x));
             game.setGameState('lobby');
         });
         endButton.x = game.getScreenWidth() / 2;
@@ -837,8 +835,17 @@ var game = {
                 break;
             case 'gameInit':
                 game.setGameState('game');
+                if (game.playerHand) {
+                    game.playerHand.forEach((x) => game.playerCardContainer.removeChild(x));
+                }
                 game.playerHand = [];
                 game.opponentHand = 0;
+                if (game.playerArmy) {
+                    game.playerArmy.forEach((x) => game.playerMinionContainer.removeChild(x));
+                }
+                if (game.opponentArmy) {
+                    game.opponentArmy.forEach((x) => game.opponentMinionContainer.removeChild(x));
+                }
                 game.playerArmy = [];
                 game.opponentArmy = [];
                 game.playerId = data.data.player.id;
