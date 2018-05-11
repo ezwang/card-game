@@ -551,7 +551,7 @@ var game = {
                     callback: function() {
                         game.gameContainer.removeChild(card);
                         game.cardDisplayIncr--;
-                        if (game.cardDisplayIncr == 0) {
+                        if (game.cardDisplayIncr <= 0) {
                             game.cardDisplayMax = 0;
                         }
                     }

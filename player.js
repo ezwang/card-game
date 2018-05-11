@@ -92,6 +92,14 @@ Player.prototype.spawnMinion = function (minionId) {
         }
         return copy.attributes.indexOf(attr) > -1;
     };
+    copy.addAttribute = function(attr) {
+        this.attributes.push(attr);
+        plr.game.sendPacket("updateMinion", {
+            playerId: plr.id,
+            minionInstanceId: this.minionInstanceId,
+            attributes: this.attributes
+        });
+    };
     copy.hasAttack = copy.hasAttribute('charge');
     delete copy.health;
     delete copy.attack;
@@ -272,12 +280,13 @@ Player.prototype.playCard = function(cardId, target) {
                                 plr.damage(action[1]);
                             }
                             else {
-                                var toMinion = game.getOpponent(plr).minions.find((x) => x.minionInstanceId == target);
-                                if (typeof toMinion === 'undefined') {
-                                    toMinion = plr.minions.find((x) => x.minionInstanceId == target);
-                                }
+                                var toMinion = game.findMinion(target);
                                 toMinion.health -= action[1];
                             }
+                            break;
+                        case 'attribute':
+                            var toMinion = game.findMinion(target);
+                            toMinion.addAttribute(action[1]);
                             break;
                         case 'all_damage':
                             plr.damage(action[1]);

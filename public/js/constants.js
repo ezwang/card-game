@@ -172,6 +172,33 @@ var constants = {
             description: 'Discard a random card.',
             actions: [['discard', 1]],
             spawn: [12]
+        },
+        '20': {
+            id: 20,
+            mana: 9,
+            type: 'spell',
+            name: 'Mass Heal',
+            description: 'Heal a unit for 10 health.',
+            actions: [['damage', -10]],
+            target: true
+        },
+        '21': {
+            id: 21,
+            mana: 2,
+            type: 'spell',
+            name: 'Shield',
+            description: 'Give a minion a shield.',
+            actions: [['attribute', 'shield']],
+            target: true
+        },
+        '22': {
+            id: 22,
+            mana: 2,
+            type: 'spell',
+            name: 'Taunt',
+            description: 'Give a minion taunt status.',
+            actions: [['attribute', 'taunt']],
+            target: true
         }
     },
     minions: {

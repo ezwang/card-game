@@ -99,6 +99,14 @@ Game.prototype.getPlayerById = function(player) {
     return this.p2;
 };
 
+Game.prototype.findMinion = function(minionInstanceId) {
+    var minion = this.p1.minions.find((x) => x.minionInstanceId == minionInstanceId);
+    if (typeof minion === 'undefined') {
+        minion = this.p2.minions.find((x) => x.minionInstanceId == minionInstanceId);
+    }
+    return minion;
+}
+
 Game.prototype.switchTurns = function(playerId) {
     var currentPlayer = this.getPlayerById(playerId);
     if (playerId != this.turn) {
