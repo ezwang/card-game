@@ -12,6 +12,7 @@ function createButton(text, callback) {
 function createMinion(minionInfo, minionId) {
     var minion = new PIXI.Container();
     minion.id = minionInfo.id;
+    minion.attributes = minionInfo.attributes;
     minion.minionInstanceId = minionId;
     minion.attackData = minionId;
     var background = PIXI.Sprite.fromImage('./img/minion.png');
@@ -55,16 +56,18 @@ function createMinion(minionInfo, minionId) {
     minion.addChild(background);
     minion.addChild(name);
 
-    if (minionInfo.attributes) {
-        [['taunt', './img/shield.png'], ['deathrattle', './img/deathrattle.png']].forEach(function(attr) {
-            if (minionInfo.attributes.indexOf(attr[0]) > -1) {
-                var shield = PIXI.Sprite.fromImage(attr[1]);
-                shield.anchor.set(0.5);
-                shield.width = 20;
-                shield.height = 20;
-                shield.x = 40;
-                shield.y = 60;
-                minion.addChild(shield);
+    if (minion.attributes) {
+        minion.attributeSprites = {};
+        [['taunt', './img/taunt.png'], ['deathrattle', './img/deathrattle.png'], ['shield', './img/shield.png']].forEach(function(attr) {
+            if (minion.attributes.indexOf(attr[0]) > -1) {
+                var attrSprite = PIXI.Sprite.fromImage(attr[1]);
+                attrSprite.anchor.set(0.5);
+                attrSprite.width = 20;
+                attrSprite.height = 20;
+                attrSprite.x = 40;
+                attrSprite.y = 60;
+                minion.attributeSprites[attr[0]] = attrSprite;
+                minion.addChild(attrSprite);
             }
         });
     }
@@ -367,6 +370,8 @@ var game = {
 
         var endButton = createButton('End Game', function() {
             endContainer.visible = false;
+            game.playerArmy.forEach((x) => game.playerMinionContainer.removeChild(x));
+            game.opponentArmy.forEach((x) => game.opponentMinionContainer.removeChild(x));
             game.setGameState('lobby');
         });
         endButton.x = game.getScreenWidth() / 2;

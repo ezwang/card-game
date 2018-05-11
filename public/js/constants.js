@@ -171,7 +171,8 @@ var constants = {
             id: 4,
             health: 1,
             attack: 2,
-            name: 'Knight'
+            name: 'Knight',
+            attributes: ['shield']
         },
         '5': {
             id: 5,
