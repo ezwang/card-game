@@ -262,6 +262,15 @@ var game = {
         // cards screen
         var cardsContainer = new PIXI.Container();
         game.cardsContainer = cardsContainer;
+
+        var cardCollectionTitle = new PIXI.Text('Your Cards', new PIXI.TextStyle({
+            fill: '#ffffff',
+            fontSize: 48
+        }));
+        cardCollectionTitle.x = 10;
+        cardCollectionTitle.y = 10;
+        cardsContainer.addChild(cardCollectionTitle);
+
         var backButton = createButton('Back', function() {
             game.setGameState('lobby');
         });
