@@ -77,7 +77,7 @@ Player.prototype.drawCard = function() {
     if (this.deck.length > 0) {
         var newCard = this.deck.pop();
         if (this.hand.length < constants.player.MAX_CARDS) {
-            this.hand.push(newCard);
+            this.hand.push(parseInt(newCard));
             this.sendPacket("addCard", { player: this.id, card: newCard });
             this.game.getOpponent(this).sendPacket("addCard", { player: this.id });
         }
