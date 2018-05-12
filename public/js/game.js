@@ -151,6 +151,7 @@ function createDamageEffect(item, x, y) {
 function createCard(cardInfo) {
     var card = new PIXI.Container();
     card.id = cardInfo.id;
+    card.target = cardInfo.target;
     card._mana = cardInfo.mana;
     Object.defineProperty(card, 'mana', {
         set: function(x) { card._mana = x; card.manaText.text = x; },
@@ -534,6 +535,14 @@ var game = {
         game.opponentMinionContainer = opponentMinions;
         gameContainer.addChild(opponentMinions);
 
+        var targetIndicator = PIXI.Sprite.fromImage('./img/target.png');
+        targetIndicator.anchor.set(0.5);
+        targetIndicator.visible = false;
+        targetIndicator.alpha = 0.5;
+        targetIndicator.width = 64;
+        targetIndicator.height = 64;
+        game.targetIndicator = targetIndicator;
+
         // victory screen
         var endContainer = new PIXI.Container();
         game.endContainer = endContainer;
@@ -567,6 +576,7 @@ var game = {
         gameContainer.addChild(turnStatus);
         gameContainer.addChild(endContainer);
         gameContainer.addChild(endTurn);
+        gameContainer.addChild(targetIndicator);
 
         game.pixi.stage.addChild(gameContainer);
         game.containers.push(gameContainer);
@@ -608,6 +618,9 @@ var game = {
             }
             return true;
         });
+        if (game.targetIndicator) {
+            game.targetIndicator.rotation += delta / 100;
+        }
     },
     connect: function(username) {
         game.ws = new WebSocket(window.location.protocol.replace('http', 'ws') + "//" + window.location.host + window.location.pathname);
@@ -771,6 +784,9 @@ var game = {
                     game.cardPreview = null;
                 }
                 card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x0000ff, 0.5) ];
+                if (card.target) {
+                    game.targetIndicator.visible = true;
+                }
                 game.selectedCard = card;
             });
             card.on('mouseup', function() {
@@ -1152,6 +1168,9 @@ $(document).ready(function() {
             game.selectedMinion.filters = game.selectedMinion.oldFilters;
             game.selectedMinion = null;
         }
+        if (game.targetIndicator) {
+            game.targetIndicator.visible = false;
+        }
     });
 
     // if username was saved in localstorage, automatically fill
@@ -1160,4 +1179,12 @@ $(document).ready(function() {
         $("#username").val(username);
         $("#login button[type=submit]").click();
     }
+
+    $("body").mousemove(function() {
+        var mousePos = game.pixi.renderer.plugins.interaction.mouse.global;
+        if (game.targetIndicator) {
+            game.targetIndicator.x = mousePos.x;
+            game.targetIndicator.y = mousePos.y;
+        }
+    });
 });

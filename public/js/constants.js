@@ -11,7 +11,7 @@ var constants = {
     },
     game: {
         LAST_CARD_DELAY: 2000,
-        TURN_TIME: 60000,
+        TURN_TIME: 120,
     },
     cardcollection: {
         CARDS_PER_ROW: 6,
