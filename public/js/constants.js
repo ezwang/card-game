@@ -302,6 +302,13 @@ var constants = {
             description: 'Throw away all cards in hand.',
             spawn: [24],
             actions: [['discard', 10]]
+        },
+        '39': {
+            mana: 4,
+            type: 'minion',
+            name: 'Shieldmaster',
+            description: 'Taunt',
+            spawn: [25]
         }
     },
     minions: {
@@ -456,6 +463,12 @@ var constants = {
             name: 'Big Boss',
             health: 12,
             attack: 12
+        },
+        '25': {
+            name: 'Shieldmaster',
+            health: 5,
+            attack: 3,
+            attributes: ['taunt']
         }
     }
 };
