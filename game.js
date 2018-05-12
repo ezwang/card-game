@@ -12,7 +12,7 @@ function Game(player1, player2) {
 Game.prototype.sendPacket = function(type, data) {
     this.p1.sendPacket(type, data);
     this.p2.sendPacket(type, data);
-}
+};
 
 function initPlayer(plr) {
     plr.health = constants.player.INITIAL_HEALTH;
@@ -125,7 +125,7 @@ Game.prototype.findMinion = function(minionInstanceId) {
         minion = this.p2.minions.find((x) => x.minionInstanceId == minionInstanceId);
     }
     return minion;
-}
+};
 
 Game.prototype.switchTurns = function(playerId) {
     var currentPlayer = this.getPlayerById(playerId);
@@ -171,6 +171,6 @@ Game.prototype.switchTurns = function(playerId) {
     };
     this.sendPacket("nextTurn", info);
     return true;
-}
+};
 
 module.exports = Game;

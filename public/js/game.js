@@ -41,7 +41,7 @@ function createMinion(minionInfo, minionId) {
     });
     Object.defineProperty(minion, 'attributes', {
         set: function(x) { this._attributes = x; this.regenAttributes(); },
-        get: function() { return this._attributes }
+        get: function() { return this._attributes; }
     });
     var background = PIXI.Sprite.fromImage('./img/minion.png');
     background.width = 80;
@@ -104,7 +104,7 @@ function createMinion(minionInfo, minionId) {
                 }
             });
         }
-    }
+    };
     minion.regenAttributes();
 
     minion.addChild(health);
@@ -736,8 +736,8 @@ var game = {
                 break;
         }
     },
-    showPlayedCard: function(card, wasDiscarded) {
-        var card = createCard(constants.cards[card]);
+    showPlayedCard: function(cardId, wasDiscarded) {
+        var card = createCard(constants.cards[cardId]);
         card.interactive = false;
         card.buttonMode = false;
         card.width /= 2;
@@ -780,9 +780,9 @@ var game = {
         }
         game.reorderCards();
     },
-    addCard(player, card) {
+    addCard(player, cardId) {
         if (player == game.playerId) {
-            var card = createCard(constants.cards[card]);
+            var card = createCard(constants.cards[cardId]);
             card.on('mouseover', function() {
                 if (game.cardPreview) {
                     game.pixi.stage.removeChild(game.cardPreview);
@@ -1065,8 +1065,8 @@ var game = {
         minion = game.opponentArmy.find(process);
         return minion;
     },
-    receivePacket: function(data) {
-        var data = JSON.parse(data.data);
+    receivePacket: function(rawData) {
+        var data = JSON.parse(rawData.data);
         switch (data.type) {
             case 'gameState':
                 game.setGameState(data.data);
@@ -1148,7 +1148,7 @@ var game = {
                         return true;
                     }
                     return false;
-                }
+                };
                 game.playerArmy.find(process);
                 game.opponentArmy.find(process);
                 game.refreshMinions();

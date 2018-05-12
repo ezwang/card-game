@@ -37,7 +37,7 @@ var constants = require('./public/js/constants.js');
 Player.prototype.setGameState = function(gameState) {
     this.state = gameState;
     this.sendPacket('gameState', gameState);
-}
+};
 
 /*
  * Handle a forced disconnect or the case when a client disconnects.
@@ -54,7 +54,7 @@ Player.prototype.disconnect = function(errorMessage) {
         this.game.end(this.game.getOpponent(this));
     }
     this.ws.close();
-}
+};
 
 /*
  * Returns the current player deck for the game, with the cards in randomized order.
@@ -63,7 +63,7 @@ Player.prototype.getDeck = function() {
     var cardIds = this.getCards();
     Array.prototype.push.apply(cardIds, cardIds);
     return cardIds.sort(() => 0.5 - Math.random()).slice(0, 30);
-}
+};
 
 Player.prototype.getCards = function() {
     var cardIds = Object.keys(constants.cards).map((k) => parseInt(k)).filter((k) => constants.cards[k].obtainable !== false);
@@ -168,7 +168,7 @@ Player.prototype.spawnMinion = function (minionId, cardId) {
 
         if (doingDamage) {
             // process minion_damage event
-            function process(minion, plr) {
+            var process = function(minion, plr) {
                 var actions = plr.processActions(minion.events.minion_damage, minion.minionInstanceId);
                 if (actions !== false) {
                     actions.forEach((x) => x());
@@ -176,7 +176,7 @@ Player.prototype.spawnMinion = function (minionId, cardId) {
                 else {
                     console.warn('Failed when processing minion events, this should not happen!');
                 }
-            }
+            };
             plr.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, plr));
             opp.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, opp));
         }
@@ -207,7 +207,7 @@ Player.prototype.spawnMinion = function (minionId, cardId) {
                 attackFrom: fromAttack
             });
         }
-    }
+    };
 
     Object.defineProperty(copy, 'health', {
         get: function() {
@@ -325,6 +325,19 @@ Player.prototype.processActions = function(rawActions, target, cardId) {
                         break;
                     case 'heal':
                         action[1] = -action[1];
+                        actions.push(function() {
+                            if (target == "opponent") {
+                                opp.damage(action[1]);
+                            }
+                            else if (target == "player") {
+                                plr.damage(action[1]);
+                            }
+                            else {
+                                var toMinion = game.findMinion(target);
+                                toMinion.health -= action[1];
+                            }
+                        });
+                        break;
                     case 'damage':
                         actions.push(function() {
                             if (target == "opponent") {
@@ -396,12 +409,12 @@ Player.prototype.processActions = function(rawActions, target, cardId) {
                         });
                         break;
                     case 'buff_attack':
-                        var toMinion = game.findMinion(target);
-                        if (typeof toMinion === 'undefined') {
+                        var toMinionAttackBuff = game.findMinion(target);
+                        if (typeof toMinionAttackBuff === 'undefined') {
                             playCard = false;
                         }
                         actions.push(function() {
-                            toMinion.attack += action[1];
+                            toMinionAttackBuff.attack += action[1];
                         });
                         break;
                     case 'buff_attack_all':
@@ -410,13 +423,13 @@ Player.prototype.processActions = function(rawActions, target, cardId) {
                         });
                         break;
                     case 'buff_health':
-                        var toMinion = game.findMinion(target);
-                        if (typeof toMinion === 'undefined') {
+                        var toMinionHealthBuff = game.findMinion(target);
+                        if (typeof toMinionHealthBuff === 'undefined') {
                             playCard = false;
                         }
                         actions.push(function() {
-                            toMinion.maxHealth += action[1];
-                            toMinion.health += action[1];
+                            toMinionHealthBuff.maxHealth += action[1];
+                            toMinionHealthBuff.health += action[1];
                         });
                         break;
                     case 'buff_health_all':
@@ -477,7 +490,7 @@ Player.prototype.processActions = function(rawActions, target, cardId) {
         return actions;
     }
     return false;
-}
+};
 
 Player.prototype.playCard = function(cardId, target) {
     if (this.game) {
