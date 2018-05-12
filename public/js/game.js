@@ -402,6 +402,11 @@ var game = {
         opponentCardsLeft.y = 54;
         game.gameContainer.addChild(opponentCardsLeft);
 
+        var turnTimer = new PIXI.Text('0:00', infoFont);
+        turnTimer.x = 5;
+        turnTimer.y = 90;
+        game.gameContainer.addChild(turnTimer);
+
         var playerPortrait = new PIXI.Graphics();
         playerPortrait.beginFill(0xffff00);
         playerPortrait.drawRect(0, 0, 100, 120);
@@ -470,6 +475,7 @@ var game = {
         }));
         opponentMana.x = -5;
         opponentMana.y = 105;
+        game.statusText.turnTimer = turnTimer;
         game.statusText.turnStatus = turnStatus;
         game.statusText.playerHealth = playerHealth;
         game.statusText.opponentHealth = opponentHealth;
@@ -569,6 +575,13 @@ var game = {
         game.pixi.ticker.add(game.processAnimations);
 
         game.setGameState('empty');
+        setInterval(game.doTurnTimer, 1000);
+    },
+    doTurnTimer: function() {
+        if (game.turnTimer) {
+            game.turnTimer -= 1;
+            game.updateInfo("turn_timer", game.turnTimer);
+        }
     },
     playCard: function(card, target) {
         game.sendPacket("playCard", { card: card.id, target: target });
@@ -648,6 +661,10 @@ var game = {
         switch (info) {
             case 'player_names':
                 game.statusText.playerInfo.text = value[0] + ' vs. ' + value[1];
+                break;
+            case 'turn_timer':
+                game.turnTimer = value;
+                game.statusText.turnTimer.text = Math.floor(game.turnTimer / 60) + ":" + ("00" + (game.turnTimer % 60)).slice(-2);
                 break;
             case 'player_cards_left':
                 game.statusText.playerCardsLeft.text = 'You have ' + value + ' cards left';
@@ -943,6 +960,7 @@ var game = {
                 game.turn = data.data.turn;
                 game.cardDisplayIncr = 0;
                 game.cardDisplayMax = 0;
+                game.updateInfo("turn_timer", data.data.turnTimer);
                 game.updateInfo("player_turn", data.data.player.id == game.turn);
                 game.updateInfo("player_names", [data.data.player.name, data.data.opponent.name]);
                 game.updateInfo("player_health", data.data.player.health);
@@ -1043,6 +1061,7 @@ var game = {
                 break;
             case 'nextTurn':
                 game.turn = data.data.turn;
+                game.updateInfo("turn_timer", data.data.turnTimer);
                 game.updateInfo("player_turn", game.playerId == game.turn);
                 game.updateInfo("player_mana", data.data[game.playerId].mana);
                 game.updateInfo("opponent_mana", data.data[game.opponentId].mana);
@@ -1089,6 +1108,9 @@ var game = {
             case 'loadCards':
                 game.playerCardList = data.data;
                 game.renderCardCollection();
+                break;
+            case 'gameTimer':
+                game.updateInfo("turn_timer", data.data);
                 break;
             case 'error':
                 game.showError(data.data);

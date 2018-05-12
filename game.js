@@ -59,6 +59,7 @@ Game.prototype.init = function() {
         health: this.p2.health,
         mana: this.p2.mana
     };
+    this.turnTimer = 60;
     this.p1.sendPacket('gameInit', {
         player: p1info,
         opponent: p2info,
@@ -66,7 +67,8 @@ Game.prototype.init = function() {
         playerDeckSize: this.p1.deck.length,
         opponentDeckSize: this.p2.deck.length,
         opponentHandSize: this.p2.hand.length,
-        turn: this.turn
+        turn: this.turn,
+        turnTimer: this.turnTimer
     });
     this.p2.sendPacket('gameInit', {
         player: p2info,
@@ -75,14 +77,27 @@ Game.prototype.init = function() {
         playerDeckSize: this.p2.deck.length,
         opponentDeckSize: this.p1.deck.length,
         opponentHandSize: this.p1.hand.length,
-        turn: this.turn
+        turn: this.turn,
+        turnTimer: this.turnTimer
     });
+    const game = this;
+    this.timerInterval = setInterval(function() { game.doTimer(); }, 10000);
+};
+
+Game.prototype.doTimer = function(ref) {
+    this.turnTimer -= 10;
+    if (this.turnTimer <= 0) {
+        this.getPlayerById(this.turn).sendError('Your turn is over!');
+        this.switchTurns(this.turn);
+    }
+    this.sendPacket('gameTimer', this.turnTimer);
 };
 
 Game.prototype.end = function(winner) {
     this.sendPacket('gameEnd', {
         winner: winner.id
     });
+    clearInterval(this.timerInterval);
 };
 
 Game.prototype.getOpponent = function(player) {
@@ -135,9 +150,11 @@ Game.prototype.switchTurns = function(playerId) {
             currentPlayer.processActions(x.events.turn_end, x.minionInstanceId).forEach((x) => x());
         }
     });
+    this.turnTimer = 60;
     var info = {
         turn: this.turn,
-        minionAttack: opponent.minions.map((x) => x.hasAttack)
+        minionAttack: opponent.minions.map((x) => x.hasAttack),
+        turnTimer: this.turnTimer
     };
     info[currentPlayer.id] = {
         mana: currentPlayer.mana,
