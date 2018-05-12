@@ -252,6 +252,14 @@ describe('Game', function() {
                         mana: 0,
                         type: 'minion',
                         spawn: [0]
+                    },
+                    '1': {
+                        id: 1,
+                        name: 'High Mana Card',
+                        description: 'Requires high mana to play.',
+                        mana: 10,
+                        type: 'spell',
+                        actions: [['damage_all', 1000]]
                     }
                 };
             });
@@ -273,6 +281,17 @@ describe('Game', function() {
 
             it('does not work for invalid cards', function() {
                 assert.ok(!plr.playCard(-3));
+            });
+
+            it('does not work if not your turn', function() {
+                var opp = game.getOpponent(plr);
+                opp.hand = [0];
+                assert.ok(!opp.playCard(0));
+            });
+
+            it('does not work if not enough mana', function() {
+                plr.hand = [1];
+                assert.ok(!plr.playCard(1));
             });
 
             it('summons minions', function() {

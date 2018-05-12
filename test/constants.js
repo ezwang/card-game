@@ -10,11 +10,12 @@ describe('constants', function() {
     }
 
     describe('cards', function() {
-        it('should have correct names, mana, and ids for all cards', function() {
+        it('should have correct names, mana, description, and ids for all cards', function() {
             Object.keys(constants.cards).forEach(function(cardId) {
                 var card = constants.cards[cardId];
                 assert.equal(typeof card.id, 'number');
                 assert.equal(typeof card.name, 'string');
+                assert.equal(typeof card.description, 'string');
                 assert.equal(typeof card.mana, 'number');
                 assert.ok(card.mana >= 0);
                 assert.equal(card.id, cardId);
