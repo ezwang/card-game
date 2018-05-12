@@ -543,6 +543,20 @@ var game = {
         playerMinions.x = 5;
         playerMinions.y = 250;
         game.playerMinionContainer = playerMinions;
+        game.playerMinionContainer.interactive = true;
+        game.playerMinionContainer.on('mouseup', function(e) {
+            var mouseX = e.data.global.x;
+            var minionX = game.playerArmy.map((x) => x.getGlobalPosition().x + x.width / 2);
+            var insertPos = 0;
+            while (insertPos < minionX.length && minionX[insertPos] < mouseX) {
+                insertPos++;
+            }
+            if (game.selectedCard) {
+                game.selectedCard.filters = game.selectedCard.oldFilters;
+                game.playCard(game.selectedCard, null, insertPos);
+                game.selectedCard = null;
+            }
+        });
         gameContainer.addChild(playerMinions);
 
         var opponentMinions = new PIXI.Container();
@@ -613,8 +627,8 @@ var game = {
             game.updateInfo("turn_timer", game.turnTimer);
         }
     },
-    playCard: function(card, target) {
-        game.sendPacket("playCard", { card: card.id, target: target });
+    playCard: function(card, target, position) {
+        game.sendPacket("playCard", { card: card.id, target: target, position: position });
     },
     resize: function() {
         game.pixi.renderer.resize(game.getScreenWidth(), game.getScreenHeight());
@@ -842,7 +856,7 @@ var game = {
         game.sendPacket("doAttack", { from: from.attackData, to: to.attackData });
         setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
     },
-    spawnMinion: function(playerId, minionId, hasAttack, minionInstanceId, cardId) {
+    spawnMinion: function(playerId, minionId, hasAttack, minionInstanceId, cardId, position) {
         var minion = createMinion(constants.minions[minionId], minionInstanceId);
         minion.cardId = cardId;
         minion.on('mousedown', function() {
@@ -895,11 +909,11 @@ var game = {
         minion.hasAttack = hasAttack;
         if (game.playerId == playerId) {
             game.playerMinionContainer.addChild(minion);
-            game.playerArmy.push(minion);
+            game.playerArmy.splice(position, 0, minion);
         }
         else {
             game.opponentMinionContainer.addChild(minion);
-            game.opponentArmy.push(minion);
+            game.opponentArmy.splice(position, 0, minion);
         }
         minion.alpha = 0;
         game.animations.push({
@@ -1010,8 +1024,11 @@ var game = {
         else if (from == 'player') {
             from = game.playerPortrait;
         }
-        else {
+        else if (from == 'opponent') {
             from = game.opponentPortrait;
+        }
+        else {
+            return false;
         }
         var fromCoord = from.getGlobalPosition();
         fromCoord.x += from.width / 2;
@@ -1026,8 +1043,11 @@ var game = {
         else if (to == 'player') {
             to = game.playerPortrait;
         }
-        else {
+        else if (to == 'opponent') {
             to = game.opponentPortrait;
+        }
+        else {
+            return false;
         }
         var toCoord = to.getGlobalPosition();
         toCoord.x += to.width / 2;
@@ -1050,6 +1070,7 @@ var game = {
         setTimeout(function() {
             game.gameContainer.removeChild(newLine);
         }, 600);
+        return true;
     },
     findMinion: function(minionInstanceId) {
         function process(item) {
@@ -1248,7 +1269,7 @@ var game = {
                 setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
                 break;
             case 'addMinion':
-                game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack, data.data.minionInstanceId, data.data.cardId);
+                game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack, data.data.minionInstanceId, data.data.cardId, data.data.position);
                 break;
             case 'loadCards':
                 game.playerCardList = data.data;

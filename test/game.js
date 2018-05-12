@@ -15,11 +15,13 @@ describe('Game', function() {
         oldMinions = constants.minions;
         constants.minions = {
             '0': {
+                id: 0,
                 name: 'Test Minion',
                 health: 5,
                 attack: 5
             },
             '1': {
+                id: 1,
                 name: 'Minion with Events',
                 health: 5,
                 attack: 5,
@@ -161,8 +163,21 @@ describe('Game', function() {
                 player1.spawnMinion(0);
             });
 
+            it('spawns minions in the correct spot', function() {
+                player1.spawnMinion(1, null, 0);
+                assert.equal(player1.minions.length, 2);
+                assert.equal(player1.minions[0].id, 1);
+            });
+
+            it('can spawn minions in the middle', function() {
+                player1.spawnMinion(0);
+                player1.spawnMinion(1, null, 1);
+                assert.equal(player1.minions[1].id, 1);
+            });
+
             it('spawns minions correctly', function() {
                 assert.equal(player1.minions.length, 1);
+                assert.equal(player1.minions[0].id, 0);
                 assert.equal(player1.sendPacket.lastCall.args[0], 'addMinion');
                 assert.equal(player2.sendPacket.lastCall.args[0], 'addMinion');
             });

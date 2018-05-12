@@ -91,7 +91,7 @@ Player.prototype.addCard = function(newCard) {
     }
 };
 
-Player.prototype.spawnMinion = function (minionId, cardId) {
+Player.prototype.spawnMinion = function (minionId, cardId, position) {
     var minionInfo = constants.minions[minionId];
     if (this.minions.length >= constants.player.MAX_MINIONS) {
         return false;
@@ -231,13 +231,14 @@ Player.prototype.spawnMinion = function (minionId, cardId) {
     plr.minions.filter((x) => x.events && x.events.minion_spawn).forEach((x) => process(x, plr));
     opp.minions.filter((x) => x.events && x.events.minion_spawn).forEach((x) => process(x, opp));
 
-    this.minions.push(copy);
+    this.minions.splice(position, 0, copy);
     this.game.sendPacket("addMinion", {
         playerId: this.id,
         minionInstanceId: copy.minionInstanceId,
         minionId: minionInfo.id,
         hasAttack: copy.hasAttack,
-        cardId: cardId
+        cardId: cardId,
+        position: position
     });
     return true;
 };
@@ -306,7 +307,7 @@ Player.prototype.doAttack = function(from, to) {
     }
 };
 
-Player.prototype.processActions = function(rawActions, target, cardId) {
+Player.prototype.processActions = function(rawActions, target, cardId, position) {
     const game = this.game;
     const plr = this;
     const opp = game.getOpponent(plr);
@@ -467,7 +468,7 @@ Player.prototype.processActions = function(rawActions, target, cardId) {
                     case 'spawn':
                         actions.push(function() {
                             action[1].forEach(function(minionId) {
-                                plr.spawnMinion(minionId, cardId);
+                                plr.spawnMinion(minionId, cardId, position);
                             });
                         });
                         break;
@@ -492,7 +493,10 @@ Player.prototype.processActions = function(rawActions, target, cardId) {
     return false;
 };
 
-Player.prototype.playCard = function(cardId, target) {
+Player.prototype.playCard = function(cardId, target, position) {
+    if (typeof position === 'undefined') {
+        position = this.minions.length;
+    }
     if (this.game) {
         var cardInfo = constants.cards[cardId];
         var cardIndex = this.hand.indexOf(parseInt(cardId));
@@ -521,7 +525,7 @@ Player.prototype.playCard = function(cardId, target) {
         var plr = this;
         var game = this.game;
         var opp = game.getOpponent(plr);
-        var actions = plr.processActions(cardInfo.actions, target, cardId);
+        var actions = plr.processActions(cardInfo.actions, target, cardId, position);
         if (actions === false) {
             this.sendError("Cannot play this card in this situation!");
             return false;
@@ -534,7 +538,7 @@ Player.prototype.playCard = function(cardId, target) {
                 }
                 actions.push(function() {
                     cardInfo.spawn.forEach(function(minionId) {
-                        plr.spawnMinion(minionId, cardId);
+                        plr.spawnMinion(minionId, cardId, position);
                     });
                 });
                 break;

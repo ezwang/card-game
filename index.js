@@ -34,7 +34,7 @@ wss.on('connection', function(ws) {
                 player.game.switchTurns(player.id);
                 break;
             case 'playCard':
-                player.playCard(data.data.card, data.data.target);
+                player.playCard(data.data.card, data.data.target, data.data.position);
                 break;
             case 'doAttack':
                 player.doAttack(data.data.from, data.data.to);
