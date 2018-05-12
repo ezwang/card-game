@@ -3,7 +3,7 @@ var constants = {
         INITIAL_HEALTH: 30,
         MAX_HEALTH: 30,
         INITIAL_MANA: 1,
-        COIN_ID: 41,
+        COIN_ID: 14,
         MAX_MANA: 10,
         MAX_MINIONS: 8,
         MAX_CARDS: 10,
