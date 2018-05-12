@@ -287,6 +287,21 @@ var constants = {
             name: 'Mind Read',
             description: "Steal 2 cards from opponent's hand.",
             actions: [['card_steal', 2]]
+        },
+        '37': {
+            mana: 2,
+            type: 'spell',
+            name: 'Life Drain',
+            description: "Steal 2 health from the opponent.",
+            actions: [['damage_opponent', 2], ['damage_player', -2]]
+        },
+        '38': {
+            mana: 10,
+            type: 'minion',
+            name: 'Big Boss',
+            description: 'Throw away all cards in hand.',
+            spawn: [24],
+            actions: [['discard', 10]]
         }
     },
     minions: {
@@ -436,6 +451,11 @@ var constants = {
             name: 'Archer',
             health: 1,
             attack: 1
+        },
+        '24': {
+            name: 'Big Boss',
+            health: 12,
+            attack: 12
         }
     }
 };
