@@ -221,6 +221,13 @@ var constants = {
             name: 'Dr. Boom',
             description: 'Also spawns 2 explode bots.',
             spawn: [17, 16, 17]
+        },
+        '28': {
+            mana: 3,
+            type: 'minion',
+            name: 'Imp Master',
+            description: 'When damaged, summon a 1/1 imp.',
+            spawn: [18]
         }
     },
     minions: {
@@ -329,6 +336,19 @@ var constants = {
             name: 'Explode Bot',
             attributes: ['deathrattle'],
             deathrattle: [['random_damage', 2], ['random_damage', 2]]
+        },
+        '18': {
+            health: 4,
+            attack: 2,
+            name: 'Imp Master',
+            events: {
+                self_damage: [['spawn', [19]]]
+            }
+        },
+        '19': {
+            health: 1,
+            attack: 1,
+            name: 'Imp'
         }
     }
 };
