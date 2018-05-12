@@ -355,6 +355,18 @@ describe('Game', function() {
                 assert.ok(!plr.playCard(1));
             });
 
+            it('does not work if too many minions', function() {
+                plr.hand = [];
+                for (var i = 0; i < constants.player.MAX_MINIONS + 1; i++) {
+                    plr.hand.push(0);
+                }
+                for (var i = 0; i < constants.player.MAX_MINIONS; i++) {
+                    assert.ok(plr.playCard(0));
+                }
+                assert.ok(!plr.playCard(0));
+                assert.deepEqual(plr.hand, [0]);
+            });
+
             it('summons minions', function() {
                 plr.hand = [0];
 

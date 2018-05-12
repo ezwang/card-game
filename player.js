@@ -561,7 +561,7 @@ Player.prototype.playCard = function(cardId, target, position) {
         }
         switch (cardInfo.type) {
             case 'minion':
-                if (plr.minions.length > constants.player.MAX_MINIONS) {
+                if (plr.minions.length >= constants.player.MAX_MINIONS) {
                     this.sendError("Cannot play this card, board is full!");
                     return false;
                 }
