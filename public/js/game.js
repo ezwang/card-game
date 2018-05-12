@@ -880,14 +880,21 @@ var game = {
             }
             if (!game.isMouseDown) {
                 if (typeof cardId !== 'undefined') {
-                    if (!game.cardPreview) {
-                        var card = createCard(constants.cards[cardId]);
-                        card.x = 5;
-                        card.y = 350;
-                        card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x551A8B, 0.5) ];
-                        game.cardPreview = card;
-                        game.gameContainer.addChild(card);
+                    if (game.cardPreview) {
+                        if (game.cardPreview.id != cardId) {
+                            game.gameContainer.removeChild(game.cardPreview);
+                            game.cardPreview = null;
+                        }
+                        else {
+                            return;
+                        }
                     }
+                    var card = createCard(constants.cards[cardId]);
+                    card.x = 5;
+                    card.y = 350;
+                    card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x551A8B, 0.5) ];
+                    game.cardPreview = card;
+                    game.gameContainer.addChild(card);
                 }
             }
             else {
