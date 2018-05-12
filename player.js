@@ -142,72 +142,77 @@ Player.prototype.spawnMinion = function (minionId) {
         get: function() { return this._maxHealth; },
         set: function(amount) { this._maxHealth = amount; }
     });
+
+    copy.setHealth = function(amount, fromAttack) {
+        // if already dead, don't do further processing
+        if (this._health <= 0) {
+            return;
+        }
+        if (amount > this._maxHealth) {
+            amount = this._maxHealth;
+        }
+
+        var doingDamage = false;
+        if (this._health > amount) {
+            doingDamage = true;
+        }
+
+        // check if minion has shield
+        if (doingDamage && this.hasAttribute('shield')) {
+            this.attributes.splice(this.attributes.indexOf('shield'), 1);
+        }
+        else {
+            this._health = amount;
+        }
+
+        if (doingDamage) {
+            // process minion_damage event
+            function process(minion, plr) {
+                var actions = plr.processActions(minion.events.minion_damage, minion.minionInstanceId);
+                if (actions !== false) {
+                    actions.forEach((x) => x());
+                }
+                else {
+                    console.warn('Failed when processing minion events, this should not happen!');
+                }
+            }
+            plr.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, plr));
+            opp.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, opp));
+        }
+        if (this.health <= 0) {
+            // process death events
+            if (this.events && this.events.death) {
+                plr.processActions(this.events.death).forEach((x) => x());
+            }
+            plr.minions.splice(plr.minions.indexOf(copy), 1);
+            plr.game.sendPacket("removeMinion", {
+                playerId: plr.id,
+                minionInstanceId: copy.minionInstanceId,
+                health: this.health,
+                fromAttack: fromAttack
+            });
+        }
+        else {
+            if (doingDamage) {
+                if (this.events && this.events.self_damage) {
+                    plr.processActions(this.events.self_damage, this.minionInstanceId).forEach((x) => x());
+                }
+            }
+            plr.game.sendPacket("updateMinion", {
+                playerId: plr.id,
+                minionInstanceId: this.minionInstanceId,
+                health: this.health,
+                attributes: this.attributes,
+                fromAttack: fromAttack
+            });
+        }
+    }
+
     Object.defineProperty(copy, 'health', {
         get: function() {
             return this._health;
         },
-        set: function(amount) {
-            // if already dead, don't do further processing
-            if (this._health <= 0) {
-                return;
-            }
-            if (amount > this._maxHealth) {
-                amount = this._maxHealth;
-            }
-
-            var doingDamage = false;
-            if (this._health > amount) {
-                doingDamage = true;
-            }
-
-            // check if minion has shield
-            if (doingDamage && this.hasAttribute('shield')) {
-                this.attributes.splice(this.attributes.indexOf('shield'), 1);
-            }
-            else {
-                this._health = amount;
-            }
-
-            if (doingDamage) {
-                // process minion_damage event
-                function process(minion, plr) {
-                    var actions = plr.processActions(minion.events.minion_damage, minion.minionInstanceId);
-                    if (actions !== false) {
-                        actions.forEach((x) => x());
-                    }
-                    else {
-                        console.warn('Failed when processing minion events, this should not happen!');
-                    }
-                }
-                plr.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, plr));
-                opp.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, opp));
-            }
-            if (this.health <= 0) {
-                // process death events
-                if (this.events && this.events.death) {
-                    plr.processActions(this.events.death).forEach((x) => x());
-                }
-                plr.minions.splice(plr.minions.indexOf(copy), 1);
-                plr.game.sendPacket("removeMinion", {
-                    playerId: plr.id,
-                    minionInstanceId: copy.minionInstanceId,
-                    health: this.health
-                });
-            }
-            else {
-                if (doingDamage) {
-                    if (this.events && this.events.self_damage) {
-                        plr.processActions(this.events.self_damage, this.minionInstanceId).forEach((x) => x());
-                    }
-                }
-                plr.game.sendPacket("updateMinion", {
-                    playerId: plr.id,
-                    minionInstanceId: this.minionInstanceId,
-                    health: this.health,
-                    attributes: this.attributes
-                });
-            }
-        }
+        set: copy.setHealth
     });
     copy.minionInstanceId = this.game.minionIdCounter;
     this.game.minionIdCounter++;
@@ -282,7 +287,7 @@ Player.prototype.doAttack = function(from, to) {
                 this.sendError("You must attack a minion with taunt!");
                 return false;
             }
-            toMinion.health -= fromMinion.attack;
+            toMinion.setHealth(toMinion.health - fromMinion.attack, fromMinion.minionInstanceId);
             fromMinion.health -= toMinion.attack;
         }
         else {
@@ -291,12 +296,6 @@ Player.prototype.doAttack = function(from, to) {
         }
     }
     fromMinion.hasAttack = false;
-    this.game.sendPacket("updateMinion", {
-        playerId: this.id,
-        minionInstanceId: fromMinion.minionInstanceId,
-        hasAttack: fromMinion.hasAttack,
-        attackFrom: fromMinion.minionInstanceId
-    });
 };
 
 Player.prototype.processActions = function(rawActions, target) {

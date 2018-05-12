@@ -131,6 +131,30 @@ describe('Game', function() {
 
     describe('Player', function() {
 
+        describe('#doAttack(from, to)', function() {
+            var plr, opp;
+
+            beforeEach(function() {
+                plr = game.getPlayerById(game.turn);
+                opp = game.getOpponent(plr);
+                player1.spawnMinion(0);
+                player2.spawnMinion(0);
+            });
+
+            it('works', function() {
+                plr.minions[0].hasAttack = true;
+                plr.doAttack(plr.minions[0].minionInstanceId, opp.minions[0].minionInstanceId);
+
+                assert.equal(plr.minions.length, 0);
+                assert.equal(opp.minions.length, 0);
+            });
+
+            it('does not work if no attack', function() {
+                plr.minions[0].hasAttack = false;
+                assert.ok(!plr.doAttack(plr.minions[0].minionInstanceId, opp.minions[0].minionInstanceId));
+            });
+        });
+
         describe('player-minion interactions', function() {
 
             beforeEach(function() {
@@ -210,6 +234,12 @@ describe('Game', function() {
                     player1.processActions([['discard', 10]]).forEach((x) => x());
 
                     assert.equal(player1.hand.length, 0);
+                });
+
+                it('attribute correct', function() {
+                    player1.processActions([['attribute', 'shield']], player1.minions[0].minionInstanceId).forEach((x) => x());
+
+                    assert.ok(player1.minions[0].hasAttribute('shield'));
                 });
 
                 it('card_copy correct', function() {
