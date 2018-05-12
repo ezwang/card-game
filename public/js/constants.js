@@ -280,6 +280,13 @@ var constants = {
             target: true,
             spawn: [23],
             actions: [['damage', 1]]
+        },
+        '36': {
+            mana: 2,
+            type: 'spell',
+            name: 'Mind Read',
+            description: "Steal 2 cards from opponent's hand.",
+            actions: [['card_steal', 2]]
         }
     },
     minions: {

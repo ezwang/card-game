@@ -76,14 +76,18 @@ Player.prototype.getCards = function() {
 Player.prototype.drawCard = function() {
     if (this.deck.length > 0) {
         var newCard = this.deck.pop();
-        if (this.hand.length < constants.player.MAX_CARDS) {
-            this.hand.push(parseInt(newCard));
-            this.sendPacket("addCard", { player: this.id, card: newCard, cardsLeft: this.deck.length });
-            this.game.getOpponent(this).sendPacket("addCard", { player: this.id, cardsLeft: this.deck.length });
-        }
-        else {
-            this.sendPacket("discardCard", { playerId: this.id, cardId: newCard });
-        }
+        this.addCard(newCard);
+    }
+};
+
+Player.prototype.addCard = function(newCard) {
+    if (this.hand.length < constants.player.MAX_CARDS) {
+        this.hand.push(parseInt(newCard));
+        this.sendPacket("addCard", { player: this.id, card: newCard, cardsLeft: this.deck.length });
+        this.game.getOpponent(this).sendPacket("addCard", { player: this.id, cardsLeft: this.deck.length });
+    }
+    else {
+        this.sendPacket("discardCard", { playerId: this.id, cardId: newCard });
     }
 };
 
@@ -444,6 +448,13 @@ Player.prototype.processActions = function(rawActions, target) {
                             });
                         });
                         break;
+                    case 'card_steal':
+                        actions.push(function() {
+                            var toSteal = Math.min(action[1], opp.hand.length);
+                            for (var i = 0; i < toSteal; i++) {
+                                plr.addCard(opp.hand[i]);
+                            }
+                        });
                     default:
                         console.warn('Unknown spell card action: ' + action[0]);
                         break;
