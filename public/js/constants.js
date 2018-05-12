@@ -3,7 +3,7 @@ var constants = {
         INITIAL_HEALTH: 30,
         MAX_HEALTH: 30,
         INITIAL_MANA: 1,
-        COIN_ID: 14,
+        COIN_ID: 41,
         MAX_MANA: 10,
         MAX_MINIONS: 8,
         MAX_CARDS: 10,
@@ -318,6 +318,14 @@ var constants = {
             description: 'Destroy a minion.',
             target: true,
             actions: [['destroy']]
+        },
+        '41': {
+            mana: 3,
+            type: 'spell',
+            name: 'Lumpify',
+            description: 'Replace a minion with a 0/1 lump with taunt.',
+            target: true,
+            actions: [['replace', 26]]
         }
     },
     minions: {
@@ -480,6 +488,12 @@ var constants = {
             name: 'Shieldmaster',
             health: 5,
             attack: 3,
+            attributes: ['taunt']
+        },
+        '26': {
+            name: 'Lump',
+            health: 1,
+            attack: 0,
             attributes: ['taunt']
         }
     }
