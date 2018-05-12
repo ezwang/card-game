@@ -332,6 +332,7 @@ var game = {
         var logoutButton = createButton('Quit', function() {
             game.setGameState('empty');
             $("#login-container").fadeIn();
+            localStorage.removeItem('username');
             game.ws.close();
         });
         logoutButton.x = game.getScreenWidth() / 2;
