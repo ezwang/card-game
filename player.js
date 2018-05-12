@@ -135,6 +135,7 @@ Player.prototype.spawnMinion = function (minionId) {
         }
     });
     Object.defineProperty(copy, 'maxHealth', {
+        get: function() { return this._maxHealth; },
         set: function(amount) { this._maxHealth = amount; }
     });
     Object.defineProperty(copy, 'health', {
@@ -341,6 +342,12 @@ Player.prototype.processActions = function(rawActions, target) {
                             plr.damage(action[1]);
                             opp.damage(action[1]);
                             plr.minions.slice().forEach((x) => x.health -= action[1]);
+                            opp.minions.slice().forEach((x) => x.health -= action[1]);
+                        });
+                        break;
+                    case 'all_damage_opponent':
+                        actions.push(function() {
+                            opp.damage(action[1]);
                             opp.minions.slice().forEach((x) => x.health -= action[1]);
                         });
                         break;

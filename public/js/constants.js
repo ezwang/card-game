@@ -264,6 +264,13 @@ var constants = {
             name: 'Gravedigger',
             description: 'Draw a card when this minion dies.',
             spawn: [22]
+        },
+        '34': {
+            mana: 5,
+            type: 'spell',
+            name: 'Earthquake',
+            description: 'Do 2 damage to all enemies.',
+            actions: [['all_damage_opponent', 2]]
         }
     },
     minions: {
