@@ -366,8 +366,9 @@ var constants = {
             health: 2,
             attack: 1,
             name: 'The Field Mouse',
-            attributes: ['deathrattle'],
-            deathrattle: [['spawn', [10, 10]]]
+            events: {
+                death: [['spawn', [10, 10]]]
+            }
         },
         '10': {
             health: 1,
@@ -415,8 +416,9 @@ var constants = {
             health: 1,
             attack: 1,
             name: 'Explode Bot',
-            attributes: ['deathrattle'],
-            deathrattle: [['random_damage', 2], ['random_damage', 2]]
+            events: {
+                death: [['random_damage', 2], ['random_damage', 2]]
+            }
         },
         '18': {
             health: 4,
@@ -451,8 +453,9 @@ var constants = {
             name: 'Gravedigger',
             health: 1,
             attack: 1,
-            attributes: ['deathrattle'],
-            deathrattle: [['draw', 1]]
+            events: {
+                death: [['draw', 1]]
+            }
         },
         '23': {
             name: 'Archer',
@@ -486,7 +489,12 @@ Object.values(constants.minions).forEach(function(x) {
         if (!x.attributes) {
             x.attributes = [];
         }
-        x.attributes.push('special');
+        if (x.events.death && Object.keys(x.events).length < 2) {
+            x.attributes.push('deathrattle');
+        }
+        else {
+            x.attributes.push('special');
+        }
     }
 });
 

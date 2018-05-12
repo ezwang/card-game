@@ -183,9 +183,9 @@ Player.prototype.spawnMinion = function (minionId) {
                 opp.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, opp));
             }
             if (this.health <= 0) {
-                // process deathrattle events
-                if (this.hasAttribute('deathrattle')) {
-                    plr.processActions(this.deathrattle).forEach((x) => x());
+                // process death events
+                if (this.events && this.events.death) {
+                    plr.processActions(this.events.death).forEach((x) => x());
                 }
                 plr.minions.splice(plr.minions.indexOf(copy), 1);
                 plr.game.sendPacket("removeMinion", {
