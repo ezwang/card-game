@@ -94,6 +94,7 @@ Player.prototype.spawnMinion = function (minionId) {
     }
     var copy = deepcopy(minionInfo);
     copy._health = copy.health;
+    copy._maxHealth = copy.health;
     copy._attack = copy.attack;
     const plr = this;
     copy.hasAttribute = function(attr) {
@@ -132,6 +133,9 @@ Player.prototype.spawnMinion = function (minionId) {
             });
         }
     });
+    Object.defineProperty(copy, 'maxHealth', {
+        set: function(amount) { this._maxHealth = amount; }
+    });
     Object.defineProperty(copy, 'health', {
         get: function() {
             return this._health;
@@ -140,6 +144,9 @@ Player.prototype.spawnMinion = function (minionId) {
             // if already dead, don't do further processing
             if (this._health <= 0) {
                 return;
+            }
+            if (this.amount > this._maxHealth) {
+                this.amount = this._maxHealth;
             }
 
             var doingDamage = false;
@@ -373,12 +380,16 @@ Player.prototype.processActions = function(rawActions, target) {
                             playCard = false;
                         }
                         actions.push(function() {
+                            toMinion.maxHealth += action[1];
                             toMinion.health += action[1];
                         });
                         break;
                     case 'buff_health_all':
                         actions.push(function() {
-                            plr.minions.slice().forEach((x) => x.health += action[1]);
+                            plr.minions.slice().forEach(function(x) {
+                                x.maxHealth += action[1];
+                                x.health += action[1];
+                            });
                         });
                         break;
                     case 'discard':
