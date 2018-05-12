@@ -20,6 +20,7 @@ wss.on('connection', function(ws) {
                 var username = data.data;
                 player = new Player(ws);
                 if (player.authenticate(username)) {
+                    console.log('Player connected: ' + username + ' (' + ws._socket.remoteAddress + ')');
                     player.setGameState("lobby");
                 }
                 else {
