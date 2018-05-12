@@ -17,7 +17,16 @@ describe('game', function() {
             '0': {
                 name: 'Test Minion',
                 health: 5,
-                mana: 5
+                attack: 5
+            },
+            '1': {
+                name: 'Minion with Events',
+                health: 5,
+                attack: 5,
+                events: {
+                    turn_start: [['buff_attack', 2]],
+                    turn_end: [['buff_health', 2]]
+                }
             }
         };
     });
@@ -38,6 +47,12 @@ describe('game', function() {
         game.end(player1);
     });
 
+    it('should reject invalid constructor', function() {
+        assert.throws(() => {
+            new Game();
+        });
+    });
+
     it('should initialize correctly', function() {
         assert.ok(game);
 
@@ -54,11 +69,50 @@ describe('game', function() {
         assert.equal(game.getPlayerById(player1.id), player1);
     });
 
-    it('#switchTurns(playerId)', function() {
-        game.switchTurns(game.turn);
+    describe('#switchTurns(playerId)', function() {
+        it('valid switch', function() {
+            var oldTurn = game.turn;
 
-        assert.equal(player1.sendPacket.lastCall.args[0], 'nextTurn');
-        assert.equal(player2.sendPacket.lastCall.args[0], 'nextTurn');
+            game.switchTurns(game.turn);
+
+            assert.notEqual(game.turn, oldTurn);
+
+            assert.equal(player1.sendPacket.lastCall.args[0], 'nextTurn');
+            assert.equal(player2.sendPacket.lastCall.args[0], 'nextTurn');
+        });
+
+        it('invalid switch', function() {
+            game.switchTurns(game.getOpponent(game.getPlayerById(game.turn)).id);
+        });
+
+        it('increases mana', function() {
+            var plr = game.getPlayerById(game.turn);
+            var oldMana = plr.mana;
+
+            game.switchTurns(game.turn);
+
+            assert.equal(plr.mana, oldMana + 1);
+        });
+
+        it('triggers events', function() {
+            var first = game.getPlayerById(game.turn);
+            var second = game.getOpponent(first);
+
+            player1.spawnMinion(1);
+            player2.spawnMinion(1);
+
+            assert.equal(game.turn, first.id);
+
+            game.switchTurns(game.turn);
+
+            assert.equal(game.turn, second.id);
+
+            assert.equal(first.minions[0].attack, 5);
+            assert.equal(first.minions[0].health, 7);
+
+            assert.equal(second.minions[0].health, 5);
+            assert.equal(second.minions[0].attack, 7);
+        });
     });
 
     describe('player', function() {
@@ -89,7 +143,13 @@ describe('game', function() {
             assert.equal(player2.sendPacket.lastCall.args[0], 'updateMinion');
         });
 
-        describe('#processActions', function() {
+        it('#findMinion(...)', function() {
+            player2.spawnMinion(0);
+
+            assert.equal(game.findMinion(player2.minions[0].minionInstanceId), player2.minions[0]);
+        });
+
+        describe('#processActions(...)', function() {
             it('damage correct', function() {
                 player1.processActions([['damage', 3]], player1.minions[0].minionInstanceId).forEach((x) => x());
 
