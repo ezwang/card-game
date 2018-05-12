@@ -39,6 +39,17 @@ describe('constants', function() {
                 }
             });
         });
+        it('should have matching minions for minion cards', function() {
+            Object.keys(constants.cards).forEach(function(cardId) {
+                var card = constants.cards[cardId];
+                if (card.type == 'minion') {
+                    var minionNames = card.spawn.map((x) => constants.minions[x].name);
+                    if (minionNames.length == 1) {
+                        assert.equal(minionNames[0], card.name);
+                    }
+                }
+            });
+        });
     });
     describe('minions', function() {
         it('should have names, health, and attack', function() {

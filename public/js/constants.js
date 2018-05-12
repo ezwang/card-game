@@ -93,7 +93,7 @@ var constants = {
         '10': {
             mana: 6,
             type: 'minion',
-            name: 'The Red Panda',
+            name: 'Red Panda',
             description: 'Very tanky unit.',
             spawn: [6]
         },
