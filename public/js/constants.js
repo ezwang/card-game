@@ -310,6 +310,14 @@ var constants = {
             name: 'Shieldmaster',
             description: 'Taunt',
             spawn: [25]
+        },
+        '40': {
+            mana: 7,
+            type: 'spell',
+            name: 'Destruction',
+            description: 'Destroy a minion.',
+            target: true,
+            actions: [['destroy']]
         }
     },
     minions: {

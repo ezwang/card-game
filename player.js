@@ -144,6 +144,20 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
         set: function(amount) { this._maxHealth = amount; }
     });
 
+    copy.destroy = function(fromAttack) {
+        // process death events
+        if (this.events && this.events.death) {
+            plr.processActions(this.events.death).forEach((x) => x());
+        }
+        plr.minions.splice(plr.minions.indexOf(copy), 1);
+        plr.game.sendPacket("removeMinion", {
+            playerId: plr.id,
+            minionInstanceId: copy.minionInstanceId,
+            health: this.health,
+            attackFrom: fromAttack
+        });
+    };
+
     copy.setHealth = function(amount, fromAttack) {
         // if already dead, don't do further processing
         if (this._health <= 0) {
@@ -181,17 +195,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
             opp.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, opp));
         }
         if (this.health <= 0) {
-            // process death events
-            if (this.events && this.events.death) {
-                plr.processActions(this.events.death).forEach((x) => x());
-            }
-            plr.minions.splice(plr.minions.indexOf(copy), 1);
-            plr.game.sendPacket("removeMinion", {
-                playerId: plr.id,
-                minionInstanceId: copy.minionInstanceId,
-                health: this.health,
-                attackFrom: fromAttack
-            });
+            this.destroy(fromAttack);
         }
         else {
             if (doingDamage) {
@@ -351,6 +355,15 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                                 var toMinion = game.findMinion(target);
                                 toMinion.health -= action[1];
                             }
+                        });
+                        break;
+                    case 'destroy':
+                        var toMinionDestroy = game.findMinion(target);
+                        if (typeof toMinionDestroy === 'undefined') {
+                            playCard = false;
+                        }
+                        actions.push(function() {
+                            toMinion.destroy();
                         });
                         break;
                     case 'attribute':
