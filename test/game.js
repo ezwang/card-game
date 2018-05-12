@@ -259,6 +259,14 @@ describe('Game', function() {
 
                     assert.equal(player2.health, oldHealth - 5);
                 });
+
+                it('mana correct', function() {
+                    var oldMana = player1.mana;
+
+                    player1.processActions([['mana', 3]]).forEach((x) => x());
+
+                    assert.equal(player1.mana, oldMana + 3);
+                });
             });
         });
 
