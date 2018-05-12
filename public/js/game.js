@@ -332,6 +332,16 @@ var game = {
         gameTitle.x = game.getScreenWidth() / 2;
         gameTitle.y = 125;
         lobbyContainer.addChild(gameTitle);
+        var userWelcome = new PIXI.Text("<Unknown>", new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 18,
+            fill: '#ffffff'
+        }));
+        userWelcome.anchor.set(0.5);
+        userWelcome.x = game.getScreenWidth() / 2;
+        userWelcome.y = 225;
+        lobbyContainer.userWelcome = userWelcome;
+        lobbyContainer.addChild(userWelcome);
         var playButton = createButton('Play', function() {
             game.sendPacket('queue');
         });
@@ -687,6 +697,7 @@ var game = {
     },
     connect: function(username) {
         game.ws = new WebSocket(window.location.protocol.replace('http', 'ws') + "//" + window.location.host + window.location.pathname);
+        game.lobbyContainer.userWelcome.text = "Logged in as: " + username;
         game.ws.onopen = function() {
             game.sendPacket("auth", username);
         };
