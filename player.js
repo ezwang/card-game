@@ -189,7 +189,7 @@ Player.prototype.spawnMinion = function (minionId) {
                 playerId: plr.id,
                 minionInstanceId: copy.minionInstanceId,
                 health: this.health,
-                fromAttack: fromAttack
+                attackFrom: fromAttack
             });
         }
         else {
@@ -203,7 +203,7 @@ Player.prototype.spawnMinion = function (minionId) {
                 minionInstanceId: this.minionInstanceId,
                 health: this.health,
                 attributes: this.attributes,
-                fromAttack: fromAttack
+                attackFrom: fromAttack
             });
         }
     }
