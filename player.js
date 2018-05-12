@@ -22,8 +22,13 @@ Player.prototype.getId = function() {
 };
 
 Player.prototype.authenticate = function(username) {
-    this.username = username;
-    return true;
+    if (username.length > 0) {
+        this.username = username;
+        return true;
+    }
+    else {
+        return false;
+    }
 };
 
 Player.prototype.sendPacket = function(type, data) {
