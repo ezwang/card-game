@@ -842,8 +842,9 @@ var game = {
         game.sendPacket("doAttack", { from: from.attackData, to: to.attackData });
         setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
     },
-    spawnMinion: function(playerId, minionId, hasAttack, minionInstanceId) {
+    spawnMinion: function(playerId, minionId, hasAttack, minionInstanceId, cardId) {
         var minion = createMinion(constants.minions[minionId], minionInstanceId);
+        minion.cardId = cardId;
         minion.on('mousedown', function() {
             game.selectedMinion = minion;
             minion.oldFilters = minion.filters;
@@ -863,10 +864,32 @@ var game = {
             if (game.targetIndicator) {
                 game.targetIndicator.alpha = 1;
             }
+            if (!game.isMouseDown) {
+                if (typeof cardId !== 'undefined') {
+                    if (!game.cardPreview) {
+                        var card = createCard(constants.cards[cardId]);
+                        card.x = 5;
+                        card.y = 350;
+                        card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x551A8B, 0.5) ];
+                        game.cardPreview = card;
+                        game.gameContainer.addChild(card);
+                    }
+                }
+            }
+            else {
+                if (game.cardPreview) {
+                    game.gameContainer.removeChild(game.cardPreview);
+                    game.cardPreview = null;
+                }
+            }
         });
         minion.on('mouseout', function() {
             if (game.targetIndicator) {
                 game.targetIndicator.alpha = 0.5;
+            }
+            if (game.cardPreview) {
+                game.gameContainer.removeChild(game.cardPreview);
+                game.cardPreview = null;
             }
         });
         minion.hasAttack = hasAttack;
@@ -1225,7 +1248,7 @@ var game = {
                 setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
                 break;
             case 'addMinion':
-                game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack, data.data.minionInstanceId);
+                game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack, data.data.minionInstanceId, data.data.cardId);
                 break;
             case 'loadCards':
                 game.playerCardList = data.data;
@@ -1293,5 +1316,9 @@ $(document).ready(function() {
             game.targetIndicator.x = mousePos.x;
             game.targetIndicator.y = mousePos.y;
         }
+    }).mousedown(function() {
+        game.isMouseDown = true;
+    }).mouseup(function() {
+        game.isMouseDown = false;
     });
 });

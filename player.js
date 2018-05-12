@@ -91,12 +91,13 @@ Player.prototype.addCard = function(newCard) {
     }
 };
 
-Player.prototype.spawnMinion = function (minionId) {
+Player.prototype.spawnMinion = function (minionId, cardId) {
     var minionInfo = constants.minions[minionId];
     if (this.minions.length >= constants.player.MAX_MINIONS) {
         return false;
     }
     var copy = deepcopy(minionInfo);
+    copy.cardId = cardId;
     copy._health = copy.health;
     copy._maxHealth = copy.health;
     copy._attack = copy.attack;
@@ -235,7 +236,8 @@ Player.prototype.spawnMinion = function (minionId) {
         playerId: this.id,
         minionInstanceId: copy.minionInstanceId,
         minionId: minionInfo.id,
-        hasAttack: copy.hasAttack
+        hasAttack: copy.hasAttack,
+        cardId: cardId
     });
     return true;
 };
@@ -304,7 +306,7 @@ Player.prototype.doAttack = function(from, to) {
     }
 };
 
-Player.prototype.processActions = function(rawActions, target) {
+Player.prototype.processActions = function(rawActions, target, cardId) {
     const game = this.game;
     const plr = this;
     const opp = game.getOpponent(plr);
@@ -452,7 +454,7 @@ Player.prototype.processActions = function(rawActions, target) {
                     case 'spawn':
                         actions.push(function() {
                             action[1].forEach(function(minionId) {
-                                plr.spawnMinion(minionId);
+                                plr.spawnMinion(minionId, cardId);
                             });
                         });
                         break;
@@ -506,7 +508,7 @@ Player.prototype.playCard = function(cardId, target) {
         var plr = this;
         var game = this.game;
         var opp = game.getOpponent(plr);
-        var actions = plr.processActions(cardInfo.actions, target);
+        var actions = plr.processActions(cardInfo.actions, target, cardId);
         if (actions === false) {
             this.sendError("Cannot play this card in this situation!");
             return false;
@@ -519,7 +521,7 @@ Player.prototype.playCard = function(cardId, target) {
                 }
                 actions.push(function() {
                     cardInfo.spawn.forEach(function(minionId) {
-                        plr.spawnMinion(minionId);
+                        plr.spawnMinion(minionId, cardId);
                     });
                 });
                 break;
