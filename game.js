@@ -59,7 +59,7 @@ Game.prototype.init = function() {
         health: this.p2.health,
         mana: this.p2.mana
     };
-    this.turnTimer = 60;
+    this.turnTimer = constants.game.TURN_TIME;
     this.p1.sendPacket('gameInit', {
         player: p1info,
         opponent: p2info,
@@ -150,7 +150,7 @@ Game.prototype.switchTurns = function(playerId) {
             currentPlayer.processActions(x.events.turn_end, x.minionInstanceId).forEach((x) => x());
         }
     });
-    this.turnTimer = 60;
+    this.turnTimer = constants.game.TURN_TIME;
     var info = {
         turn: this.turn,
         minionAttack: opponent.minions.map((x) => x.hasAttack),

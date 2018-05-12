@@ -10,7 +10,8 @@ var constants = {
         NO_MOVE_DELAY: 500
     },
     game: {
-        LAST_CARD_DELAY: 2000
+        LAST_CARD_DELAY: 2000,
+        TURN_TIME: 60000,
     },
     cardcollection: {
         CARDS_PER_ROW: 6,
