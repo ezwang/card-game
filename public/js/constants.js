@@ -271,6 +271,15 @@ var constants = {
             name: 'Earthquake',
             description: 'Do 2 damage to all enemies.',
             actions: [['all_damage_opponent', 2]]
+        },
+        '35': {
+            mana: 1,
+            type: 'minion',
+            name: 'Archer',
+            description: 'Deal one damage.',
+            target: true,
+            spawn: [23],
+            actions: [['damage', 1]]
         }
     },
     minions: {
@@ -415,6 +424,11 @@ var constants = {
             attack: 1,
             attributes: ['deathrattle'],
             deathrattle: [['draw', 1]]
+        },
+        '23': {
+            name: 'Archer',
+            health: 1,
+            attack: 1
         }
     }
 };
