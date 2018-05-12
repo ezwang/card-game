@@ -593,6 +593,15 @@ Player.prototype.addToQueue = function() {
     }
 };
 
+Player.prototype.removeFromQueue = function() {
+    var playerIndex = queued.indexOf(this.id);
+    if (playerIndex > -1) {
+        queued.splice(playerIndex, 1);
+        return true;
+    }
+    return false;
+};
+
 Player.prototype.isInQueue = function() {
     return queued.indexOf(this.id) > -1;
 };

@@ -30,6 +30,10 @@ wss.on('connection', function(ws) {
                 player.setGameState("queued");
                 player.addToQueue();
                 break;
+            case 'dequeue':
+                player.removeFromQueue();
+                player.setGameState("lobby");
+                break;
             case 'endTurn':
                 player.game.switchTurns(player.id);
                 break;

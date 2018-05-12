@@ -285,11 +285,19 @@ var game = {
         var loadingMessage = new PIXI.Text('Finding an opponent...', new PIXI.TextStyle({
             fontFamily: 'Pangolin',
             fontSize: 36,
-            fill: '#ffffff'
+            fill: '#ccccff'
         }));
         loadingMessage.anchor.set(0.5);
         loadingMessage.x = game.getScreenWidth() / 2;
         loadingMessage.y = 100;
+        var cancelButton = createButton('Cancel', function() {
+            game.sendPacket('dequeue');
+        });
+        cancelButton.style.fontSize -= 10;
+        cancelButton.anchor.set(0.5);
+        cancelButton.x = game.getScreenWidth() / 2;
+        cancelButton.y = 150;
+        queuedContainer.addChild(cancelButton);
         queuedContainer.addChild(loadingMessage);
         game.pixi.stage.addChild(queuedContainer);
         game.containers.push(queuedContainer);
