@@ -2,6 +2,13 @@ var assert = require('assert');
 var constants = require('../public/js/constants.js');
 
 describe('constants', function() {
+    function assertValidActions(actions) {
+        assert.ok(Array.isArray(actions));
+        actions.forEach(function(action) {
+            assert.ok(Array.isArray(action));
+        });
+    }
+
     describe('cards', function() {
         it('should have correct ids for all cards', function() {
             Object.keys(constants.cards).forEach(function(cardId) {
@@ -24,6 +31,19 @@ describe('constants', function() {
                 var card = constants.cards[cardId];
                 if (card.type == 'spell') {
                     assert.notStrictEqual(card.actions, undefined);
+                    assertValidActions(card.actions);
+                }
+            });
+        });
+    });
+    describe('minions', function() {
+        it('should have valid events', function() {
+            Object.keys(constants.minions).forEach(function(minionId) {
+                var minion = constants.minions[minionId];
+                if (typeof minion.events !== 'undefined') {
+                    Object.values(minion.events).forEach(function(handler) {
+                        assertValidActions(handler);
+                    });
                 }
             });
         });
