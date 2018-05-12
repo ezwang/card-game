@@ -10,10 +10,11 @@ describe('constants', function() {
     }
 
     describe('cards', function() {
-        it('should have correct ids for all cards', function() {
+        it('should have correct names and ids for all cards', function() {
             Object.keys(constants.cards).forEach(function(cardId) {
                 var card = constants.cards[cardId];
                 assert.equal(typeof card.id, 'number');
+                assert.equal(typeof card.name, 'string');
                 assert.equal(card.id, cardId);
             });
         });
@@ -37,6 +38,12 @@ describe('constants', function() {
         });
     });
     describe('minions', function() {
+        it('should have names', function() {
+            Object.keys(constants.minions).forEach(function(minionId) {
+                var minion = constants.minions[minionId];
+                assert.strictEqual(typeof minion.name, 'string');
+            });
+        });
         it('should have valid events', function() {
             Object.keys(constants.minions).forEach(function(minionId) {
                 var minion = constants.minions[minionId];

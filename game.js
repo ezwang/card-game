@@ -2,6 +2,10 @@ var Player = require('./player.js');
 var constants = require('./public/js/constants.js');
 
 function Game(player1, player2) {
+    if (!player1 || !player2) {
+        throw new TypeError('The game constructor requires 2 players!');
+    }
+
     this.p1 = player1;
     this.p2 = player2;
 }

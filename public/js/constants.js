@@ -169,7 +169,7 @@ var constants = {
             type: 'spell',
             name: 'Mass Heal',
             description: 'Heal a unit for 10 health.',
-            actions: [['damage', -10]],
+            actions: [['heal', 10]],
             target: true
         },
         '21': {

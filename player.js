@@ -151,8 +151,8 @@ Player.prototype.spawnMinion = function (minionId) {
             if (this._health <= 0) {
                 return;
             }
-            if (this.amount > this._maxHealth) {
-                this.amount = this._maxHealth;
+            if (amount > this._maxHealth) {
+                amount = this._maxHealth;
             }
 
             var doingDamage = false;
@@ -315,6 +315,8 @@ Player.prototype.processActions = function(rawActions, target) {
                             }
                         });
                         break;
+                    case 'heal':
+                        action[1] = -action[1];
                     case 'damage':
                         actions.push(function() {
                             if (target == "opponent") {
