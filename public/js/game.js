@@ -980,6 +980,68 @@ var game = {
             game.cardsContainer.addChild(card);
         }
     },
+    drawAction: function(from, to) {
+        if (typeof from === 'number') {
+            from = game.findMinion(from);
+        }
+        else if (from == 'player') {
+            from = game.playerPortrait;
+        }
+        else {
+            from = game.opponentPortrait;
+        }
+        var fromCoord = from.getGlobalPosition();
+        fromCoord.x += from.width / 2;
+        fromCoord.y += from.height / 2;
+        if (typeof from.id !== 'number') {
+            fromCoord.x -= 15;
+            fromCoord.y -= 10;
+        }
+        if (typeof to === 'number') {
+            to = game.findMinion(to);
+        }
+        else if (to == 'player') {
+            to = game.playerPortrait;
+        }
+        else {
+            to = game.opponentPortrait;
+        }
+        var toCoord = to.getGlobalPosition();
+        toCoord.x += to.width / 2;
+        toCoord.y += to.height / 2;
+        if (typeof to.id !== 'number') {
+            toCoord.x -= 15;
+            toCoord.y -= 10;
+        }
+        var newLine = new PIXI.Graphics();
+        newLine.alpha = 0.7;
+        newLine.position.set(fromCoord.x, fromCoord.y);
+        var lx = toCoord.x - fromCoord.x;
+        var ly = toCoord.y - fromCoord.y;
+        var angle = Math.atan2(ly, lx);
+        newLine.lineStyle(8, 0xff0000).moveTo(0, 0).lineTo(lx, ly);
+        newLine.lineStyle(6, 0xff0000);
+        newLine.moveTo(lx, ly).lineTo(lx + Math.cos(Math.PI + angle - Math.PI / 6) * 30, ly + Math.sin(Math.PI + angle - Math.PI / 6) * 30);
+        newLine.moveTo(lx, ly).lineTo(lx + Math.cos(Math.PI + angle + Math.PI / 6) * 30, ly + Math.sin(Math.PI + angle + Math.PI / 6) * 30);
+        game.gameContainer.addChild(newLine);
+        setTimeout(function() {
+            game.gameContainer.removeChild(newLine);
+        }, 600);
+    },
+    findMinion: function(minionInstanceId) {
+        function process(item) {
+            if (item.minionInstanceId == minionInstanceId) {
+                return true;
+            }
+            return false;
+        }
+        var minion = game.playerArmy.find(process);
+        if (minion) {
+            return minion;
+        }
+        minion = game.opponentArmy.find(process);
+        return minion;
+    },
     receivePacket: function(data) {
         var data = JSON.parse(data.data);
         switch (data.type) {
@@ -1030,6 +1092,14 @@ var game = {
                         else {
                             game.updateInfo('opponent_' + item, data.data[item]);
                         }
+                        if (typeof data.data.attackFrom !== 'undefined') {
+                            if (data.data.playerId == game.playerId) {
+                                game.drawAction(data.data.attackFrom, "player");
+                            }
+                            else {
+                                game.drawAction(data.data.attackFrom, "opponent");
+                            }
+                        }
                     }
                 });
                 break;
@@ -1049,6 +1119,9 @@ var game = {
                         if (typeof data.data.attributes !== 'undefined') {
                             minion.attributes = data.data.attributes;
                         }
+                        if (typeof data.data.attackFrom !== 'undefined') {
+                            game.drawAction(data.data.attackFrom, instId);
+                        }
                         return true;
                     }
                     return false;
@@ -1061,6 +1134,9 @@ var game = {
                 var instId = data.data.minionInstanceId;
                 var minionToRemove;
                 var callback;
+                if (typeof data.data.attackFrom !== 'undefined') {
+                    game.drawAction(data.data.attackFrom, instId);
+                }
                 game.playerArmy.forEach(function(minion) {
                     if (minion.minionInstanceId == instId) {
                         minionToRemove = minion;
