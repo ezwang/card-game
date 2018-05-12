@@ -436,6 +436,16 @@ var game = {
                 game.selectedCard = null;
             }
         });
+        playerPortrait.on('mouseover', function() {
+            if (game.targetIndicator) {
+                game.targetIndicator.alpha = 1;
+            }
+        });
+        playerPortrait.on('mouseout', function() {
+            if (game.targetIndicator) {
+                game.targetIndicator.alpha = 0.5;
+            }
+        });
 
         opponentPortrait.on('mouseup', function() {
             if (game.selectedMinion) {
@@ -445,6 +455,16 @@ var game = {
                 game.selectedCard.filters = game.selectedCard.oldFilters;
                 game.playCard(game.selectedCard, opponentPortrait.attackData);
                 game.selectedCard = null;
+            }
+        });
+        opponentPortrait.on('mouseover', function() {
+            if (game.targetIndicator) {
+                game.targetIndicator.alpha = 1;
+            }
+        });
+        opponentPortrait.on('mouseout', function() {
+            if (game.targetIndicator) {
+                game.targetIndicator.alpha = 0.5;
             }
         });
 
@@ -839,6 +859,16 @@ var game = {
                 game.selectedCard = null;
             }
         });
+        minion.on('mouseover', function() {
+            if (game.targetIndicator) {
+                game.targetIndicator.alpha = 1;
+            }
+        });
+        minion.on('mouseout', function() {
+            if (game.targetIndicator) {
+                game.targetIndicator.alpha = 0.5;
+            }
+        });
         minion.hasAttack = hasAttack;
         if (game.playerId == playerId) {
             game.playerMinionContainer.addChild(minion);
@@ -1170,6 +1200,7 @@ $(document).ready(function() {
         }
         if (game.targetIndicator) {
             game.targetIndicator.visible = false;
+            game.targetIndicator.alpha = 0.5;
         }
     });
 
