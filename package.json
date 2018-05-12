@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "Eric Wang",
   "dependencies": {
     "deepcopy": "^0.6.3",
     "express": "^4.16.3",
     "ws": "^5.1.1"
+  },
+  "devDependencies": {
+    "mocha": "^5.1.1"
   }
 }
