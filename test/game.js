@@ -131,36 +131,97 @@ describe('Game', function() {
 
     describe('Player', function() {
 
-        beforeEach(function() {
-            player1.spawnMinion(0);
-        });
+        describe('player-minion interactions', function() {
 
-        it('spawns minions correctly', function() {
-            assert.equal(player1.minions.length, 1);
-            assert.equal(player1.sendPacket.lastCall.args[0], 'addMinion');
-            assert.equal(player2.sendPacket.lastCall.args[0], 'addMinion');
-        });
+            beforeEach(function() {
+                player1.spawnMinion(0);
+            });
 
-        it('kills minions correctly', function() {
-            player1.minions[0].health -= 999;
+            it('spawns minions correctly', function() {
+                assert.equal(player1.minions.length, 1);
+                assert.equal(player1.sendPacket.lastCall.args[0], 'addMinion');
+                assert.equal(player2.sendPacket.lastCall.args[0], 'addMinion');
+            });
 
-            assert.equal(player1.minions.length, 0);
-            assert.equal(player1.sendPacket.lastCall.args[0], 'removeMinion');
-            assert.equal(player2.sendPacket.lastCall.args[0], 'removeMinion');
-        });
+            it('kills minions correctly', function() {
+                player1.minions[0].health -= 999;
 
-        it('damages minions correctly', function() {
-            player1.minions[0].health -= 1;
+                assert.equal(player1.minions.length, 0);
+                assert.equal(player1.sendPacket.lastCall.args[0], 'removeMinion');
+                assert.equal(player2.sendPacket.lastCall.args[0], 'removeMinion');
+            });
 
-            assert.equal(player1.minions.length, 1);
-            assert.equal(player1.sendPacket.lastCall.args[0], 'updateMinion');
-            assert.equal(player2.sendPacket.lastCall.args[0], 'updateMinion');
-        });
+            it('damages minions correctly', function() {
+                player1.minions[0].health -= 1;
 
-        it('#findMinion(...)', function() {
-            player2.spawnMinion(0);
+                assert.equal(player1.minions.length, 1);
+                assert.equal(player1.sendPacket.lastCall.args[0], 'updateMinion');
+                assert.equal(player2.sendPacket.lastCall.args[0], 'updateMinion');
+            });
 
-            assert.equal(game.findMinion(player2.minions[0].minionInstanceId), player2.minions[0]);
+            it('#findMinion(...)', function() {
+                player2.spawnMinion(0);
+
+                assert.equal(game.findMinion(player2.minions[0].minionInstanceId), player2.minions[0]);
+            });
+
+            describe('#processActions(...)', function() {
+                it('damage correct', function() {
+                    player1.processActions([['damage', 3]], player1.minions[0].minionInstanceId).forEach((x) => x());
+
+                    assert.equal(player1.minions[0].health, 2);
+                });
+
+                it('all_damage correct', function() {
+                    for (var i = 0; i < 5; i++) {
+                        player1.spawnMinion(0);
+                        player2.spawnMinion(0);
+                    }
+
+                    player1.processActions([['all_damage', 5]]).forEach((x) => x());
+
+                    assert.equal(player1.minions.length, 0);
+                    assert.equal(player2.minions.length, 0);
+                });
+
+                it('heal correct', function() {
+                    player1.minions[0].health -= 1;
+
+                    player1.processActions([['heal', 3]], player1.minions[0].minionInstanceId).forEach((x) => x());
+
+                    assert.equal(player1.minions[0].health, 5);
+                });
+
+                it('heal player correct', function() {
+                    player1.damage(-10);
+
+                    assert.equal(player1.health, constants.player.MAX_HEALTH);
+                });
+
+                it('draw correct', function() {
+                    var numCards = player1.hand.length;
+
+                    player1.processActions([['draw', 3]]).forEach((x) => x());
+
+                    assert.equal(player1.hand.length, numCards + 3);
+                });
+
+                it('discard correct', function() {
+                    player1.processActions([['discard', 10]]).forEach((x) => x());
+
+                    assert.equal(player1.hand.length, 0);
+                });
+
+                it('card_copy correct', function() {
+                    var numCards = player1.hand.length;
+                    var numCardsOpp = player2.hand.length;
+
+                    player1.processActions([['card_copy', 3]]).forEach((x) => x());
+
+                    assert.equal(player1.hand.length, numCards + 3);
+                    assert.equal(player2.hand.length, numCardsOpp);
+                });
+            });
         });
 
         it('::get(playerId)', function() {
@@ -174,6 +235,52 @@ describe('Game', function() {
         it('#setGameState(gameState)', function() {
             player2.setGameState('lobby');
             assert.equal(player2.sendPacket.lastCall.args[0], 'gameState');
+        });
+
+        describe('#playCard(cardId)', function() {
+            var oldCards;
+            var plr;
+
+            before(function() {
+                sinon.stub(console, 'warn');
+                oldCards = constants.cards;
+                constants.cards = {
+                    '0': {
+                        id: 0,
+                        name: 'Test Minion Card',
+                        description: 'Summons a test minion.',
+                        mana: 0,
+                        type: 'minion',
+                        spawn: [0]
+                    }
+                };
+            });
+
+            after(function() {
+                constants.cards = oldCards;
+                console.warn.restore();
+            });
+
+            beforeEach(function() {
+                plr = game.getPlayerById(game.turn);
+            });
+
+            it('does not work if player does not have card', function() {
+                plr.hand = [];
+
+                assert.ok(!plr.playCard(0));
+            });
+
+            it('does not work for invalid cards', function() {
+                assert.ok(!plr.playCard(-3));
+            });
+
+            it('summons minions', function() {
+                plr.hand = [0];
+
+                assert.ok(plr.playCard(0));
+                assert.equal(plr.minions.length, 1);
+            });
         });
 
         describe('#addToQueue()', function() {
@@ -195,64 +302,6 @@ describe('Game', function() {
                 for (var i = 0; i < 10; i++) {
                     new Player().addToQueue();
                 }
-            });
-        });
-
-        describe('#processActions(...)', function() {
-            it('damage correct', function() {
-                player1.processActions([['damage', 3]], player1.minions[0].minionInstanceId).forEach((x) => x());
-
-                assert.equal(player1.minions[0].health, 2);
-            });
-
-            it('all_damage correct', function() {
-                for (var i = 0; i < 5; i++) {
-                    player1.spawnMinion(0);
-                    player2.spawnMinion(0);
-                }
-
-                player1.processActions([['all_damage', 5]]).forEach((x) => x());
-
-                assert.equal(player1.minions.length, 0);
-                assert.equal(player2.minions.length, 0);
-            });
-
-            it('heal correct', function() {
-                player1.minions[0].health -= 1;
-
-                player1.processActions([['heal', 3]], player1.minions[0].minionInstanceId).forEach((x) => x());
-
-                assert.equal(player1.minions[0].health, 5);
-            });
-
-            it('heal player correct', function() {
-                player1.damage(-10);
-
-                assert.equal(player1.health, constants.player.MAX_HEALTH);
-            });
-
-            it('draw correct', function() {
-                var numCards = player1.hand.length;
-
-                player1.processActions([['draw', 3]]).forEach((x) => x());
-
-                assert.equal(player1.hand.length, numCards + 3);
-            });
-
-            it('discard correct', function() {
-                player1.processActions([['discard', 10]]).forEach((x) => x());
-
-                assert.equal(player1.hand.length, 0);
-            });
-
-            it('card_copy correct', function() {
-                var numCards = player1.hand.length;
-                var numCardsOpp = player2.hand.length;
-
-                player1.processActions([['card_copy', 3]]).forEach((x) => x());
-
-                assert.equal(player1.hand.length, numCards + 3);
-                assert.equal(player2.hand.length, numCardsOpp);
             });
         });
     });

@@ -479,6 +479,11 @@ Player.prototype.playCard = function(cardId, target) {
             this.sendError("It is not currently your turn!");
             return false;
         }
+        if (typeof cardInfo == 'undefined') {
+            console.warn('Player tried playing invalid card: ' + cardId);
+            this.sendError("You tried playing an invalid card!");
+            return false;
+        }
         if (cardInfo.mana > this.mana) {
             this.sendError("You do not have enough mana to play this card!");
             return false;
@@ -488,7 +493,7 @@ Player.prototype.playCard = function(cardId, target) {
             return false;
         }
         if (cardIndex <= -1) {
-            console.warn('Player tried playing nonexistent card: ' + cardId + ' (' + cardInfo.name + ', index: ' + cardIndex + '), only has ' + this.hand);
+            console.warn('Player tried playing unavailable card: ' + cardId + ' (' + cardInfo.name + ', index: ' + cardIndex + '), only has ' + this.hand);
             this.sendError("You do not have this card!");
             return false;
         }
@@ -529,7 +534,7 @@ Player.prototype.playCard = function(cardId, target) {
         return true;
     }
     else {
-        throw "Tried to play card while not in game!";
+        throw new Error("Tried to play card while not in game!");
     }
 };
 
