@@ -302,11 +302,22 @@ var game = {
         game.pixi.stage.addChild(queuedContainer);
         game.containers.push(queuedContainer);
 
+        var cardBack = PIXI.Sprite.fromImage('./img/card_back.png');
+        cardBack.anchor.set(0.5);
+        cardBack.alpha = 0.3;
+        cardBack.width = 400;
+        cardBack.height = 500;
+        cardBack.x = game.getScreenWidth() / 2;
+        cardBack.y = game.getScreenHeight() / 2;
+        cardBack.rotation = 15;
+        queuedContainer.cardBack = cardBack;
+        queuedContainer.addChild(cardBack);
+
         // main menu screen
         var lobbyContainer = new PIXI.Container();
         game.lobbyContainer = lobbyContainer;
 
-        var cardBack = PIXI.Sprite.fromImage('./img/card_back.png');
+        cardBack = PIXI.Sprite.fromImage('./img/card_back.png');
         cardBack.anchor.set(0.5);
         cardBack.alpha = 0.3;
         cardBack.width = 400;
@@ -672,6 +683,7 @@ var game = {
         if (game.targetIndicator) {
             game.targetIndicator.rotation += delta / 100;
         }
+        game.queuedContainer.cardBack.rotation += delta / 200;
     },
     connect: function(username) {
         game.ws = new WebSocket(window.location.protocol.replace('http', 'ws') + "//" + window.location.host + window.location.pathname);
@@ -705,6 +717,7 @@ var game = {
                 game.lobbyContainer.visible = true;
                 break;
             case 'queued':
+                game.queuedContainer.cardBack.rotation = 15;
                 game.queuedContainer.visible = true;
                 break;
             case 'game':
