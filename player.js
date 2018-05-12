@@ -296,6 +296,12 @@ Player.prototype.doAttack = function(from, to) {
         }
     }
     fromMinion.hasAttack = false;
+    if (this.game) {
+        this.game.sendPacket("updateMinion", {
+            minionInstanceId: fromMinion.minionInstanceId,
+            hasAttack: fromMinion.hasAttack
+        });
+    }
 };
 
 Player.prototype.processActions = function(rawActions, target) {
