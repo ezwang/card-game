@@ -250,6 +250,13 @@ var constants = {
             description: 'Give a minion +4/+4.',
             target: true,
             actions: [['buff_health', 4], ['buff_attack', 4]]
+        },
+        '32': {
+            mana: 2,
+            type: 'minion',
+            name: 'Knife Thrower',
+            description: 'Deal 1 damage to a random enemy when a minion is spawned.',
+            spawn: [21]
         }
     },
     minions: {
@@ -378,6 +385,14 @@ var constants = {
             name: 'Shredder',
             events: {
                 self_damage: [['discard', 1]]
+            }
+        },
+        '21': {
+            health: 2,
+            attack: 2,
+            name: 'Knife Thrower',
+            events: {
+                minion_spawn: [['random_damage_opponent', 1]]
             }
         }
     }

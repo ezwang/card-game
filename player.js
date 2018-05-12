@@ -97,6 +97,7 @@ Player.prototype.spawnMinion = function (minionId) {
     copy._maxHealth = copy.health;
     copy._attack = copy.attack;
     const plr = this;
+    var opp = plr.game.getOpponent(plr);
     copy.hasAttribute = function(attr) {
         if (!copy.attributes) {
             return false;
@@ -174,7 +175,6 @@ Player.prototype.spawnMinion = function (minionId) {
                     }
                 }
                 plr.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, plr));
-                var opp = plr.game.getOpponent(plr);
                 opp.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, opp));
             }
             if (this.health <= 0) {
@@ -206,6 +206,20 @@ Player.prototype.spawnMinion = function (minionId) {
     });
     copy.minionInstanceId = this.game.minionIdCounter;
     this.game.minionIdCounter++;
+
+    // process minion_spawn event
+    function process(minion, plr) {
+        var actions = plr.processActions(minion.events.minion_spawn, minion.minionInstanceId);
+        if (actions !== false) {
+            actions.forEach((x) => x());
+        }
+        else {
+            console.warn('Failed when processing minion events, this should not happen!');
+        }
+    }
+    plr.minions.filter((x) => x.events && x.events.minion_spawn).forEach((x) => process(x, plr));
+    opp.minions.filter((x) => x.events && x.events.minion_spawn).forEach((x) => process(x, opp));
+
     this.minions.push(copy);
     this.game.sendPacket("addMinion", {
         playerId: this.id,
