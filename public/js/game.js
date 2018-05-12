@@ -329,6 +329,14 @@ var game = {
         var cardButton = createButton('Your Cards', function() {
             game.setGameState('cards');
         });
+        var logoutButton = createButton('Quit', function() {
+            game.setGameState('empty');
+            $("#login-container").fadeIn();
+            game.ws.close();
+        });
+        logoutButton.x = game.getScreenWidth() / 2;
+        logoutButton.y = 125 + 140 + 100;
+        lobbyContainer.addChild(logoutButton);
         cardButton.x = game.getScreenWidth() / 2;
         cardButton.y = 125 + 140 + 50;
         lobbyContainer.addChild(cardButton);
@@ -1316,6 +1324,7 @@ $(document).ready(function() {
         e.preventDefault();
         var username = $("#username").val();
         if (username) {
+            localStorage.setItem("username", username);
             game.connect(username);
             $("#login-container").fadeOut();
         }
@@ -1343,6 +1352,7 @@ $(document).ready(function() {
     var username = localStorage.getItem("username");
     if (username) {
         $("#username").val(username);
+        $("#login-container").hide();
         $("#login button[type=submit]").click();
     }
 
