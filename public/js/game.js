@@ -959,7 +959,7 @@ var game = {
                 break;
             case 'updatePlayer':
                 ['health', 'mana'].forEach(function(item) {
-                    if (data.data[item]) {
+                    if (typeof data.data[item] !== 'undefined') {
                         if (data.data.playerId == game.playerId) {
                             game.updateInfo('player_' + item, data.data[item]);
                         }
