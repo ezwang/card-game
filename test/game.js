@@ -251,6 +251,14 @@ describe('Game', function() {
                     assert.equal(player1.hand.length, numCards + 3);
                     assert.equal(player2.hand.length, numCardsOpp);
                 });
+
+                it('damage_opponent correct', function() {
+                    var oldHealth = player2.health;
+
+                    player1.processActions([['damage_opponent', 5]]).forEach((x) => x());
+
+                    assert.equal(player2.health, oldHealth - 5);
+                });
             });
         });
 

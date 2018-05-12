@@ -368,10 +368,10 @@ Player.prototype.processActions = function(rawActions, target) {
                             var all = plr.minions.concat(opp.minions).concat([plr, opp]);
                             var random = all[Math.floor(all.length * Math.random())];
                             if (random instanceof Player) {
-                                random.damage(action[1]);
+                                random.damage(action[1], target);
                             }
                             else {
-                                random.health -= action[1];
+                                random.setHealth(random.health - action[1], target);
                             }
                         });
                         break;
@@ -380,10 +380,10 @@ Player.prototype.processActions = function(rawActions, target) {
                             var all = opp.minions.concat([opp]);
                             var random = all[Math.floor(all.length * Math.random())];
                             if (random instanceof Player) {
-                                random.damage(action[1]);
+                                random.damage(action[1], target);
                             }
                             else {
-                                random.health -= action[1];
+                                random.setHealth(random.health - action[1], target);
                             }
                         });
                         break;
@@ -441,12 +441,12 @@ Player.prototype.processActions = function(rawActions, target) {
                         break;
                     case 'damage_opponent':
                         actions.push(function() {
-                            opp.damage(action[1]);
+                            opp.damage(action[1], target);
                         });
                         break;
                     case 'damage_player':
                         actions.push(function() {
-                            plr.damage(action[1]);
+                            plr.damage(action[1], target);
                         });
                         break;
                     case 'spawn':
