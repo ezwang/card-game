@@ -537,6 +537,9 @@ Player.prototype.playCard = function(cardId, target) {
  * Add a player to the queue of players searching for a game or start a new game with 2 players.
  */
 Player.prototype.addToQueue = function() {
+    if (this.game) {
+        throw new Error('Player is already in a game!');
+    }
     if (queued.length > 0) {
         var opponent = queued.pop();
         var game = new Game(this, Player.get(opponent));
@@ -545,6 +548,10 @@ Player.prototype.addToQueue = function() {
     else {
         queued.push(this.id);
     }
+};
+
+Player.prototype.isInQueue = function() {
+    return queued.indexOf(this.id) > -1;
 };
 
 module.exports = Player;

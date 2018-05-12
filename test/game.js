@@ -5,7 +5,7 @@ var Game = require('../game.js');
 var Player = require('../player.js');
 var constants = require('../public/js/constants.js');
 
-describe('game', function() {
+describe('Game', function() {
     var player1, player2;
     var game;
     var oldMinions;
@@ -69,6 +69,20 @@ describe('game', function() {
         assert.equal(game.getPlayerById(player1.id), player1);
     });
 
+    describe('#doTimer(...)', function() {
+        it('notifies player', function() {
+            game.doTimer();
+            assert.equal(player1.sendPacket.lastCall.args[0], 'gameTimer');
+        });
+        it('switches turns', function() {
+            sinon.stub(Game.prototype, 'switchTurns');
+            game.turnTimer = -5;
+            game.doTimer();
+            assert.ok(game.switchTurns.called);
+            Game.prototype.switchTurns.restore();
+        });
+    });
+
     describe('#switchTurns(playerId)', function() {
         it('valid switch', function() {
             var oldTurn = game.turn;
@@ -115,7 +129,7 @@ describe('game', function() {
         });
     });
 
-    describe('player', function() {
+    describe('Player', function() {
 
         beforeEach(function() {
             player1.spawnMinion(0);
@@ -147,6 +161,41 @@ describe('game', function() {
             player2.spawnMinion(0);
 
             assert.equal(game.findMinion(player2.minions[0].minionInstanceId), player2.minions[0]);
+        });
+
+        it('::get(playerId)', function() {
+            assert.equal(Player.get(player2.id), player2);
+        });
+
+        it('#getId()', function() {
+            assert.equal(player2.getId(), player2.id);
+        });
+
+        it('#setGameState(gameState)', function() {
+            player2.setGameState('lobby');
+            assert.equal(player2.sendPacket.lastCall.args[0], 'gameState');
+        });
+
+        describe('#addToQueue()', function() {
+            it('fails when in game', function() {
+                assert.throws(() => player1.addToQueue());
+                assert.throws(() => player2.addToQueue());
+            });
+            it('works not in game', function() {
+                game.end(player1.id);
+                player1.addToQueue();
+
+                assert.ok(player1.isInQueue());
+            });
+            it('works with multiple players', function() {
+                game.end(player1.id);
+                player1.addToQueue();
+                player2.addToQueue();
+
+                for (var i = 0; i < 10; i++) {
+                    new Player().addToQueue();
+                }
+            });
         });
 
         describe('#processActions(...)', function() {

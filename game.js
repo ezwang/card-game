@@ -1,4 +1,3 @@
-var Player = require('./player.js');
 var constants = require('./public/js/constants.js');
 
 function Game(player1, player2) {
@@ -101,6 +100,8 @@ Game.prototype.end = function(winner) {
     this.sendPacket('gameEnd', {
         winner: winner.id
     });
+    this.p1.game = null;
+    this.p2.game = null;
     clearInterval(this.timerInterval);
 };
 
