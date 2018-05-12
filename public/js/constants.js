@@ -233,7 +233,7 @@ var constants = {
             mana: 3,
             type: 'minion',
             name: 'Shredder',
-            description: 'When damaged, discard a card from your deck.',
+            description: 'When damaged, discard a card from your hand.',
             spawn: [20]
         },
         '30': {
@@ -257,6 +257,13 @@ var constants = {
             name: 'Knife Thrower',
             description: 'Deal 1 damage to a random enemy when a minion is spawned.',
             spawn: [21]
+        },
+        '33': {
+            mana: 2,
+            type: 'minion',
+            name: 'Gravedigger',
+            description: 'Draw a card when this minion dies.',
+            spawn: [22]
         }
     },
     minions: {
@@ -394,6 +401,13 @@ var constants = {
             events: {
                 minion_spawn: [['random_damage_opponent', 1]]
             }
+        },
+        '22': {
+            name: 'Gravedigger',
+            health: 1,
+            attack: 1,
+            attributes: ['deathrattle'],
+            deathrattle: [['draw', 1]]
         }
     }
 };
