@@ -183,8 +183,10 @@ Player.prototype.spawnMinion = function (minionId) {
                 });
             }
             else {
-                if (this.events && this.events.self_damage) {
-                    plr.processActions(this.events.self_damage, this.minionInstanceId).forEach((x) => x());
+                if (doingDamage) {
+                    if (this.events && this.events.self_damage) {
+                        plr.processActions(this.events.self_damage, this.minionInstanceId).forEach((x) => x());
+                    }
                 }
                 plr.game.sendPacket("updateMinion", {
                     playerId: plr.id,

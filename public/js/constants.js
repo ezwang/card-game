@@ -228,6 +228,13 @@ var constants = {
             name: 'Imp Master',
             description: 'When damaged, summon a 1/1 imp.',
             spawn: [18]
+        },
+        '29': {
+            mana: 3,
+            type: 'minion',
+            name: 'Shredder',
+            description: 'When damaged, discard a card from your deck.',
+            spawn: [20]
         }
     },
     minions: {
@@ -349,6 +356,14 @@ var constants = {
             health: 1,
             attack: 1,
             name: 'Imp'
+        },
+        '20': {
+            health: 6,
+            attack: 4,
+            name: 'Shredder',
+            events: {
+                self_damage: [['discard', 1]]
+            }
         }
     }
 };
