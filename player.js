@@ -335,6 +335,18 @@ Player.prototype.processActions = function(rawActions, target) {
                             }
                         });
                         break;
+                    case 'random_damage_opponent':
+                        actions.push(function() {
+                            var all = opp.minions.concat([opp]);
+                            var random = all[Math.floor(all.length * Math.random())];
+                            if (random instanceof Player) {
+                                random.damage(action[1]);
+                            }
+                            else {
+                                random.health -= action[1];
+                            }
+                        });
+                        break;
                     case 'mana':
                         actions.push(function() {
                             plr.mana += action[1];
