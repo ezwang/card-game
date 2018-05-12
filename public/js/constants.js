@@ -242,6 +242,14 @@ var constants = {
             name: 'Magic Missile',
             description: 'Do 3 damage randomly split among enemies.',
             actions: [['random_damage_opponent', 1], ['random_damage_opponent', 1], ['random_damage_opponent', 1]]
+        },
+        '31': {
+            mana: 5,
+            type: 'spell',
+            name: 'Powerful Buff',
+            description: 'Give a minion +4/+4.',
+            target: true,
+            actions: [['buff_health', 4], ['buff_attack', 4]]
         }
     },
     minions: {
