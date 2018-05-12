@@ -235,12 +235,12 @@ Player.prototype.spawnMinion = function (minionId) {
     return true;
 };
 
-Player.prototype.damage = function(amount) {
+Player.prototype.damage = function(amount, source) {
     this.health -= amount;
     if (this.health > constants.player.MAX_HEALTH) {
         this.health = constants.player.MAX_HEALTH;
     }
-    this.game.sendPacket("updatePlayer", { playerId: this.id, health: this.health });
+    this.game.sendPacket("updatePlayer", { playerId: this.id, health: this.health, attackFrom: source });
     if (this.health <= 0) {
         this.game.end(this.game.getOpponent(this));
     }
@@ -268,7 +268,7 @@ Player.prototype.doAttack = function(from, to) {
 
     if (to == "opponent") {
         if (!hasTaunt) {
-            this.game.getOpponent(this).damage(fromMinion.attack);
+            this.game.getOpponent(this).damage(fromMinion.attack, fromMinion.minionInstanceId);
         }
         else {
             this.sendError("You must attack a minion with taunt!");
@@ -294,7 +294,8 @@ Player.prototype.doAttack = function(from, to) {
     this.game.sendPacket("updateMinion", {
         playerId: this.id,
         minionInstanceId: fromMinion.minionInstanceId,
-        hasAttack: fromMinion.hasAttack
+        hasAttack: fromMinion.hasAttack,
+        attackFrom: fromMinion.minionInstanceId
     });
 };
 
