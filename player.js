@@ -450,13 +450,14 @@ Player.prototype.processActions = function(rawActions, target) {
                             });
                         });
                         break;
-                    case 'card_steal':
+                    case 'card_copy':
                         actions.push(function() {
                             var toSteal = Math.min(action[1], opp.hand.length);
                             for (var i = 0; i < toSteal; i++) {
                                 plr.addCard(opp.hand[i]);
                             }
                         });
+                        break;
                     default:
                         console.warn('Unknown spell card action: ' + action[0]);
                         break;

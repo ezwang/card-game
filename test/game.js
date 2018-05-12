@@ -115,6 +115,36 @@ describe('game', function() {
 
                 assert.equal(player1.minions[0].health, 5);
             });
+
+            it('heal player correct', function() {
+                player1.damage(-10);
+
+                assert.equal(player1.health, constants.player.MAX_HEALTH);
+            });
+
+            it('draw correct', function() {
+                var numCards = player1.hand.length;
+
+                player1.processActions([['draw', 3]]).forEach((x) => x());
+
+                assert.equal(player1.hand.length, numCards + 3);
+            });
+
+            it('discard correct', function() {
+                player1.processActions([['discard', 10]]).forEach((x) => x());
+
+                assert.equal(player1.hand.length, 0);
+            });
+
+            it('card_copy correct', function() {
+                var numCards = player1.hand.length;
+                var numCardsOpp = player2.hand.length;
+
+                player1.processActions([['card_copy', 3]]).forEach((x) => x());
+
+                assert.equal(player1.hand.length, numCards + 3);
+                assert.equal(player2.hand.length, numCardsOpp);
+            });
         });
     });
 });

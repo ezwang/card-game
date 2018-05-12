@@ -286,8 +286,8 @@ var constants = {
             mana: 2,
             type: 'spell',
             name: 'Mind Read',
-            description: "Steal 2 cards from opponent's hand.",
-            actions: [['card_steal', 2]]
+            description: "Copy 2 cards from opponent's hand.",
+            actions: [['card_copy', 2]]
         },
         '37': {
             mana: 2,
