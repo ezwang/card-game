@@ -358,7 +358,7 @@ var constants = {
             actions: [['damage', 3]]
         },
         '43': {
-            mana: 8,
+            mana: 9,
             type: 'minion',
             name: 'The Magician',
             description: 'Whenever you play a card, summon a 2/2 rabbit.',
