@@ -96,6 +96,45 @@ Player.prototype.addCard = function(newCard) {
     }
 };
 
+Player.prototype.doMulligan = function(redos) {
+    if (this.game.turn != -1) {
+        this.sendError('You cannot mulligan after the beginning phase!');
+        return false;
+    }
+    if (this.playerMulliganDone) {
+        this.sendError('You can only mulligan once!');
+        return false;
+    }
+
+    for (var i = 0; i < this.hand.length; i++) {
+        if (redos[i]) {
+            var deckPos = Math.floor(Math.random() * this.deck.length);
+            var temp = this.deck[deckPos];
+            this.deck[deckPos] = this.hand[i];
+            this.hand[i] = temp;
+            this.sendPacket('addCard', {
+                player: this.id,
+                card: this.hand[i],
+                cardsLeft: this.deck.length
+            });
+            this.sendPacket('discardCard', {
+                playerId: this.id,
+                cardId: this.deck[deckPos]
+            });
+        }
+    }
+
+    // if both players done with choosing cards, start the game
+    if (this.game.playerMulliganDone) {
+        this.game.initTurn();
+    }
+    else {
+        this.game.playerMulliganDone = true;
+        this.playerMulliganDone = true;
+    }
+    return true;
+};
+
 Player.prototype.spawnMinion = function (minionId, cardId, position) {
     var minionInfo = constants.minions[minionId];
     if (this.minions.length >= constants.player.MAX_MINIONS) {

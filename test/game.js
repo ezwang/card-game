@@ -58,6 +58,7 @@ describe('Game', function() {
         player2 = new Player();
         game = new Game(player1, player2);
         game.init();
+        game.initTurn();
     });
 
     afterEach(function() {

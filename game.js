@@ -40,15 +40,7 @@ Game.prototype.init = function() {
     this.p1.deck = this.p1.deck.slice(3);
     this.p2.deck = this.p2.deck.slice(3);
 
-    this.turn = Math.random() > 0.5 ? this.p1.id : this.p2.id;
-
-    // give the 2nd player to move a coin
-    if (this.turn == this.p1.id) {
-        this.p2.hand.push(constants.player.COIN_ID);
-    }
-    else {
-        this.p1.hand.push(constants.player.COIN_ID);
-    }
+    this.turn = -1;
 
     var p1info = {
         id: this.p1.id,
@@ -62,7 +54,7 @@ Game.prototype.init = function() {
         health: this.p2.health,
         mana: this.p2.mana
     };
-    this.turnTimer = constants.game.TURN_TIME;
+    this.setTurnTimer(constants.game.TURN_TIME);
     this.p1.sendPacket('gameInit', {
         player: p1info,
         opponent: p2info,
@@ -84,14 +76,36 @@ Game.prototype.init = function() {
         turnTimer: this.turnTimer
     });
     const game = this;
-    this.timerInterval = setInterval(function() { game.doTimer(); }, 10000);
+};
+
+Game.prototype.initTurn = function() {
+    this.turn = Math.random() > 0.5 ? this.p1.id : this.p2.id;
+
+    // give the 2nd player to move a coin
+    if (this.turn == this.p1.id) {
+        this.p2.addCard(constants.player.COIN_ID);
+    }
+    else {
+        this.p1.addCard(constants.player.COIN_ID);
+    }
+
+    this.setTurnTimer(constants.game.TURN_TIME);
+    this.p1.sendPacket('nextTurn', {
+        turn: this.turn,
+        turnTimer: this.turnTimer
+    });
 };
 
 Game.prototype.doTimer = function(ref) {
     this.turnTimer -= 10;
     if (this.turnTimer <= 0) {
-        this.getPlayerById(this.turn).sendError('Your turn is over!');
-        this.switchTurns(this.turn);
+        if (this.turn != -1) {
+            this.getPlayerById(this.turn).sendError('Your turn is over!');
+            this.switchTurns(this.turn);
+        }
+        else {
+            this.initTurn();
+        }
     }
     this.sendPacket('gameTimer', this.turnTimer);
 };
@@ -127,6 +141,15 @@ Game.prototype.findMinion = function(minionInstanceId) {
     return minion;
 };
 
+Game.prototype.setTurnTimer = function(time) {
+    this.turnTimer = time;
+    if (typeof this.timerInterval !== 'undefined') {
+        clearInterval(this.timerInterval);
+    }
+    const game = this;
+    this.timerInterval = setInterval(function() { game.doTimer(); }, 10000);
+};
+
 Game.prototype.switchTurns = function(playerId) {
     var currentPlayer = this.getPlayerById(playerId);
     if (playerId != this.turn) {
@@ -155,7 +178,7 @@ Game.prototype.switchTurns = function(playerId) {
             currentPlayer.processActions(x.events.turn_end, x.minionInstanceId).forEach((x) => x());
         }
     });
-    this.turnTimer = constants.game.TURN_TIME;
+    this.setTurnTimer(constants.game.TURN_TIME);
     var info = {
         turn: this.turn,
         minionAttack: opponent.minions.map((x) => x.hasAttack),

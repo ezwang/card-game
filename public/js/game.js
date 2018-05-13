@@ -656,9 +656,40 @@ var game = {
         gameContainer.addChild(opponentPortrait);
         gameContainer.addChild(playerInfo);
         gameContainer.addChild(turnStatus);
-        gameContainer.addChild(endContainer);
         gameContainer.addChild(endTurn);
         gameContainer.addChild(targetIndicator);
+
+        // mulligan screen
+        var mulliganContainer = new PIXI.Container();
+        var mulliganBg = new PIXI.Graphics();
+        mulliganBg.beginFill(0x000000);
+        mulliganBg.drawRect(0, 0, game.getScreenWidth(), game.getScreenHeight());
+        mulliganBg.alpha = 0.4;
+        mulliganBg.interactive = true;
+        var mTitle = new PIXI.Text('Choose Cards to Replace', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 56,
+            fill: '#ffffff'
+        }));
+        mTitle.anchor.set(0.5);
+        mTitle.x = game.getScreenWidth() / 2;
+        mTitle.y = 75;
+
+        var mButton = createButton('Finish', function() {
+            mulliganContainer.cards.forEach((x) => mulliganContainer.removeChild(x));
+            game.sendPacket('doMulligan', mulliganContainer.cards.map((x) => x.selected));
+            mulliganContainer.visible = false;
+        });
+        mButton.x = game.getScreenWidth() / 2;
+        mButton.y = game.getScreenHeight() - 175;
+
+        mulliganContainer.addChild(mulliganBg);
+        mulliganContainer.addChild(mTitle);
+        mulliganContainer.addChild(mButton);
+        gameContainer.mulliganContainer = mulliganContainer;
+
+        gameContainer.addChild(mulliganContainer);
+        gameContainer.addChild(endContainer);
 
         game.pixi.stage.addChild(gameContainer);
         game.containers.push(gameContainer);
@@ -1186,6 +1217,27 @@ var game = {
                 });
                 game.opponentHand = data.data.opponentHandSize;
                 game.reorderCards();
+
+                var i = 0;
+                game.gameContainer.mulliganContainer.visible = true;
+                game.gameContainer.mulliganContainer.cards = [];
+                data.data.playerHand.forEach(function(cardId) {
+                    var card = createCard(constants.cards[cardId]);
+                    card.on('click', function() {
+                        card.selected = !card.selected;
+                        if (card.selected) {
+                            card.filters = [ new PIXI.filters.GlowFilter(10, 2, 2, 0x00ff00, 0.5) ];
+                        }
+                        else {
+                            card.filters = [];
+                        }
+                    });
+                    card.x = (game.getScreenWidth() - card.width) / 2 + (i - 1) * (card.width + 20);
+                    card.y = 125;
+                    game.gameContainer.mulliganContainer.cards.push(card);
+                    game.gameContainer.mulliganContainer.addChild(card);
+                    i++;
+                });
                 break;
             case 'updatePlayer':
                 ['health', 'mana'].forEach(function(item) {
@@ -1289,23 +1341,29 @@ var game = {
                 game.turn = data.data.turn;
                 game.updateInfo("turn_timer", data.data.turnTimer);
                 game.updateInfo("player_turn", game.playerId == game.turn);
-                game.updateInfo("player_mana", data.data[game.playerId].mana);
-                game.updateInfo("opponent_mana", data.data[game.opponentId].mana);
-                var min;
-                var oth;
-                if (game.playerId == game.turn) {
-                    min = game.playerArmy;
-                    oth = game.opponentArmy;
+                if (data.data[game.playerId] && typeof data.data[game.playerId].mana !== 'undefined') {
+                    game.updateInfo("player_mana", data.data[game.playerId].mana);
                 }
-                else {
-                    min = game.opponentArmy;
-                    oth = game.playerArmy;
+                if (data.data[game.opponentId] && typeof data.data[game.opponentId].mana !== 'undefined') {
+                    game.updateInfo("opponent_mana", data.data[game.opponentId].mana);
                 }
-                for (var i = 0; i < min.length; i++) {
-                    min[i].hasAttack = data.data.minionAttack[i];
-                }
-                for (var i = 0; i < oth.length; i++) {
-                    oth[i].hasAttack = false;
+                if (data.data.minionAttack) {
+                    var min;
+                    var oth;
+                    if (game.playerId == game.turn) {
+                        min = game.playerArmy;
+                        oth = game.opponentArmy;
+                    }
+                    else {
+                        min = game.opponentArmy;
+                        oth = game.playerArmy;
+                    }
+                    for (var i = 0; i < min.length; i++) {
+                        min[i].hasAttack = data.data.minionAttack[i];
+                    }
+                    for (var i = 0; i < oth.length; i++) {
+                        oth[i].hasAttack = false;
+                    }
                 }
                 game.refreshMinions();
                 game.reorderCards();

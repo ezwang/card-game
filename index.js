@@ -41,6 +41,9 @@ wss.on('connection', function(ws) {
             case 'playCard':
                 player.playCard(data.data.card, data.data.target, data.data.position);
                 break;
+            case 'doMulligan':
+                player.doMulligan(data.data);
+                break;
             case 'doAttack':
                 player.doAttack(data.data.from, data.data.to);
                 break;
