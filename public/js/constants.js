@@ -362,7 +362,8 @@ var constants = {
             type: 'minion',
             name: 'The Magician',
             description: 'Whenever you play a card, summon a 2/2 rabbit.',
-            spawn: [28]
+            spawn: [28],
+            image: 'magician.png'
         },
         '44': {
             mana: 8,
