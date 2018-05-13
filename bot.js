@@ -13,6 +13,50 @@ function hasAction(card, action) {
     return card.actions.some((x) => x[0] == action);
 }
 
+Bot.getTarget = function(game, bot, opp) {
+    var sortedMinions = opp.minions.sort(function(x, y) {
+        // target special minions first
+        var xSpecial = x.hasAttribute('special');
+        var ySpecial = y.hasAttribute('special');
+        if (xSpecial && !ySpecial) {
+            return -1;
+        }
+        if (ySpecial && !xSpecial) {
+            return 1;
+        }
+        // target minion with least health
+        return x.health - y.health;
+    });
+    var targetObject = sortedMinions.find((x) => x.hasAttribute('taunt'));
+    var target = targetObject;
+    var hasTaunt = true;
+    if (!target) {
+        hasTaunt = false;
+        if (opp.minions.length > 0) {
+            targetObject = sortedMinions[0];
+            target = targetObject.minionInstanceId;
+        }
+        else {
+            target = 'opponent';
+            targetObject = null;
+        }
+    }
+    else {
+        target = targetObject.minionInstanceId;
+    }
+
+    // if no taunts and can kill opponent (or get close to doing so), do so
+    var maxDamage = bot.minions.map((x) => x.attack).reduce((x, y) => x + y, 0);
+    if (maxDamage * 1.2 >= opp.health && !hasTaunt) {
+        target = 'opponent';
+        targetObject = null;
+    }
+    return {
+        target: target,
+        targetObject: targetObject
+    };
+};
+
 Bot.prototype.playMove = function() {
     // bot's turn, do actions
     const bot = this;
@@ -61,6 +105,9 @@ Bot.prototype.playMove = function() {
                                 return false;
                             }
                         }
+                        if (hasAction(card, 'damage')) {
+                            bot.playCard(card.id, Bot.getTarget(bot.game, bot, opp).target);
+                        }
                     }
                 }
             }
@@ -87,37 +134,16 @@ Bot.prototype.playMove = function() {
             return;
         }
         // do minion attacks
-        var targetObject = opp.minions.sort((x, y) => x.health - y.health).find((x) => x.hasAttribute('taunt'));
-        var target = targetObject;
-        var hasTaunt = true;
-        if (!target) {
-            hasTaunt = false;
-            if (opp.minions.length > 0) {
-                targetObject = opp.minions.sort((x, y) => x.health - y.health)[0];
-                target = targetObject.minionInstanceId;
-            }
-            else {
-                target = 'opponent';
-                targetObject = null;
-            }
-        }
-        else {
-            target = targetObject.minionInstanceId;
-        }
-
-        // if no taunts and can kill opponent, do so
-        var maxDamage = bot.minions.map((x) => x.attack).reduce((x, y) => x + y, 0);
-        if (maxDamage >= opp.health && !hasTaunt) {
-            target = 'opponent';
-            targetObject = null;
-        }
+        var targetInfo = Bot.getTarget(bot.game, bot, opp);
+        var target = targetInfo.target;
+        var targetObject = targetInfo.targetObject;
 
         bot.minions.sort((x, y) => y.health - x.health).every(function(minion) {
             if (minion.hasAttack) {
                 if (targetObject) {
                     if (minion.health <= targetObject.attack) {
                         if (!targetObject.hasAttribute('taunt') && !targetObject.hasAttribute('special')) {
-                            if (minion.health >= targetObject.health && minion.health >= target) {
+                            if (minion.health >= targetObject.health && minion.attack >= targetObject.attack) {
                                 target = 'opponent';
                                 targetObject = null;
                             }
