@@ -20,7 +20,7 @@ wss.on('connection', function(ws) {
                 var username = data.data;
                 player = new Player(ws);
                 if (player.authenticate(username)) {
-                    console.log('Player connected: ' + username + ' (' + ws._socket.remoteAddress + ')');
+                    console.log(`Player connected: ${username} (${ws._socket.remoteAddress})`);
                     player.setGameState("lobby");
                 }
                 else {
@@ -48,7 +48,7 @@ wss.on('connection', function(ws) {
                 player.sendPacket("loadCards", player.getCards().sort((x, y) => constants.cards[x].mana - constants.cards[y].mana));
                 break;
             default:
-                console.log('Unknown Packet: ' + JSON.stringify(data));
+                console.log(`Unknown Packet: ${JSON.stringify(data)}`);
                 break;
         }
     });
