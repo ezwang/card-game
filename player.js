@@ -391,7 +391,7 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                             playCard = false;
                         }
                         actions.push(function() {
-                            toMinion.destroy(null, true);
+                            toMinionDestroy.destroy(null, true);
                         });
                         break;
                     case 'attribute':

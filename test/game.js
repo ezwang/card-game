@@ -314,6 +314,12 @@ describe('Game', function() {
                     assert.equal(player1.minions.length, 1);
                     assert.equal(player1.minions[0].id, 2);
                 });
+
+                it('destroy correct', function() {
+                    player1.processActions([['destroy']], player1.minions[0].minionInstanceId).forEach((x) => x());
+
+                    assert.equal(player1.minions.length, 0);
+                });
             });
         });
 
