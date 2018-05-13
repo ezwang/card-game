@@ -90,8 +90,9 @@ var constants = {
             mana: 4,
             type: 'minion',
             name: 'Tank',
-            description: 'A pretty good unit.',
-            spawn: [3]
+            description: 'A pretty average unit.',
+            spawn: [3],
+            image: 'tank.png'
         },
         '8': {
             mana: 3,
