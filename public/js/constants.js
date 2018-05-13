@@ -326,6 +326,15 @@ var constants = {
             description: 'Replace a minion with a 0/1 lump with taunt.',
             target: true,
             actions: [['replace', 26]]
+        },
+        '42': {
+            mana: 6,
+            type: 'minion',
+            name: 'Fire Golem',
+            description: 'Do 3 damage to some object.',
+            target: true,
+            spawn: [27],
+            actions: [['damage', 3]]
         }
     },
     minions: {
@@ -495,6 +504,11 @@ var constants = {
             health: 1,
             attack: 0,
             attributes: ['taunt']
+        },
+        '27': {
+            name: 'Fire Golem',
+            health: 3,
+            attack: 6
         }
     }
 };
