@@ -588,6 +588,22 @@ var game = {
             game.sendPacket('endTurn');
         });
 
+        var surrender = new PIXI.Text("Surrender", new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 18,
+            fill: '#ffffff'
+        }));
+        game.statusText.surrender = surrender;
+        surrender.x = game.getScreenWidth() - 80;
+        surrender.y = 5;
+        surrender.interactive = true;
+        surrender.buttonMode = true;
+        surrender.on('click', function() {
+            if (confirm('Are you sure you want to give up?')) {
+                game.sendPacket('surrender');
+            }
+        });
+
         var playerCards = new PIXI.Container();
         playerCards.x = 5;
         playerCards.y = game.getScreenHeight() - 130;
@@ -673,6 +689,7 @@ var game = {
         gameContainer.addChild(playerInfo);
         gameContainer.addChild(turnStatus);
         gameContainer.addChild(endTurn);
+        gameContainer.addChild(surrender);
         gameContainer.addChild(targetIndicator);
 
         // mulligan screen

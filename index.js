@@ -44,6 +44,9 @@ wss.on('connection', function(ws) {
             case 'endTurn':
                 player.game.switchTurns(player.id);
                 break;
+            case 'surrender':
+                player.game.end(player.game.getOpponent(player));
+                break;
             case 'playCard':
                 player.playCard(data.data.card, data.data.target, data.data.position);
                 break;
