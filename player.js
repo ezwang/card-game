@@ -259,9 +259,11 @@ Player.prototype.damage = function(amount, source) {
     if (this.health > constants.player.MAX_HEALTH) {
         this.health = constants.player.MAX_HEALTH;
     }
-    this.game.sendPacket("updatePlayer", { playerId: this.id, health: this.health, attackFrom: source });
-    if (this.health <= 0) {
-        this.game.end(this.game.getOpponent(this));
+    if (this.game) {
+        this.game.sendPacket("updatePlayer", { playerId: this.id, health: this.health, attackFrom: source });
+        if (this.health <= 0) {
+            this.game.end(this.game.getOpponent(this));
+        }
     }
 };
 
