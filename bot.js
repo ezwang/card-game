@@ -22,6 +22,10 @@ Bot.prototype.playMove = function() {
         return;
     }
     var processActionQueue = function() {
+        // game ended, stop processing
+        if (!bot.game) {
+            return;
+        }
         var noActions = true;
         // try playing spell cards
         bot.hand.every(function(cardId) {
