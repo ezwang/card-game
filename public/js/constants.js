@@ -188,7 +188,8 @@ var constants = {
             name: 'Mass Heal',
             description: 'Heal a unit for 10 health.',
             actions: [['heal', 10]],
-            target: true
+            target: true,
+            image: 'heal.png'
         },
         '21': {
             mana: 2,
