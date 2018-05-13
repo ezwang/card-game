@@ -310,6 +310,16 @@ describe('Game', function() {
                     assert.equal(player1.health, constants.player.MAX_HEALTH);
                 });
 
+                it('heal player through action correct', function() {
+                    var oldHealth = player1.health;
+
+                    player1.damage(10);
+
+                    player1.processActions([['heal', 10]], "player").forEach((x) => x());
+
+                    assert.equal(player1.health, oldHealth);
+                });
+
                 it('draw correct', function() {
                     var numCards = player1.hand.length;
 
