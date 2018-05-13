@@ -26,6 +26,7 @@ Game.prototype.init = function() {
     initPlayer(this.p2);
 
     this.minionIdCounter = 0;
+    this.turnCounter = 0;
 
     this.p1.game = this;
     this.p2.game = this;
@@ -111,8 +112,11 @@ Game.prototype.doTimer = function(ref) {
 };
 
 Game.prototype.end = function(winner) {
+    if (typeof winner === 'undefined') {
+        throw new Error('Must pass player instance to game end function!');
+    }
     this.sendPacket('gameEnd', {
-        winner: winner.id
+        winner: typeof winner.id
     });
     this.p1.game = null;
     this.p2.game = null;
@@ -184,6 +188,7 @@ Game.prototype.switchTurns = function(playerId) {
             currentPlayer.processActions(x.events.turn_end, x.minionInstanceId).forEach((x) => x());
         }
     });
+    this.turnCounter++;
     this.setTurnTimer(constants.game.TURN_TIME);
     var info = {
         turn: this.turn,
