@@ -1,5 +1,6 @@
 var assert = require('assert');
 var sinon = require('sinon');
+var deepcopy = require('deepcopy');
 
 var Game = require('../game.js');
 var Player = require('../player.js');
@@ -213,7 +214,7 @@ describe('Game', function() {
         var saved;
 
         beforeEach(function() {
-            saved = constants.minions[0];
+            saved = deepcopy(constants.minions[0]);
         });
 
         afterEach(function() {
@@ -233,7 +234,7 @@ describe('Game', function() {
             assert.ok(spy.called);
         });
 
-        it('friendly death triggers', function() {
+        it('friendly_death triggers', function() {
             constants.minions[0].events = {
                 friendly_death: [['draw', 1]]
             };
@@ -244,6 +245,108 @@ describe('Game', function() {
             player1.spawnMinion(1);
 
             player1.minions.find((x) => x.id == 1).health = -1;
+
+            assert.ok(spy.called);
+        });
+
+        it('opponent_death triggers', function() {
+            constants.minions[0].events = {
+                opponent_death: [['draw', 1]]
+            };
+
+            var spy = sinon.spy(player1, 'drawCard');
+
+            player1.spawnMinion(0);
+            player2.spawnMinion(1);
+
+            player2.minions[0].health = -1;
+
+            assert.ok(spy.called);
+        });
+
+        it('minion_damage triggers on damage', function() {
+            constants.minions[0].events = {
+                minion_damage: [['draw', 1]]
+            };
+
+            var spy = sinon.spy(player1, 'drawCard');
+
+            player1.spawnMinion(0);
+            player1.spawnMinion(1);
+
+            player1.minions.find((x) => x.id == 1).health -= 1;
+
+            assert.ok(spy.called);
+        });
+
+        it('minion_damage triggers on death', function() {
+            constants.minions[0].events = {
+                minion_damage: [['draw', 1]]
+            };
+
+            var spy = sinon.spy(player1, 'drawCard');
+
+            player1.spawnMinion(0);
+            player1.spawnMinion(1);
+
+            player1.minions.find((x) => x.id == 1).health = -1;
+
+            assert.ok(spy.called);
+        });
+
+        it('turn_start triggers', function() {
+            constants.minions[0].events = {
+                turn_start: [['draw', 1]]
+            };
+
+            var plr = game.getOpponent(game.getPlayerById(game.turn));
+            var spy = sinon.spy(plr, 'drawCard');
+
+            plr.spawnMinion(0);
+
+            game.switchTurns(game.turn);
+
+            assert.ok(spy.called);
+        });
+
+        it('turn_end triggers', function() {
+            constants.minions[0].events = {
+                turn_end: [['draw', 1]]
+            };
+
+            var plr = game.getPlayerById(game.turn);
+            var spy = sinon.spy(plr, 'drawCard');
+
+            plr.spawnMinion(0);
+
+            game.switchTurns(game.turn);
+
+            assert.ok(spy.called);
+        });
+
+        it('self_damage triggers', function() {
+            constants.minions[0].events = {
+                self_damage: [['draw', 1]]
+            };
+
+            var spy = sinon.spy(player1, 'drawCard');
+
+            player1.spawnMinion(0);
+
+            player1.minions[0].health -= 1;
+
+            assert.ok(spy.called);
+        });
+
+        it('minion_spawn triggers', function() {
+            constants.minions[0].events = {
+                minion_spawn: [['draw', 1]]
+            };
+
+            var spy = sinon.spy(player1, 'drawCard');
+
+            player1.spawnMinion(0);
+            player1.spawnMinion(1);
 
             assert.ok(spy.called);
         });

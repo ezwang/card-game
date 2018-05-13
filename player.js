@@ -146,7 +146,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
     copy._maxHealth = copy.health;
     copy._attack = copy.attack;
     const plr = this;
-    var opp = plr.game.getOpponent(plr);
+    const opp = plr.game.getOpponent(plr);
     copy.hasAttribute = function(attr) {
         if (!copy.attributes) {
             return false;
@@ -206,6 +206,11 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
             plr.minions.forEach(function(minion) {
                 if (minion.events && minion.events.friendly_death) {
                     plr.processActions(minion.events.friendly_death).forEach((x) => x());
+                }
+            });
+            opp.minions.forEach(function(minion) {
+                if (minion.events && minion.events.opponent_death) {
+                    opp.processActions(minion.events.opponent_death).forEach((x) => x());
                 }
             });
         }
