@@ -342,6 +342,13 @@ var constants = {
             name: 'The Magician',
             description: 'Whenever you play a card, summon a 2/2 rabbit.',
             spawn: [28]
+        },
+        '44': {
+            mana: 8,
+            type: 'minion',
+            name: 'The Magistrate',
+            description: 'Whenever you play a card, gain +2 attack.',
+            spawn: [30]
         }
     },
     minions: {
@@ -522,13 +529,21 @@ var constants = {
             health: 5,
             attack: 4,
             events: {
-                player_play_card: [['spawn', 29]]
+                player_play_card: [['spawn', [29]]]
             }
         },
         '29': {
             name: 'Rabbit',
             health: 2,
             attack: 2
+        },
+        '30': {
+            name: 'The Magistrate',
+            health: 5,
+            attack: 4,
+            events: {
+                player_play_card: [['buff_attack', 2]]
+            }
         }
     }
 };
