@@ -87,6 +87,35 @@ describe('Game', function() {
         assert.equal(game.getPlayerById(player1.id), player1);
     });
 
+    describe('#doMulligan(cards)', function() {
+        beforeEach(function() {
+            game.end(game.turn);
+            game = new Game(player1, player2);
+            game.init();
+        });
+
+        it('replaces cards', function() {
+            player1.hand = [0, 0, 0];
+            player1.deck = [1, 1, 1];
+
+            var oldHand = player1.hand.splice();
+            player1.doMulligan([true, true, true]);
+            assert.notEqual(oldHand, player1.hand);
+        });
+
+        it('keeps cards if none to replace', function() {
+            var oldHand = player1.hand;
+            player1.doMulligan([false, false, false]);
+            assert.deepEqual(oldHand, player1.hand);
+        });
+
+        it('starts the game', function() {
+            player1.doMulligan([false, false, false]);
+            player2.doMulligan([false, false, false]);
+            assert.notEqual(game.turn, -1);
+        });
+    });
+
     describe('#doTimer(...)', function() {
         it('notifies player', function() {
             game.doTimer();
