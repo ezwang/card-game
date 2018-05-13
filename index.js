@@ -9,6 +9,8 @@ const server = http.createServer(app);
 const wss = new ws.Server({ server });
 
 const Player = require('./player.js');
+const Bot = require('./bot.js');
+const Game = require('./game.js');
 const constants = require('./public/js/constants.js');
 
 wss.on('connection', function(ws) {
@@ -30,6 +32,10 @@ wss.on('connection', function(ws) {
             case 'queue':
                 player.setGameState("queued");
                 player.addToQueue();
+                break;
+            case 'playBot':
+                var game = new Game(player, new Bot());
+                game.init();
                 break;
             case 'dequeue':
                 player.removeFromQueue();

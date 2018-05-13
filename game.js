@@ -130,7 +130,10 @@ Game.prototype.getPlayerById = function(player) {
     if (player == this.p1.id) {
         return this.p1;
     }
-    return this.p2;
+    else if (player == this.p2.id) {
+        return this.p2;
+    }
+    throw new Error(`Could not find player with id: ${player}, valid options are [${this.p1.id}, ${this.p2.id}]!`);
 };
 
 Game.prototype.findMinion = function(minionInstanceId) {
@@ -151,6 +154,9 @@ Game.prototype.setTurnTimer = function(time) {
 };
 
 Game.prototype.switchTurns = function(playerId) {
+    if (typeof playerId === 'undefined') {
+        throw new Error('Must specify the current player id!');
+    }
     var currentPlayer = this.getPlayerById(playerId);
     if (playerId != this.turn) {
         currentPlayer.sendError("It is not currently your turn!");

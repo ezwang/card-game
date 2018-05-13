@@ -360,6 +360,13 @@ var game = {
         var cardButton = createButton('Your Cards', function() {
             game.setGameState('cards');
         });
+        cardButton.x = game.getScreenWidth() / 2;
+        cardButton.y = 125 + 140 + 100;
+        var botButton = createButton('Tutorial', function() {
+            game.sendPacket('playBot');
+        });
+        botButton.x = game.getScreenWidth() / 2;
+        botButton.y = 125 + 140 + 50;
         var logoutButton = createButton('Quit', function() {
             game.setGameState('empty');
             $("#login-container").fadeIn();
@@ -367,12 +374,12 @@ var game = {
             game.ws.close();
         });
         logoutButton.x = game.getScreenWidth() / 2;
-        logoutButton.y = 125 + 140 + 100;
+        logoutButton.y = 125 + 140 + 150;
+
         lobbyContainer.addChild(logoutButton);
-        cardButton.x = game.getScreenWidth() / 2;
-        cardButton.y = 125 + 140 + 50;
         lobbyContainer.addChild(cardButton);
         lobbyContainer.addChild(playButton);
+        lobbyContainer.addChild(botButton);
         game.pixi.stage.addChild(lobbyContainer);
         game.containers.push(lobbyContainer);
 
