@@ -12,6 +12,7 @@ var constants = {
     game: {
         LAST_CARD_DELAY: 2000,
         TURN_TIME: 120,
+        TIPS: ["Can't find an opponent? Open a new tab and play against yourself!"]
     },
     cardcollection: {
         CARDS_PER_ROW: 6,

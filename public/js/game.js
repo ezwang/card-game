@@ -297,6 +297,15 @@ var game = {
         cancelButton.anchor.set(0.5);
         cancelButton.x = game.getScreenWidth() / 2;
         cancelButton.y = 150;
+        var tipMessage = new PIXI.Text('Tip: ' + constants.game.TIPS[Math.floor(Math.random() * constants.game.TIPS.length)], new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 16,
+            fill: '#f0e68c'
+        }));
+        tipMessage.anchor.set(0.5);
+        tipMessage.x = game.getScreenWidth() / 2;
+        tipMessage.y = game.getScreenHeight() - 100;
+        queuedContainer.addChild(tipMessage);
         queuedContainer.addChild(cancelButton);
         queuedContainer.addChild(loadingMessage);
         game.pixi.stage.addChild(queuedContainer);
