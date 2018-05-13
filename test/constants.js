@@ -1,7 +1,7 @@
 var assert = require('assert');
 var constants = require('../public/js/constants.js');
 
-describe('constants', function() {
+describe('Constants', function() {
     function assertValidActions(actions) {
         assert.ok(Array.isArray(actions));
         actions.forEach(function(action) {
