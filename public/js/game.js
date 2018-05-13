@@ -664,7 +664,7 @@ var game = {
         var mulliganBg = new PIXI.Graphics();
         mulliganBg.beginFill(0x000000);
         mulliganBg.drawRect(0, 0, game.getScreenWidth(), game.getScreenHeight());
-        mulliganBg.alpha = 0.4;
+        mulliganBg.alpha = 0.5;
         mulliganBg.interactive = true;
         var mTitle = new PIXI.Text('Choose Cards to Replace', new PIXI.TextStyle({
             fontFamily: 'Pangolin',
@@ -674,6 +674,16 @@ var game = {
         mTitle.anchor.set(0.5);
         mTitle.x = game.getScreenWidth() / 2;
         mTitle.y = 75;
+
+        var mHelp = new PIXI.Text('Click on cards to choose the ones you want to discard, and then press finish.', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 18,
+            fill: '#ffffff'
+        }));
+
+        mHelp.anchor.set(0.5);
+        mHelp.x = game.getScreenWidth() / 2;
+        mHelp.y = 125;
 
         var mButton = createButton('Finish', function() {
             mulliganContainer.cards.forEach((x) => mulliganContainer.removeChild(x));
@@ -685,6 +695,7 @@ var game = {
 
         mulliganContainer.addChild(mulliganBg);
         mulliganContainer.addChild(mTitle);
+        mulliganContainer.addChild(mHelp);
         mulliganContainer.addChild(mButton);
         gameContainer.mulliganContainer = mulliganContainer;
 
@@ -1233,7 +1244,7 @@ var game = {
                         }
                     });
                     card.x = (game.getScreenWidth() - card.width) / 2 + (i - 1) * (card.width + 20);
-                    card.y = 125;
+                    card.y = 150;
                     game.gameContainer.mulliganContainer.cards.push(card);
                     game.gameContainer.mulliganContainer.addChild(card);
                     i++;
