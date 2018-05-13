@@ -158,7 +158,8 @@ var constants = {
             type: 'spell',
             name: 'Morale Boost',
             description: 'Give all of your minions +2 attack.',
-            actions: [['buff_attack_all', 2]]
+            actions: [['buff_attack_all', 2]],
+            image: 'morale_boost.png'
         },
         '17': {
             mana: 5,
