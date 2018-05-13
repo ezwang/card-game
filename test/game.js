@@ -123,6 +123,11 @@ describe('Game', function() {
             assert.equal(player1.sendPacket.lastCall.args[0], 'nextTurn');
             assert.equal(player2.sendPacket.lastCall.args[0], 'nextTurn');
         });
+
+        it('cannot be done twice', function() {
+            player1.doMulligan([true, true, true]);
+            assert.ok(!player1.doMulligan([true, true, true]));
+        });
     });
 
     describe('#doTimer(...)', function() {
@@ -499,6 +504,12 @@ describe('Game', function() {
                 for (var i = 0; i < 10; i++) {
                     new Player().addToQueue();
                 }
+            });
+        });
+
+        describe('#authenticate(username)', function() {
+            it('rejects empty usernames', function() {
+                assert.ok(!player1.authenticate(''));
             });
         });
 
