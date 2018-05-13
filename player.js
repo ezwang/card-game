@@ -151,8 +151,10 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
 
     copy.destroy = function(fromAttack, doEvents) {
         // process death events
-        if (this.events && this.events.death) {
-            plr.processActions(this.events.death).forEach((x) => x());
+        if (doEvents) {
+            if (this.events && this.events.death) {
+                plr.processActions(this.events.death).forEach((x) => x());
+            }
         }
         plr.minions.splice(plr.minions.indexOf(copy), 1);
         plr.game.sendPacket("removeMinion", {
@@ -374,8 +376,13 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                                 minionIndex = game.p2.minions.indexOf(toMinionReplace);
                                 minionPlr = game.p2;
                             }
-                            minionPlr.spawnMinion(action[1], cardId, minionIndex);
+                            if (minionIndex <= -1) {
+                                throw new Error('Could not find minion to replace!');
+                            }
                             toMinionReplace.destroy(null, false);
+                            if (!minionPlr.spawnMinion(action[1], cardId, minionIndex)) {
+                                throw new Error('Could not spawn replacement minion!');
+                            }
                         });
                         break;
                     case 'destroy':

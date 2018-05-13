@@ -307,6 +307,13 @@ describe('Game', function() {
 
                     assert.equal(player1.mana, oldMana + 3);
                 });
+
+                it('replace correct', function() {
+                    player1.processActions([['replace', 2]], player1.minions[0].minionInstanceId).forEach((x) => x());
+
+                    assert.equal(player1.minions.length, 1);
+                    assert.equal(player1.minions[0].id, 2);
+                });
             });
         });
 
