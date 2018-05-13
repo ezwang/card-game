@@ -212,6 +212,11 @@ Bot.prototype.sendPacket = function(msg, data) {
         case 'message':
             break;
         case 'nextTurn':
+            // not in a game, don't do anything
+            if (!this.game) {
+                break;
+            }
+            // first time tutorial text
             const bot = this;
             const opp = bot.game.getOpponent(bot);
             if (data.turn == opp.id) {
@@ -228,11 +233,8 @@ Bot.prototype.sendPacket = function(msg, data) {
                     this.firstTurn = true;
                 }
             }
+            // process AI moves
             if (data.turn == this.id) {
-                // not in a game, don't do anything
-                if (!this.game) {
-                    break;
-                }
                 this.playMove();
             }
             break;
