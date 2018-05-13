@@ -164,7 +164,8 @@ var constants = {
             type: 'spell',
             name: 'Medical Aid',
             description: 'Give all of your minions +2 health.',
-            actions: [['buff_health_all', 2]]
+            actions: [['buff_health_all', 2]],
+            image: 'medical_aid.png'
         },
         '18': {
             mana: 5,
