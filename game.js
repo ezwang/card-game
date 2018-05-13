@@ -118,11 +118,11 @@ Game.prototype.end = function(winner) {
     this.sendPacket('gameEnd', {
         winner: winner.id
     });
+    clearInterval(this.timerInterval);
     this.p1.cleanup();
     this.p2.cleanup();
     this.p1.game = null;
     this.p2.game = null;
-    clearInterval(this.timerInterval);
 };
 
 Game.prototype.getOpponent = function(player) {

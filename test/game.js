@@ -9,8 +9,10 @@ describe('Game', function() {
     var player1, player2;
     var game;
     var oldMinions;
+    var clock;
 
     before(function() {
+        clock = sinon.useFakeTimers();
         sinon.stub(Player.prototype, 'sendPacket');
         oldMinions = constants.minions;
         constants.minions = {
@@ -51,6 +53,7 @@ describe('Game', function() {
     after(function() {
         Player.prototype.sendPacket.restore();
         constants.minions = oldMinions;
+        clock.restore();
     });
 
     beforeEach(function() {
@@ -92,6 +95,10 @@ describe('Game', function() {
             game.end(game.turn);
             game = new Game(player1, player2);
             game.init();
+        });
+
+        afterEach(function() {
+            game.end(player1);
         });
 
         it('replaces cards', function() {
