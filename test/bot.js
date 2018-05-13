@@ -6,8 +6,15 @@ var Game = require('../game.js');
 var Bot = require('../bot.js');
 
 describe('Bot', function() {
+    var oldBotDelay;
+
     before(function() {
+        oldBotDelay = constants.game.BOT_DELAY;
         constants.game.BOT_DELAY = 0;
+    });
+
+    after(function() {
+        constants.game.BOT_DELAY = oldBotDelay;
     });
 
     var game, bot1, bot2;
