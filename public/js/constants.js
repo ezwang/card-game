@@ -377,6 +377,13 @@ var constants = {
             name: 'The Magistrate',
             description: 'Whenever you play a card, gain +2 attack.',
             spawn: [30]
+        },
+        '45': {
+            mana: 4,
+            type: 'minion',
+            name: 'The Acolyte',
+            description: 'Whenever another minion dies, draw a card.',
+            spawn: [31]
         }
     },
     minions: {
@@ -571,6 +578,14 @@ var constants = {
             attack: 4,
             events: {
                 player_play_card: [['buff_attack', 2]]
+            }
+        },
+        '31': {
+            name: 'The Acolyte',
+            health: 2,
+            attack: 4,
+            events: {
+                friendly_death: [['draw', 1]]
             }
         }
     }

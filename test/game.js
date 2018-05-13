@@ -209,6 +209,46 @@ describe('Game', function() {
         });
     });
 
+    describe('minion events', function() {
+        var saved;
+
+        beforeEach(function() {
+            saved = constants.minions[0];
+        });
+
+        afterEach(function() {
+            constants.minions[0] = saved;
+        });
+
+        it('death triggers', function() {
+            constants.minions[0].events = {
+                death: [['draw', 1]]
+            };
+
+            var spy = sinon.spy(player1, 'drawCard');
+
+            player1.spawnMinion(0);
+            player1.minions[0].health = -1;
+
+            assert.ok(spy.called);
+        });
+
+        it('friendly death triggers', function() {
+            constants.minions[0].events = {
+                friendly_death: [['draw', 1]]
+            };
+
+            var spy = sinon.spy(player1, 'drawCard');
+
+            player1.spawnMinion(0);
+            player1.spawnMinion(1);
+
+            player1.minions.find((x) => x.id == 1).health = -1;
+
+            assert.ok(spy.called);
+        });
+    });
+
     describe('Player', function() {
 
         describe('#doAttack(from, to)', function() {

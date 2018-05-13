@@ -202,6 +202,13 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
             health: this.health,
             attackFrom: fromAttack
         });
+        if (doEvents) {
+            plr.minions.forEach(function(minion) {
+                if (minion.events && minion.events.friendly_death) {
+                    plr.processActions(minion.events.friendly_death).forEach((x) => x());
+                }
+            });
+        }
     };
 
     copy.setHealth = function(amount, fromAttack) {
