@@ -1001,6 +1001,9 @@ var game = {
                     card.x = 5;
                     card.y = 350;
                     card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x551A8B, 0.5) ];
+                    card.on('click', function() {
+                        game.gameContainer.removeChild(card);
+                    });
                     game.cardPreview = card;
                     game.gameContainer.addChild(card);
                 }

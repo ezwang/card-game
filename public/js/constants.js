@@ -13,7 +13,7 @@ var constants = {
         LAST_CARD_DELAY: 2000,
         BOT_DELAY: 1000,
         TURN_TIME: 120,
-        TIPS: ["Can't find an opponent? Open a new tab and play against yourself!"]
+        TIPS: ["Can't find an opponent? Open a new tab and play against yourself!", "New to the game? Play against the tutorial bot!"]
     },
     cardcollection: {
         CARDS_PER_ROW: 6,
