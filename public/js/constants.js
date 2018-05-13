@@ -54,7 +54,8 @@ var constants = {
             type: 'minion',
             spawn: [1],
             name: 'Dummy',
-            description: 'Spawn a distraction.'
+            description: 'Spawn a distraction.',
+            image: 'dummy.png'
         },
         '3': {
             mana: 3,
