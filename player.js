@@ -685,4 +685,6 @@ Player.prototype.isInQueue = function() {
     return queued.indexOf(this.id) > -1;
 };
 
+Player.prototype.cleanup = function() {};
+
 module.exports = Player;

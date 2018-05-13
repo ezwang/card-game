@@ -57,6 +57,13 @@ Bot.getTarget = function(game, bot, opp) {
     };
 };
 
+Bot.prototype.sendMessage = function(msg) {
+    if (!this.game) {
+        return;
+    }
+    this.game.getOpponent(this).sendPacket('message', '[Tutorial Bot] ' + msg);
+};
+
 Bot.prototype.playMove = function() {
     // bot's turn, do actions
     const bot = this;
@@ -172,6 +179,12 @@ Bot.prototype.playMove = function() {
     processActionQueue();
 };
 
+Bot.prototype.cleanup = function() {
+    if (this.timeoutIds) {
+        this.timeoutIds.forEach((x) => clearTimeout(x));
+    }
+};
+
 Bot.prototype.sendPacket = function(msg, data) {
     switch(msg) {
         case 'gameInit':
@@ -196,7 +209,25 @@ Bot.prototype.sendPacket = function(msg, data) {
             break;
         case 'gameEnd':
             break;
+        case 'message':
+            break;
         case 'nextTurn':
+            const bot = this;
+            const opp = bot.game.getOpponent(bot);
+            if (data.turn == opp.id) {
+                if (!this.firstTurn) {
+                    var i = 0;
+                    bot.timeoutIds = [];
+                    constants.game.INTRO.forEach(function(msg) {
+                        var timeoutId = setTimeout(function() {
+                            bot.sendMessage(msg);
+                        }, (constants.game.MESSAGE_FADE_SPEED + 500) * i);
+                        bot.timeoutIds.push(timeoutId);
+                        i++;
+                    });
+                    this.firstTurn = true;
+                }
+            }
             if (data.turn == this.id) {
                 // not in a game, don't do anything
                 if (!this.game) {

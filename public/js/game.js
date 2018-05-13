@@ -1095,6 +1095,27 @@ var game = {
             game.opponentCardsContainer.addChild(cardBack);
         }
     },
+    showMessage: function(msg) {
+        var msgText = new PIXI.Text(msg, new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 18,
+            fill: '#00ff00',
+            wordWrap: true,
+            wordWrapWidth: 300
+        }));
+        msgText.x = 5;
+        msgText.y = 350 + 20 * game.msgIncrMax;
+        game.msgIncr++;
+        game.msgIncrMax += Math.floor(msgText.height / 18);
+        game.pixi.stage.addChild(msgText);
+        setTimeout(function() {
+            game.pixi.stage.removeChild(msgText);
+            game.msgIncr--;
+            if (game.msgIncr <= 0) {
+                game.msgIncrMax = 0;
+            }
+        }, constants.game.MESSAGE_FADE_SPEED);
+    },
     showError: function(errorMsg) {
         var errorText = new PIXI.Text(errorMsg, new PIXI.TextStyle({
             fontFamily: 'Pangolin',
@@ -1233,6 +1254,8 @@ var game = {
                 game.turn = data.data.turn;
                 game.cardDisplayIncr = 0;
                 game.cardDisplayMax = 0;
+                game.msgIncr = 0;
+                game.msgIncrMax = 0;
                 game.updateInfo("turn_timer", data.data.turnTimer);
                 game.updateInfo("player_turn", game.turn);
                 game.updateInfo("player_names", [data.data.player.name, data.data.opponent.name]);
@@ -1429,6 +1452,9 @@ var game = {
                 break;
             case 'error':
                 game.showError(data.data);
+                break;
+            case 'message':
+                game.showMessage(data.data);
                 break;
             default:
                 console.warn("Unknown packet: " + JSON.stringify(data));

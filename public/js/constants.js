@@ -13,7 +13,22 @@ var constants = {
         LAST_CARD_DELAY: 2000,
         BOT_DELAY: 1000,
         TURN_TIME: 120,
-        TIPS: ["Can't find an opponent? Open a new tab and play against yourself!", "New to the game? Play against the tutorial bot!"]
+        MESSAGE_FADE_SPEED: 3000,
+        TIPS: ["Can't find an opponent? Open a new tab and play against yourself!", "New to the game? Play against the tutorial bot!"],
+        INTRO: [
+            "Hi! I'm tutorial bot!",
+            "I'll be teaching you how to play this game.",
+            "Cards that you can currently play are outlined in green.",
+            "To play a card, drag and drop it onto the playing area (grey area).",
+            "To end your turn, press the End Turn button on the right.",
+            "Your minions are the bottom circles in the playing area (grey area).",
+            "The minions that you can use to attack are highlighted in green.",
+            "You can attack my minions by dragging your minions onto mine.",
+            "You can also attack me by dragging your minions onto my portrait (yellow box at top).",
+            "Some cards require a target to be played on.",
+            "In that case, start dragging at the card and let go of your mouse at the target you want to play your card on.",
+            "Good luck, and enjoy the game!"
+        ]
     },
     cardcollection: {
         CARDS_PER_ROW: 6,
