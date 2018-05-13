@@ -29,6 +29,12 @@ describe('Game', function() {
                     turn_start: [['buff_attack', 2]],
                     turn_end: [['buff_health', 2]]
                 }
+            },
+            '2': {
+                id: 2,
+                name: 'No Attack Minion',
+                health: 1,
+                attack: 0
             }
         };
     });
@@ -128,6 +134,25 @@ describe('Game', function() {
 
             assert.equal(second.minions[0].health, 5);
             assert.equal(second.minions[0].attack, 7);
+        });
+
+        it('sets attack flag', function() {
+            var first = game.getPlayerById(game.turn);
+            var second = game.getOpponent(first);
+
+            second.spawnMinion(0);
+            second.spawnMinion(2);
+
+            game.switchTurns(game.turn);
+
+            second.minions.forEach(function(minion) {
+                if (minion.attack > 0) {
+                    assert.ok(minion.hasAttack);
+                }
+                else {
+                    assert.ok(!minion.hasAttack);
+                }
+            });
         });
     });
 
