@@ -3,7 +3,7 @@ var constants = require('./public/js/constants.js');
 
 function Bot() {
     Player.call(this, null);
-    this.username = 'Bot';
+    this.username = 'Tutorial Bot';
 }
 
 Bot.prototype = Object.create(Player.prototype);
