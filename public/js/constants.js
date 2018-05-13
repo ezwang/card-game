@@ -196,7 +196,8 @@ var constants = {
             name: 'Shield',
             description: 'Give a minion a shield.',
             actions: [['attribute', 'shield']],
-            target: true
+            target: true,
+            image: 'shield.png'
         },
         '22': {
             mana: 2,
@@ -204,7 +205,8 @@ var constants = {
             name: 'Taunt',
             description: 'Give a minion taunt status.',
             actions: [['attribute', 'taunt']],
-            target: true
+            target: true,
+            image: 'taunt.png'
         },
         '23': {
             mana: 4,
