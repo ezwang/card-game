@@ -260,7 +260,8 @@ var constants = {
             type: 'spell',
             name: 'Magic Missile',
             description: 'Do 3 damage randomly split among enemies.',
-            actions: [['random_damage_opponent', 1], ['random_damage_opponent', 1], ['random_damage_opponent', 1]]
+            actions: [['random_damage_opponent', 1], ['random_damage_opponent', 1], ['random_damage_opponent', 1]],
+            image: 'magic_missile.png'
         },
         '31': {
             mana: 5,
