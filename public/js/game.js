@@ -158,11 +158,12 @@ function createCard(cardInfo) {
         get: function() { return card._mana; }
     });
     var background = PIXI.Sprite.fromImage('./img/card.png');
-    var image = new PIXI.Graphics();
-    image.beginFill(0xff00ff);
-    image.drawRect(0, 0, 160, 100);
-    image.x = 15;
-    image.y = 15;
+    var imagePlaceholder = new PIXI.Graphics();
+    imagePlaceholder.beginFill(0xff00ff);
+    imagePlaceholder.drawRect(0, 0, 160, 100);
+    imagePlaceholder.x = 15;
+    imagePlaceholder.y = 15;
+
     var title = new PIXI.Text(cardInfo.name || 'Untitled Card', new PIXI.TextStyle({
         fontFamily: 'Pangolin',
         fontSize: 20
@@ -209,7 +210,15 @@ function createCard(cardInfo) {
     mana.x = 160;
     card.interative = true;
     card.buttonMode = true;
-    card.addChild(image);
+    card.addChild(imagePlaceholder);
+
+    if (cardInfo.image) {
+        var image = PIXI.Sprite.fromImage('./img/cards/' + cardInfo.image);
+        image.x = 15;
+        image.y = 15;
+        card.addChild(image);
+    }
+
     card.addChild(background);
     card.addChild(title);
     card.addChild(mana);
@@ -1107,9 +1116,9 @@ var game = {
         msgText.y = 350 + 20 * game.msgIncrMax;
         game.msgIncr++;
         game.msgIncrMax += Math.floor(msgText.height / 18);
-        game.pixi.stage.addChild(msgText);
+        game.gameContainer.addChild(msgText);
         setTimeout(function() {
-            game.pixi.stage.removeChild(msgText);
+            game.gameContainer.removeChild(msgText);
             game.msgIncr--;
             if (game.msgIncr <= 0) {
                 game.msgIncrMax = 0;

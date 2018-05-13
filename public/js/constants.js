@@ -141,7 +141,8 @@ var constants = {
             name: 'The Coin',
             description: 'Gives you one extra mana this turn.',
             obtainable: false,
-            actions: [['mana', 1]]
+            actions: [['mana', 1]],
+            image: 'coin.png'
         },
         '15': {
             mana: 6,
