@@ -428,5 +428,12 @@ describe('Game', function() {
                 }
             });
         });
+
+        it('#removeFromQueue()', function() {
+            game.end(player1.id);
+            player1.addToQueue();
+            player1.removeFromQueue();
+            assert.ok(!player1.isInQueue());
+        });
     });
 });
