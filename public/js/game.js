@@ -875,6 +875,8 @@ var game = {
                 }
                 else {
                     value = value == game.playerId;
+                    game.statusText.endTurn.interactive = value;
+                    game.statusText.endTurn.buttonMode = value;
                     game.statusText.endTurn.style.fill = value ? '#ffffff' : '#aaaaaa';
                     game.statusText.turnStatus.text = value ? 'Your Turn' : "Opponent's Turn";
                 }
