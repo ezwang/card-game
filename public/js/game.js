@@ -704,6 +704,7 @@ var game = {
         game.ws.onmessage = game.receivePacket;
         game.ws.onclose = function() {
             $("#login-container").fadeIn();
+            $("#login-container .error").text('Disconnected from server!');
             game.setGameState('empty');
             game.ws = null;
         };
