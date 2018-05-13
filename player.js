@@ -195,7 +195,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
                     actions.forEach((x) => x());
                 }
                 else {
-                    console.warn('Failed when processing minion events, this should not happen!');
+                    throw new Error('Failed when processing minion events, this should not happen!');
                 }
             };
             plr.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, plr));
@@ -236,7 +236,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
             actions.forEach((x) => x());
         }
         else {
-            console.warn('Failed when processing minion events, this should not happen!');
+            throw new Error('Failed when processing minion events, this should not happen!');
         }
     }
     plr.minions.filter((x) => x.events && x.events.minion_spawn).forEach((x) => process(x, plr));
