@@ -1054,6 +1054,7 @@ var game = {
         }
     },
     reorderCards: function() {
+        // render player cards
         var order = [];
         for (var i = 0; i < 10; i++) {
             var temp = {};
@@ -1073,6 +1074,8 @@ var game = {
                 game.playerHand[i].filters = [];
             }
         }
+
+        // render opponent card backs
         game.opponentCardsContainer.children.forEach((x) => game.opponentCardsContainer.removeChild(x));
         for (var i = 0; i < game.opponentHand; i++) {
             var cardBack = PIXI.Sprite.fromImage('./img/card_back.png');

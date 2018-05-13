@@ -221,6 +221,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
         // check if minion has shield
         if (doingDamage && this.hasAttribute('shield')) {
             this.attributes.splice(this.attributes.indexOf('shield'), 1);
+            doingDamage = false;
         }
         else {
             this._health = amount;
