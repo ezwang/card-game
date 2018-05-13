@@ -1339,6 +1339,7 @@ var game = {
                 break;
             case 'nextTurn':
                 game.turn = data.data.turn;
+                game.gameContainer.mulliganContainer.visible = false;
                 game.updateInfo("turn_timer", data.data.turnTimer);
                 game.updateInfo("player_turn", game.playerId == game.turn);
                 if (data.data[game.playerId] && typeof data.data[game.playerId].mana !== 'undefined') {
