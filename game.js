@@ -90,7 +90,7 @@ Game.prototype.initTurn = function() {
     }
 
     this.setTurnTimer(constants.game.TURN_TIME);
-    this.p1.sendPacket('nextTurn', {
+    this.sendPacket('nextTurn', {
         turn: this.turn,
         turnTimer: this.turnTimer
     });

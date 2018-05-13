@@ -113,6 +113,8 @@ describe('Game', function() {
             player1.doMulligan([false, false, false]);
             player2.doMulligan([false, false, false]);
             assert.notEqual(game.turn, -1);
+            assert.equal(player1.sendPacket.lastCall.args[0], 'nextTurn');
+            assert.equal(player2.sendPacket.lastCall.args[0], 'nextTurn');
         });
     });
 

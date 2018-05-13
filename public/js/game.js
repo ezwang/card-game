@@ -837,8 +837,14 @@ var game = {
                 game.statusText.opponentMana.text = value;
                 break;
             case 'player_turn':
-                game.statusText.endTurn.style.fill = value ? '#ffffff' : '#aaaaaa';
-                game.statusText.turnStatus.text = value ? 'Your Turn' : "Opponent's Turn";
+                if (value == -1) {
+                    game.statusText.turnStatus.text = 'Card Selection';
+                }
+                else {
+                    value = value == game.playerId;
+                    game.statusText.endTurn.style.fill = value ? '#ffffff' : '#aaaaaa';
+                    game.statusText.turnStatus.text = value ? 'Your Turn' : "Opponent's Turn";
+                }
                 break;
             default:
                 console.warn('No information update handler for ' + info + ' -> ' + value + '.');
@@ -1215,7 +1221,7 @@ var game = {
                 game.cardDisplayIncr = 0;
                 game.cardDisplayMax = 0;
                 game.updateInfo("turn_timer", data.data.turnTimer);
-                game.updateInfo("player_turn", data.data.player.id == game.turn);
+                game.updateInfo("player_turn", game.turn);
                 game.updateInfo("player_names", [data.data.player.name, data.data.opponent.name]);
                 game.updateInfo("player_health", data.data.player.health);
                 game.updateInfo("player_mana", data.data.player.mana);
@@ -1352,14 +1358,14 @@ var game = {
                 game.turn = data.data.turn;
                 game.gameContainer.mulliganContainer.visible = false;
                 game.updateInfo("turn_timer", data.data.turnTimer);
-                game.updateInfo("player_turn", game.playerId == game.turn);
-                if (data.data[game.playerId] && typeof data.data[game.playerId].mana !== 'undefined') {
+                game.updateInfo("player_turn", game.turn);
+                if (typeof data.data[game.playerId] !== 'undefined' && typeof data.data[game.playerId].mana !== 'undefined') {
                     game.updateInfo("player_mana", data.data[game.playerId].mana);
                 }
-                if (data.data[game.opponentId] && typeof data.data[game.opponentId].mana !== 'undefined') {
+                if (typeof data.data[game.opponentId] !== 'undefined' && typeof data.data[game.opponentId].mana !== 'undefined') {
                     game.updateInfo("opponent_mana", data.data[game.opponentId].mana);
                 }
-                if (data.data.minionAttack) {
+                if (typeof data.data.minionAttack !== 'undefined') {
                     var min;
                     var oth;
                     if (game.playerId == game.turn) {
