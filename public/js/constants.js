@@ -335,6 +335,13 @@ var constants = {
             target: true,
             spawn: [27],
             actions: [['damage', 3]]
+        },
+        '43': {
+            mana: 8,
+            type: 'minion',
+            name: 'The Magician',
+            description: 'Whenever you play a card, summon a 2/2 rabbit.',
+            spawn: [28]
         }
     },
     minions: {
@@ -509,6 +516,19 @@ var constants = {
             name: 'Fire Golem',
             health: 3,
             attack: 6
+        },
+        '28': {
+            name: 'The Magician',
+            health: 5,
+            attack: 4,
+            events: {
+                player_play_card: [['spawn', 29]]
+            }
+        },
+        '29': {
+            name: 'Rabbit',
+            health: 2,
+            attack: 2
         }
     }
 };

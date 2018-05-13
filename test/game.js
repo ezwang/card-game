@@ -35,6 +35,15 @@ describe('Game', function() {
                 name: 'No Attack Minion',
                 health: 1,
                 attack: 0
+            },
+            '3': {
+                id: 3,
+                name: 'Play Card Event Minion',
+                health: 1,
+                attack: 1,
+                events: {
+                    player_play_card: [['buff_attack', 2]]
+                }
             }
         };
     });
@@ -410,6 +419,15 @@ describe('Game', function() {
 
                 assert.ok(plr.playCard(0));
                 assert.equal(plr.minions.length, 1);
+            });
+
+            it('triggers events', function() {
+                plr.hand = [0];
+
+                assert.ok(plr.spawnMinion(3));
+                assert.ok(plr.playCard(0));
+
+                assert.equal(plr.minions.find((x) => x.id == 3).attack, 3);
             });
         });
 

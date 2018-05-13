@@ -599,6 +599,15 @@ Player.prototype.playCard = function(cardId, target, position) {
             playerId: this.id,
             cardId: cardId
         });
+        this.minions.forEach(function(minion) {
+            if (minion.events && minion.events.player_play_card) {
+                actions = plr.processActions(minion.events.player_play_card, minion.minionInstanceId, minion.cardId);
+                if (actions === false) {
+                    throw new Error('Error occured while processing minion -> player play card events!');
+                }
+                actions.forEach((x) => x());
+            }
+        });
         return true;
     }
     else {
