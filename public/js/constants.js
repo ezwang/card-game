@@ -152,7 +152,8 @@ var constants = {
             name: 'Stronger Fireball',
             description: 'Do four damage to some target.',
             actions: [['damage', 4]],
-            target: true
+            target: true,
+            image: 'fireball.png'
         },
         '16': {
             mana: 5,
