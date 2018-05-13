@@ -116,7 +116,7 @@ Game.prototype.end = function(winner) {
         throw new Error('Must pass player instance to game end function!');
     }
     this.sendPacket('gameEnd', {
-        winner: typeof winner.id
+        winner: winner.id
     });
     this.p1.game = null;
     this.p2.game = null;
