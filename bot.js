@@ -150,6 +150,10 @@ Bot.prototype.playMove = function() {
                         }
                     }
                 }
+                // don't attack if taunt and player has low health
+                if (minion.hasAttribute('taunt') && bot.health <= 8) {
+                    return true;
+                }
                 bot.doAttack(minion.minionInstanceId, target);
                 noActions = false;
                 return false;
