@@ -615,9 +615,9 @@ Player.prototype.playCard = function(cardId, target, position) {
             this.sendError("You do not have this card!");
             return false;
         }
-        var plr = this;
-        var game = this.game;
-        var opp = game.getOpponent(plr);
+        const plr = this;
+        const game = this.game;
+        const opp = game.getOpponent(plr);
         var actions = plr.processActions(cardInfo.actions, target, cardId, position);
         if (actions === false) {
             this.sendError("Cannot play this card in this situation!");
@@ -652,6 +652,15 @@ Player.prototype.playCard = function(cardId, target, position) {
         this.minions.forEach(function(minion) {
             if (minion.events && minion.events.player_play_card) {
                 actions = plr.processActions(minion.events.player_play_card, minion.minionInstanceId, minion.cardId);
+                if (actions === false) {
+                    throw new Error('Error occured while processing minion -> player play card events!');
+                }
+                actions.forEach((x) => x());
+            }
+        });
+        opp.minions.forEach(function(minion) {
+            if (minion.events && minion.events.opponent_play_card) {
+                actions = opp.processActions(minion.events.opponent_play_card, minion.minionInstanceId, minion.cardId);
                 if (actions === false) {
                     throw new Error('Error occured while processing minion -> player play card events!');
                 }

@@ -212,13 +212,26 @@ describe('Game', function() {
 
     describe('minion events', function() {
         var saved;
+        var cardSaved;
 
         beforeEach(function() {
+            cardSaved = constants.cards;
+            constants.cards = {
+                '0': {
+                    id: 0,
+                    mana: 0,
+                    name: 'Dummy Card',
+                    description: 'This is a dummy card.',
+                    type: 'spell',
+                    actions: []
+                }
+            };
             saved = deepcopy(constants.minions[0]);
         });
 
         afterEach(function() {
             constants.minions[0] = saved;
+            constants.cards = cardSaved;
         });
 
         it('death triggers', function() {
@@ -347,6 +360,39 @@ describe('Game', function() {
 
             player1.spawnMinion(0);
             player1.spawnMinion(1);
+
+            assert.ok(spy.called);
+        });
+
+        it('player_play_card triggers', function() {
+            constants.minions[0].events = {
+                player_play_card: [['draw', 1]]
+            };
+
+            var plr = game.getPlayerById(game.turn);
+            var spy = sinon.spy(plr, 'drawCard');
+
+            plr.spawnMinion(0);
+
+            plr.hand = [0];
+            plr.playCard(0);
+
+            assert.ok(spy.called);
+        });
+
+        it('opponent_play_card triggers', function() {
+            constants.minions[0].events = {
+                opponent_play_card: [['draw', 1]]
+            };
+
+            var plr = game.getPlayerById(game.turn);
+            var opp = game.getOpponent(plr);
+            var spy = sinon.spy(opp, 'drawCard');
+
+            opp.spawnMinion(0);
+
+            plr.hand = [0];
+            plr.playCard(0);
 
             assert.ok(spy.called);
         });
