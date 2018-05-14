@@ -36,11 +36,11 @@ Game.prototype.init = function() {
     this.p2.deck = this.p2.getDeck();
 
     // move 3 cards from deck to hand
-    this.p1.hand = this.p1.deck.slice(0, 3).map((x) => parseInt(x));
-    this.p2.hand = this.p2.deck.slice(0, 3).map((x) => parseInt(x));
+    this.p1.hand = this.p1.deck.slice(0, constants.player.HAND_SIZE).map((x) => parseInt(x));
+    this.p2.hand = this.p2.deck.slice(0, constants.player.HAND_SIZE).map((x) => parseInt(x));
 
-    this.p1.deck = this.p1.deck.slice(3);
-    this.p2.deck = this.p2.deck.slice(3);
+    this.p1.deck = this.p1.deck.slice(constants.player.HAND_SIZE);
+    this.p2.deck = this.p2.deck.slice(constants.player.HAND_SIZE);
 
     this.turn = -1;
 
