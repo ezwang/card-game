@@ -137,7 +137,8 @@ var constants = {
             type: 'minion',
             name: 'The Field Mouse',
             description: 'Spawns more allies on death.',
-            spawn: [9]
+            spawn: [9],
+            image: 'mouse.png'
         },
         '14': {
             mana: 0,
