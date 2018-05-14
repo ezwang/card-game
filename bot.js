@@ -156,7 +156,19 @@ Bot.prototype.playMove = function() {
         var target = targetInfo.target;
         var targetObject = targetInfo.targetObject;
 
-        bot.minions.sort((x, y) => y.health - x.health).every(function(minion) {
+        bot.minions.sort(function(x, y) {
+            // have shielded minions attack first
+            var xShield = x.hasAttribute('shield');
+            var yShield = y.hasAttribute('shield');
+            if (xShield && !yShield) {
+                return -1;
+            }
+            if (yShield && !xShield) {
+                return 1;
+            }
+            // highest health minions should then attack
+            return y.health - x.health;
+        }).every(function(minion) {
             if (minion.hasAttack) {
                 if (targetObject) {
                     if (minion.health <= targetObject.attack) {
