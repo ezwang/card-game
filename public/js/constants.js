@@ -14,6 +14,7 @@ var constants = {
         BOT_DELAY: 1000,
         TURN_TIME: 120,
         MESSAGE_FADE_SPEED: 3000,
+        PING_TIME: 30000,
         TIPS: ["Can't find an opponent? Open a new tab and play against yourself!", "New to the game? Play against the tutorial bot!"],
         INTRO: [
             "Hi! I'm tutorial bot!",

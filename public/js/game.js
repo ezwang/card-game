@@ -763,6 +763,7 @@ var game = {
 
         game.setGameState('empty');
         setInterval(game.doTurnTimer, 1000);
+        setInterval(game.sendPing, constants.game.PING_TIME / 2);
     },
     doTurnTimer: function() {
         if (game.turnTimer) {
@@ -814,8 +815,17 @@ var game = {
             game.ws = null;
         };
     },
-    sendPacket(type, data) {
+    sendPing: function() {
+        if (game.ws && game.ws.readyState == 1 && game.lastPacket) {
+            var now = new Date();
+            if (now.getTime() - game.lastPacket.getTime() >= constants.game.PING_TIME) {
+                game.sendPacket("ping");
+            }
+        }
+    },
+    sendPacket: function(type, data) {
         if (game.ws && game.ws.readyState == 1) {
+            game.lastPacket = new Date();
             game.ws.send(JSON.stringify({
                 type: type,
                 data: data
@@ -1277,6 +1287,7 @@ var game = {
         return minion;
     },
     receivePacket: function(rawData) {
+        game.lastPacket = new Date();
         var data = JSON.parse(rawData.data);
         switch (data.type) {
             case 'gameState':

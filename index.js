@@ -59,6 +59,8 @@ wss.on('connection', function(ws) {
             case 'loadCards':
                 player.sendPacket("loadCards", player.getCards().sort((x, y) => constants.cards[x].mana - constants.cards[y].mana));
                 break;
+            case 'ping':
+                break;
             default:
                 console.log(`Unknown Packet: ${JSON.stringify(data)}`);
                 break;
