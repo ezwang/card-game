@@ -88,6 +88,10 @@ Bot.prototype.playMove = function() {
         if (!bot.game) {
             return;
         }
+        // game almost ended, stop processing
+        if (bot.health <= 0 || opp.health <= 0) {
+            return;
+        }
         var noActions = true;
         // try playing spell cards
         bot.hand.every(function(cardId) {
