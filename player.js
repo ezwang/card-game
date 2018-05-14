@@ -645,6 +645,9 @@ Player.prototype.playCard = function(cardId, target, position) {
                 console.warn('Unknown card type: ' + cardInfo.type);
                 break;
         }
+        if (!this.game) {
+            return false;
+        }
         this.hand.splice(cardIndex, 1);
         actions.forEach((x) => x());
         this.mana -= cardInfo.mana;
