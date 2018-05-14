@@ -356,7 +356,8 @@ var constants = {
             name: 'Lumpify',
             description: 'Replace a minion with a 0/1 lump with taunt.',
             target: true,
-            actions: [['replace', 26]]
+            actions: [['replace', 26]],
+            image: 'lump.png'
         },
         '42': {
             mana: 6,
