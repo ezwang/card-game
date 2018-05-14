@@ -7,6 +7,7 @@ function Game(player1, player2) {
 
     this.p1 = player1;
     this.p2 = player2;
+    this.ended = false;
 }
 
 Game.prototype.sendPacket = function(type, data) {
@@ -119,6 +120,7 @@ Game.prototype.end = function(winner) {
         winner: winner.id
     });
     clearInterval(this.timerInterval);
+    this.ended = true;
     this.p1.cleanup();
     this.p2.cleanup();
     this.p1.game = null;
@@ -160,6 +162,9 @@ Game.prototype.setTurnTimer = function(time) {
 };
 
 Game.prototype.switchTurns = function(playerId) {
+    if (this.ended) {
+        return false;
+    }
     if (typeof playerId === 'undefined') {
         throw new Error('Must specify the current player id!');
     }

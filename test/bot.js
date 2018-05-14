@@ -25,7 +25,7 @@ describe('Bot', function() {
     });
 
     it('plays 10 turns', function(done) {
-        this.timeout(10 * 1000);
+        this.timeout(5 * 1000);
 
         var originalSwitchTurns = game.switchTurns.bind(game);
         var stub = sinon.stub(Game.prototype, 'switchTurns').callsFake(function(playerId) {
@@ -42,8 +42,27 @@ describe('Bot', function() {
         game.init();
     });
 
+    it('handles sudden interrupts', function(done) {
+        this.timeout(5 * 1000);
+
+        var originalSwitchTurns = game.switchTurns.bind(game);
+        var stub = sinon.stub(Game.prototype, 'switchTurns').callsFake(function(playerId) {
+            if (game.turnCounter >= 10) {
+                stub.restore();
+                game.end(bot1.id);
+                assert.ok(!game.switchTurns(playerId));
+                done();
+            }
+            else {
+                originalSwitchTurns(playerId);
+            }
+        });
+
+        game.init();
+    });
+
     it('plays against self correctly', function(done) {
-        this.timeout(10 * 1000);
+        this.timeout(5 * 1000);
 
         var stub = sinon.stub(Game.prototype, 'end').callsFake(function() {
             assert.ok(game.turnCounter >= 3, game.turnCounter);
