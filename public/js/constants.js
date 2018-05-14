@@ -123,7 +123,8 @@ var constants = {
             type: 'minion',
             name: 'The Bunny',
             description: 'Good for quick attacks.',
-            spawn: [7]
+            spawn: [7],
+            image: 'bunny.png'
         },
         '12': {
             mana: 3,
