@@ -185,7 +185,8 @@ var constants = {
             name: 'Ninja',
             description: 'Do 2 damage to the opponent.',
             actions: [['damage_opponent', 2]],
-            spawn: [11]
+            spawn: [11],
+            image: 'ninja.png'
         },
         '19': {
             mana: 1,
