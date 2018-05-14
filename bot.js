@@ -185,6 +185,19 @@ Bot.prototype.cleanup = function() {
     }
 };
 
+Bot.prototype.doIntroduction = function() {
+    const bot = this;
+    var i = 0;
+    bot.timeoutIds = [];
+    constants.game.INTRO.forEach(function(msg) {
+        var timeoutId = setTimeout(function() {
+            bot.sendMessage(msg);
+        }, (constants.game.MESSAGE_FADE_SPEED + 500) * i);
+        bot.timeoutIds.push(timeoutId);
+        i++;
+    });
+};
+
 Bot.prototype.sendPacket = function(msg, data) {
     switch(msg) {
         case 'gameInit':
@@ -217,19 +230,10 @@ Bot.prototype.sendPacket = function(msg, data) {
                 break;
             }
             // first time tutorial text
-            const bot = this;
-            const opp = bot.game.getOpponent(bot);
+            const opp = this.game.getOpponent(this);
             if (data.turn == opp.id) {
                 if (!this.firstTurn) {
-                    var i = 0;
-                    bot.timeoutIds = [];
-                    constants.game.INTRO.forEach(function(msg) {
-                        var timeoutId = setTimeout(function() {
-                            bot.sendMessage(msg);
-                        }, (constants.game.MESSAGE_FADE_SPEED + 500) * i);
-                        bot.timeoutIds.push(timeoutId);
-                        i++;
-                    });
+                    this.doIntroduction();
                     this.firstTurn = true;
                 }
             }
