@@ -307,7 +307,8 @@ var constants = {
             description: 'Deal one damage.',
             target: true,
             spawn: [23],
-            actions: [['damage', 1]]
+            actions: [['damage', 1]],
+            image: 'archer.png'
         },
         '36': {
             mana: 2,
