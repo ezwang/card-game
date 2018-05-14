@@ -325,7 +325,8 @@ var constants = {
             type: 'spell',
             name: 'Mind Read',
             description: "Copy 2 cards from opponent's hand.",
-            actions: [['card_copy', 2]]
+            actions: [['card_copy', 2]],
+            image: 'mind_read.png'
         },
         '37': {
             mana: 2,
