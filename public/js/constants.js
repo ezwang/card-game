@@ -15,6 +15,7 @@ var constants = {
         LAST_CARD_DELAY: 2000,
         BOT_DELAY: 1000,
         TURN_TIME: 120,
+        TURN_TIME_CHECK: 10000,
         MESSAGE_FADE_SPEED: 3000,
         PING_TIME: 30000,
         TIPS: ["Can't find an opponent? Open a new tab and play against yourself!", "New to the game? Play against the tutorial bot!"],

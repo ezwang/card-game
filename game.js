@@ -158,7 +158,7 @@ Game.prototype.setTurnTimer = function(time) {
         clearInterval(this.timerInterval);
     }
     const game = this;
-    this.timerInterval = setInterval(function() { game.doTimer(); }, 10000);
+    this.timerInterval = setInterval(function() { game.doTimer(); }, constants.game.TURN_TIME_CHECK);
 };
 
 Game.prototype.switchTurns = function(playerId) {
