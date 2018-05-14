@@ -478,8 +478,18 @@ var game = {
         playerPortrait.x = game.getScreenWidth() / 2 - 50;
         playerPortrait.y = game.getScreenHeight() - 25 - playerPortrait.height - 100;
         playerPortrait.interactive = true;
+        playerPortrait.buttonMode = true;
         playerPortrait.attackData = "player";
         game.playerPortrait = playerPortrait;
+
+        var playerLabel = new PIXI.Text('You', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 18
+        }));
+        playerLabel.anchor.set(0.5);
+        playerLabel.x = playerPortrait.width / 2;
+        playerLabel.y = 50;
+        game.playerPortrait.addChild(playerLabel);
 
         var opponentPortrait = new PIXI.Graphics();
         opponentPortrait.beginFill(0xffff00);
@@ -487,8 +497,18 @@ var game = {
         opponentPortrait.x = game.getScreenWidth() / 2 - 50;
         opponentPortrait.y = 25;
         opponentPortrait.interactive = true;
+        opponentPortrait.buttonMode = true;
         opponentPortrait.attackData = "opponent";
         game.opponentPortrait = opponentPortrait;
+
+        var opponentLabel = new PIXI.Text('Opponent', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 18
+        }));
+        opponentLabel.anchor.set(0.5);
+        opponentLabel.x = opponentPortrait.width / 2;
+        opponentLabel.y = 50;
+        game.opponentPortrait.addChild(opponentLabel);
 
         playerPortrait.on('mouseup', function() {
             if (game.selectedMinion) {
