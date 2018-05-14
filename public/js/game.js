@@ -1472,7 +1472,7 @@ var game = {
                 setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
                 break;
             case 'gameEnd':
-                game.statusText.endText.text = data.data.winner == game.playerId ? 'Winner!' : 'Loser!';
+                game.statusText.endText.text = data.data.winner == game.playerId ? 'Victory!' : 'Defeat!';
                 game.endContainer.visible = true;
                 break;
             case 'discardCard':
