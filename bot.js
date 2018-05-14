@@ -53,7 +53,8 @@ Bot.getTarget = function(game, bot, opp) {
     }
     return {
         target: target,
-        targetObject: targetObject
+        targetObject: targetObject,
+        hasTaunt: hasTaunt
     };
 };
 
@@ -149,10 +150,26 @@ Bot.prototype.playMove = function() {
             if (minion.hasAttack) {
                 if (targetObject) {
                     if (minion.health <= targetObject.attack) {
-                        if (!targetObject.hasAttribute('taunt') && !targetObject.hasAttribute('special')) {
-                            if (minion.health >= targetObject.health && minion.attack >= targetObject.attack) {
+                        if (minion.attack < targetObject.health / 4) {
+                            // don't attack if attack won't do much
+                            if (!targetInfo.hasTaunt) {
                                 target = 'opponent';
                                 targetObject = null;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                        else if (!targetObject.hasAttribute('taunt') && !targetObject.hasAttribute('special')) {
+                            if (minion.health >= targetObject.health && minion.attack >= targetObject.attack) {
+                                // don't attack if this minion is better than the opponent's minion
+                                if (!targetInfo.hasTaunt) {
+                                    target = 'opponent';
+                                    targetObject = null;
+                                }
+                                else {
+                                    return true;
+                                }
                             }
                         }
                     }
