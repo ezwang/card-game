@@ -86,6 +86,9 @@ Player.prototype.drawCard = function() {
 };
 
 Player.prototype.addCard = function(newCard) {
+    if (!this.game) {
+        return false;
+    }
     if (this.hand.length < constants.player.MAX_CARDS) {
         this.hand.push(parseInt(newCard));
         this.sendPacket("addCard", { player: this.id, card: newCard, cardsLeft: this.deck.length });
@@ -94,6 +97,7 @@ Player.prototype.addCard = function(newCard) {
     else {
         this.sendPacket("discardCard", { playerId: this.id, cardId: newCard });
     }
+    return true;
 };
 
 Player.prototype.doMulligan = function(redos) {
