@@ -298,7 +298,8 @@ var constants = {
             type: 'spell',
             name: 'Earthquake',
             description: 'Do 2 damage to all enemies.',
-            actions: [['all_damage_opponent', 2]]
+            actions: [['all_damage_opponent', 2]],
+            image: 'earthquake.png'
         },
         '35': {
             mana: 1,
