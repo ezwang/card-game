@@ -1008,6 +1008,9 @@ var game = {
         }
     },
     checkCanMove: function() {
+        if (game.ended) {
+            return;
+        }
         if (game.turn == game.playerId) {
             if (game.playerHand.filter((x) => x.mana <= game.playerMana).length > 0) {
                 return true;
@@ -1315,6 +1318,7 @@ var game = {
                 game.cardDisplayMax = 0;
                 game.msgIncr = 0;
                 game.msgIncrMax = 0;
+                game.ended = false;
                 game.updateInfo("turn_timer", data.data.turnTimer);
                 game.updateInfo("player_turn", game.turn);
                 game.updateInfo("player_names", [data.data.player.name, data.data.opponent.name]);
@@ -1483,6 +1487,7 @@ var game = {
                 setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
                 break;
             case 'gameEnd':
+                game.ended = true;
                 game.statusText.endText.text = data.data.winner == game.playerId ? 'Victory!' : 'Defeat!';
                 game.endContainer.visible = true;
                 break;
