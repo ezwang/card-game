@@ -67,7 +67,7 @@ Player.prototype.disconnect = function(errorMessage) {
 Player.prototype.getDeck = function() {
     var cardIds = this.getCards();
     Array.prototype.push.apply(cardIds, cardIds);
-    return cardIds.sort(() => 0.5 - Math.random()).slice(0, 30);
+    return cardIds.sort(() => 0.5 - Math.random()).slice(0, constants.player.DECK_SIZE);
 };
 
 Player.prototype.getCards = function() {

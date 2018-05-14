@@ -61,6 +61,29 @@ describe('Bot', function() {
         game.init();
     });
 
+    it('plays against self correctly (first 30 cards)', function(done) {
+        this.timeout(5 * 1000);
+
+        var cardStub = sinon.stub(Bot.prototype, 'getDeck').callsFake(function() {
+            var deck = [];
+            for (var i = 0; i < constants.player.DECK_SIZE; i++) {
+                deck.push(i);
+            }
+            return deck;
+        });
+
+        var stub = sinon.stub(Game.prototype, 'end').callsFake(function() {
+            assert.ok(game.turnCounter >= 3, game.turnCounter);
+            assert.ok(bot1.health <= 0 || bot2.health <= 0, `Bot1 Health: ${bot1.health}, Bot2 Health: ${bot2.health}`);
+            stub.restore();
+            cardStub.restore();
+            game.end(bot1.id);
+            done();
+        });
+
+        game.init();
+    });
+
     it('plays against self correctly', function(done) {
         this.timeout(5 * 1000);
 
