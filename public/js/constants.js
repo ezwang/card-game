@@ -226,7 +226,8 @@ var constants = {
             type: 'spell',
             name: 'Soul Sacrifice',
             description: 'Lose two health, gain two cards.',
-            actions: [['damage_player', 2], ['draw', 2]]
+            actions: [['damage_player', 2], ['draw', 2]],
+            image: 'soul_sacrifice.png'
         },
         '25': {
             mana: 4,
