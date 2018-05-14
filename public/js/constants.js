@@ -351,7 +351,8 @@ var constants = {
             name: 'Destruction',
             description: 'Destroy a minion.',
             target: true,
-            actions: [['destroy']]
+            actions: [['destroy']],
+            image: 'destruction.png'
         },
         '41': {
             mana: 3,
