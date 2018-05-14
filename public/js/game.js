@@ -326,20 +326,20 @@ var game = {
         });
 
         var playerCards = new PIXI.Container();
-        playerCards.x = 5;
+        playerCards.x = game.getScreenWidth() / 2 - 450;
         playerCards.y = game.getScreenHeight() - 130;
         game.playerCardContainer = playerCards;
         gameContainer.addChild(playerCards);
 
         var opponentCards = new PIXI.Container();
-        opponentCards.x = 500;
+        opponentCards.x = game.getScreenWidth() - 300;
         game.opponentCardsContainer = opponentCards;
         gameContainer.addChild(opponentCards);
 
         var playerMinions = new PIXI.Container();
         var minionBg = new PIXI.Graphics();
         minionBg.beginFill(0xcccccc);
-        minionBg.drawRect(0, 0, 790, 100);
+        minionBg.drawRect(0, 0, game.getScreenWidth() - 10, 100);
         playerMinions.addChild(minionBg);
         playerMinions.x = 5;
         playerMinions.y = 250;
@@ -363,7 +363,7 @@ var game = {
         var opponentMinions = new PIXI.Container();
         minionBg = new PIXI.Graphics();
         minionBg.beginFill(0xdddddd);
-        minionBg.drawRect(0, 0, 790, 100);
+        minionBg.drawRect(0, 0, game.getScreenWidth() - 10, 100);
         opponentMinions.addChild(minionBg);
         opponentMinions.x = 5;
         opponentMinions.y = 150;
