@@ -342,7 +342,7 @@ var game = {
         minionBg.drawRect(0, 0, game.getScreenWidth() - 10, 100);
         playerMinions.addChild(minionBg);
         playerMinions.x = 5;
-        playerMinions.y = 250;
+        playerMinions.y = game.getScreenHeight() / 2 - 50;
         game.playerMinionContainer = playerMinions;
         game.playerMinionContainer.interactive = true;
         game.playerMinionContainer.on('mouseup', function(e) {
@@ -366,7 +366,7 @@ var game = {
         minionBg.drawRect(0, 0, game.getScreenWidth() - 10, 100);
         opponentMinions.addChild(minionBg);
         opponentMinions.x = 5;
-        opponentMinions.y = 150;
+        opponentMinions.y = game.getScreenHeight() / 2 - 150;
         game.opponentMinionContainer = opponentMinions;
         gameContainer.addChild(opponentMinions);
 
@@ -866,7 +866,7 @@ var game = {
             wordWrapWidth: 300
         }));
         msgText.x = 5;
-        msgText.y = 350 + 20 * game.msgIncrMax;
+        msgText.y = game.getScreenHeight() / 2 + 50 + 20 * game.msgIncrMax;
         game.msgIncr++;
         game.msgIncrMax += Math.floor(msgText.height / 18);
         game.gameContainer.addChild(msgText);
