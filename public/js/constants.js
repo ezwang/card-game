@@ -115,7 +115,8 @@ var constants = {
             type: 'minion',
             name: 'Red Panda',
             description: 'Very tanky unit.',
-            spawn: [6]
+            spawn: [6],
+            image: 'red_panda.png'
         },
         '11': {
             mana: 3,
