@@ -66,7 +66,8 @@ var constants = {
             type: 'spell',
             name: 'Card Search',
             description: 'Draw two cards.',
-            actions: [['draw', 2]]
+            actions: [['draw', 2]],
+            image: 'card_search.png'
         },
         '4': {
             mana: 2,
