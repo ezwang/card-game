@@ -229,7 +229,8 @@ var constants = {
             type: 'minion',
             name: 'Fallen Swordsman',
             description: 'Any time a minion takes damage, this unit gains one attack.',
-            spawn: [13]
+            spawn: [13],
+            image: 'swordsman.png'
         },
         '24': {
             mana: 1,
