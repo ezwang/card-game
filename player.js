@@ -51,14 +51,13 @@ Player.prototype.disconnect = function(errorMessage) {
     if (errorMessage) {
         this.sendPacket('error', errorMessage);
     }
-    var i = queued.indexOf(this.id);
-    if (i > -1) {
-        queued.splice(i, 1);
-    }
+    this.removeFromQueue();
     if (this.game) {
         this.game.end(this.game.getOpponent(this));
     }
-    this.ws.close();
+    if (this.ws) {
+        this.ws.close();
+    }
 };
 
 /*

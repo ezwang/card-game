@@ -708,5 +708,12 @@ describe('Game', function() {
             player1.removeFromQueue();
             assert.ok(!player1.isInQueue());
         });
+
+        it('#disconnect() removes player from queue', function() {
+            game.end(player1.id);
+            player1.addToQueue();
+            player1.disconnect();
+            assert.ok(!player1.isInQueue());
+        });
     });
 });
