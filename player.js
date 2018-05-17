@@ -52,8 +52,9 @@ Player.prototype.disconnect = function(errorMessage) {
         this.sendPacket('error', errorMessage);
     }
     this.removeFromQueue();
-    if (this.game) {
-        this.game.end(this.game.getOpponent(this));
+    const game = this.game;
+    if (game) {
+        game.end(game.getOpponent(this));
     }
     if (this.ws) {
         this.ws.close();
@@ -85,13 +86,14 @@ Player.prototype.drawCard = function() {
 };
 
 Player.prototype.addCard = function(newCard) {
-    if (!this.game) {
+    const game = this.game;
+    if (!game) {
         return false;
     }
     if (this.hand.length < constants.player.MAX_CARDS) {
         this.hand.push(parseInt(newCard));
         this.sendPacket("addCard", { player: this.id, card: newCard, cardsLeft: this.deck.length });
-        this.game.getOpponent(this).sendPacket("addCard", { player: this.id, cardsLeft: this.deck.length });
+        game.getOpponent(this).sendPacket("addCard", { player: this.id, cardsLeft: this.deck.length });
     }
     else {
         this.sendPacket("discardCard", { playerId: this.id, cardId: newCard });
@@ -316,10 +318,11 @@ Player.prototype.damage = function(amount, source) {
     if (this.health > constants.player.MAX_HEALTH) {
         this.health = constants.player.MAX_HEALTH;
     }
-    if (this.game) {
-        this.game.sendPacket("updatePlayer", { playerId: this.id, health: this.health, attackFrom: source });
+    const game = this.game;
+    if (game) {
+        game.sendPacket("updatePlayer", { playerId: this.id, health: this.health, attackFrom: source });
         if (this.health <= 0) {
-            this.game.end(this.game.getOpponent(this));
+            game.end(game.getOpponent(this));
         }
     }
 };
