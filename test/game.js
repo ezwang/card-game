@@ -664,6 +664,12 @@ describe('Game', function() {
                 assert.equal(plr.minions.length, 1);
             });
 
+            it('minions without charge cannot attack', function() {
+                plr.hand = [0];
+                assert.ok(plr.playCard(0));
+                assert.ok(!plr.minions[0].hasAttack);
+            });
+
             it('triggers events', function() {
                 plr.hand = [0];
 
