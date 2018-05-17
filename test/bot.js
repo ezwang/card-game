@@ -28,6 +28,7 @@ describe('Bot', function() {
         bot2 = new Bot();
         game = new Game(bot1, bot2);
 
+        this.timeout(0);
         timeout = setTimeout(() => {
             throw new Error(`Timeout exceeded! bot1 hand: ${bot1.hand}, bot1 deck: ${bot1.deck}, bot2 hand: ${bot2.hand}, bot2 deck: ${bot2.deck}`);
         }, 5 * 1000);
