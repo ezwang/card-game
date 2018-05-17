@@ -336,7 +336,12 @@ Player.prototype.doAttack = function(from, to) {
         return false;
     }
 
-    var hasTaunt = this.game.getOpponent(this).minions.filter((x) => x.hasAttribute('taunt')).length > 0;
+    const game = this.game;
+    if (!game) {
+        return false;
+    }
+
+    var hasTaunt = game.getOpponent(this).minions.filter((x) => x.hasAttribute('taunt')).length > 0;
 
     // check if minion has attack
     if (!fromMinion.hasAttack) {
@@ -369,12 +374,10 @@ Player.prototype.doAttack = function(from, to) {
         }
     }
     fromMinion.hasAttack = false;
-    if (this.game) {
-        this.game.sendPacket("updateMinion", {
-            minionInstanceId: fromMinion.minionInstanceId,
-            hasAttack: fromMinion.hasAttack
-        });
-    }
+    game.sendPacket("updateMinion", {
+        minionInstanceId: fromMinion.minionInstanceId,
+        hasAttack: fromMinion.hasAttack
+    });
 };
 
 Player.prototype.processActions = function(rawActions, target, cardId, position) {
