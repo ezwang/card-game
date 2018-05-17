@@ -127,6 +127,9 @@ Game.prototype.end = function(winner) {
     this.p2.game = null;
 };
 
+/**
+ * Given a player instance, return the opponent instance.
+ */
 Game.prototype.getOpponent = function(player) {
     if (player == this.p1) {
         return this.p2;
@@ -134,6 +137,9 @@ Game.prototype.getOpponent = function(player) {
     return this.p1;
 };
 
+/**
+ * Given a player id, return the player instance associated with the id.
+ */
 Game.prototype.getPlayerById = function(player) {
     if (player == this.p1.id) {
         return this.p1;
@@ -144,6 +150,9 @@ Game.prototype.getPlayerById = function(player) {
     throw new Error(`Could not find player with id: ${player}, valid options are [${this.p1.id}, ${this.p2.id}]!`);
 };
 
+/**
+ * Find a minion instance given a minion instance id.
+ */
 Game.prototype.findMinion = function(minionInstanceId) {
     var minion = this.p1.minions.find((x) => x.minionInstanceId == minionInstanceId);
     if (typeof minion === 'undefined') {
