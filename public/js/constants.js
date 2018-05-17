@@ -45,14 +45,16 @@ var constants = {
             type: 'minion',
             spawn: [0, 0, 0],
             name: 'Tiny Army',
-            description: 'Spawn a few soldiers. Not a very special card.'
+            description: 'Spawn a few soldiers. Not a very special card.',
+            image: 'army.png'
         },
         '1': {
             mana: 5,
             type: 'minion',
             spawn: [0, 0, 0, 0, 0],
             name: 'Medium Army',
-            description: 'Spawn a few more soldiers.'
+            description: 'Spawn a few more soldiers.',
+            image: 'medium_army.png'
         },
         '2': {
             mana: 2,
@@ -114,7 +116,8 @@ var constants = {
             type: 'spell',
             name: 'Explosion',
             description: 'Do 3 damage to everything.',
-            actions: [['all_damage', 3]]
+            actions: [['all_damage', 3]],
+            image: 'explosion.png'
         },
         '10': {
             mana: 6,
@@ -304,7 +307,8 @@ var constants = {
             type: 'minion',
             name: 'Gravedigger',
             description: 'Draw a card when this minion dies.',
-            spawn: [22]
+            spawn: [22],
+            image: 'gravedigger.png'
         },
         '34': {
             mana: 5,
