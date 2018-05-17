@@ -15,6 +15,7 @@ var constants = {
         LAST_CARD_DELAY: 2000,
         BOT_DELAY: 1000,
         TURN_TIME: 120,
+        MULLIGAN_TIME: 60,
         TURN_TIME_CHECK: 10000,
         MESSAGE_FADE_SPEED: 3000,
         PING_TIME: 30000,

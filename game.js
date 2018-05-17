@@ -56,7 +56,7 @@ Game.prototype.init = function() {
         health: this.p2.health,
         mana: this.p2.mana
     };
-    this.setTurnTimer(constants.game.TURN_TIME);
+    this.setTurnTimer(constants.game.MULLIGAN_TIME);
     this.p1.sendPacket('gameInit', {
         player: p1info,
         opponent: p2info,
