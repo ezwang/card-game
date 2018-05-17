@@ -77,7 +77,6 @@ Game.prototype.init = function() {
         turn: this.turn,
         turnTimer: this.turnTimer
     });
-    const game = this;
 };
 
 Game.prototype.initTurn = function() {
