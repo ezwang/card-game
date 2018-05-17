@@ -94,7 +94,8 @@ var constants = {
             name: 'Nuke',
             description: 'Do 10 damage to some target.',
             actions: [['damage', 10]],
-            target: true
+            target: true,
+            image: 'nuke.png'
         },
         '7': {
             mana: 4,
@@ -256,7 +257,8 @@ var constants = {
             type: 'minion',
             name: 'Annoy-o-matic',
             description: 'Has taunt and shield.',
-            spawn: [15]
+            spawn: [15],
+            image: 'annoy.png'
         },
         '27': {
             mana: 8,
@@ -277,7 +279,8 @@ var constants = {
             type: 'minion',
             name: 'Shredder',
             description: 'When damaged, discard a card from your hand.',
-            spawn: [20]
+            spawn: [20],
+            image: 'shredder.png'
         },
         '30': {
             mana: 1,
@@ -300,7 +303,8 @@ var constants = {
             type: 'minion',
             name: 'Knife Thrower',
             description: 'Deal 1 damage to a random enemy when a minion is spawned.',
-            spawn: [21]
+            spawn: [21],
+            image: 'knife_thrower.png'
         },
         '33': {
             mana: 2,
@@ -341,7 +345,8 @@ var constants = {
             type: 'spell',
             name: 'Life Drain',
             description: "Steal 2 health from the opponent.",
-            actions: [['damage_opponent', 2], ['damage_player', -2]]
+            actions: [['damage_opponent', 2], ['damage_player', -2]],
+            image: 'life_drain.png'
         },
         '38': {
             mana: 10,
@@ -349,7 +354,8 @@ var constants = {
             name: 'Big Boss',
             description: 'Throw away all cards in hand.',
             spawn: [24],
-            actions: [['discard', 10]]
+            actions: [['discard', 10]],
+            image: 'big_boss.png'
         },
         '39': {
             mana: 4,
