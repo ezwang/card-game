@@ -1,5 +1,6 @@
 var assert = require('assert');
 var constants = require('../public/js/constants.js');
+var fs = require('fs');
 
 describe('Constants', function() {
     function assertValidActions(actions) {
@@ -19,6 +20,11 @@ describe('Constants', function() {
                 assert.equal(typeof card.mana, 'number');
                 assert.ok(card.mana >= 0);
                 assert.equal(card.id, cardId);
+
+                // make sure image exists if set
+                if (typeof card.image !== 'undefined') {
+                    assert.ok(fs.existsSync('./public/img/cards/' + card.image), card.image);
+                }
             });
         });
         it('should have valid minion ids', function() {
