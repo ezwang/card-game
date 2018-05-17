@@ -142,7 +142,8 @@ var constants = {
             type: 'minion',
             name: 'The Wombat',
             description: 'Good as a temporary shield.',
-            spawn: [8]
+            spawn: [8],
+            image: 'wombat.png'
         },
         '13': {
             mana: 3,
