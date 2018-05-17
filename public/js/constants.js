@@ -75,11 +75,11 @@ var constants = {
         '4': {
             mana: 2,
             type: 'spell',
-            name: 'Fireball',
-            description: 'Do one damage to some target.',
-            actions: [['damage', 1]],
+            name: 'Fireburst',
+            description: 'Do two damage to some target.',
+            actions: [['damage', 2]],
             target: true,
-            image: 'fireball_weak.png'
+            image: 'fireburst.png'
         },
         '5': {
             mana: 2,
@@ -162,8 +162,8 @@ var constants = {
         '15': {
             mana: 6,
             type: 'spell',
-            name: 'Stronger Fireball',
-            description: 'Do four damage to some target.',
+            name: 'Fireball',
+            description: 'Do 4 damage to some target.',
             actions: [['damage', 4]],
             target: true,
             image: 'fireball.png'
