@@ -156,14 +156,29 @@ Bot.prototype.playMove = function() {
             setTimeout(processActionQueue, constants.game.BOT_DELAY);
             return;
         }
+
+        // get target to attack
+        var targetInfo = Bot.getTarget(bot.game, bot, opp);
+        var target = targetInfo.target;
+        var targetObject = targetInfo.targetObject;
+
         // try playing minion cards
         bot.hand.every(function(cardId) {
             var card = constants.cards[cardId];
             if (card.mana <= bot.mana && bot.minions.length < constants.player.MAX_MINIONS) {
-                if (card.type == 'minion' && !card.target) {
-                    noActions = false;
-                    bot.playCard(card.id);
-                    return false;
+                if (card.type == 'minion') {
+                    if (!card.target) {
+                        noActions = false;
+                        bot.playCard(card.id);
+                        return false;
+                    }
+                    else {
+                        if (hasAction(card, 'damage')) {
+                            noActions = false;
+                            bot.playCard(card.id, target);
+                            return false;
+                        }
+                    }
                 }
             }
             return true;
@@ -173,10 +188,6 @@ Bot.prototype.playMove = function() {
             return;
         }
         // do minion attacks
-        var targetInfo = Bot.getTarget(bot.game, bot, opp);
-        var target = targetInfo.target;
-        var targetObject = targetInfo.targetObject;
-
         bot.minions.sort(function(x, y) {
             // have shielded minions attack first
             var xShield = x.hasAttribute('shield');
