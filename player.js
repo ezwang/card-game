@@ -219,6 +219,10 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
     };
 
     copy.setHealth = function(amount, fromAttack) {
+        // if game ended, don't do anything
+        if (!plr.game || plr.game.ended) {
+            return;
+        }
         // if already dead, don't do further processing
         if (this._health <= 0) {
             return;
