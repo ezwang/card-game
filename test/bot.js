@@ -7,6 +7,7 @@ var Bot = require('../bot.js');
 
 describe('Bot', function() {
     var oldBotDelay;
+    var timeout;
 
     before(function() {
         oldBotDelay = constants.game.BOT_DELAY;
@@ -26,11 +27,17 @@ describe('Bot', function() {
         bot1 = new Bot();
         bot2 = new Bot();
         game = new Game(bot1, bot2);
+
+        timeout = setTimeout(() => {
+            throw new Error(`Timeout exceeded! bot1 hand: ${bot1.hand}, bot1 deck: ${bot1.deck}, bot2 hand: ${bot2.hand}, bot2 deck: ${bot2.deck}`);
+        }, 5 * 1000);
+    });
+
+    afterEach(function() {
+        clearTimeout(timeout);
     });
 
     it('plays 10 turns', function(done) {
-        this.timeout(5 * 1000);
-
         var originalSwitchTurns = game.switchTurns.bind(game);
         var stub = sinon.stub(Game.prototype, 'switchTurns').callsFake(function(playerId) {
             if (game.turnCounter >= 10) {
@@ -47,8 +54,6 @@ describe('Bot', function() {
     });
 
     it('handles sudden interrupts', function(done) {
-        this.timeout(5 * 1000);
-
         var originalSwitchTurns = game.switchTurns.bind(game);
         var stub = sinon.stub(Game.prototype, 'switchTurns').callsFake(function(playerId) {
             if (game.turnCounter >= 10) {
@@ -66,8 +71,6 @@ describe('Bot', function() {
     });
 
     it('plays against self correctly (first 30 cards)', function(done) {
-        this.timeout(5 * 1000);
-
         var cardStub = sinon.stub(Bot.prototype, 'getDeck').callsFake(function() {
             var deck = [];
             for (var i = 0; i < constants.player.DECK_SIZE; i++) {
@@ -89,13 +92,25 @@ describe('Bot', function() {
     });
 
     it('plays against self correctly', function(done) {
-        this.timeout(5 * 1000);
-
         var stub = sinon.stub(Game.prototype, 'end').callsFake(function() {
             assert.ok(game.turnCounter >= 3, game.turnCounter);
             assert.ok(bot1.health <= 0 || bot2.health <= 0, `Bot1 Health: ${bot1.health}, Bot2 Health: ${bot2.health}`);
             stub.restore();
             game.end(bot1.id);
+            done();
+        });
+
+        game.init();
+    });
+
+    it('handles no cards to play correctly', function(done) {
+        sinon.stub(Bot.prototype, 'getDeck').callsFake(function() {
+            return [];
+        });
+
+        var stub = sinon.stub(Game.prototype, 'end').callsFake(function(gameEnd) {
+            stub.restore();
+            game.end(gameEnd);
             done();
         });
 

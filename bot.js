@@ -304,6 +304,10 @@ Bot.prototype.sendPacket = function(msg, data) {
             if (!this.game) {
                 break;
             }
+            // surrender if no more cards/minions
+            if (this.hand.length <= 0 && this.deck.length <= 0 && this.minions.length <= 0) {
+                this.game.end(this.game.getOpponent(this.id));
+            }
             // first time tutorial text
             const opp = this.game.getOpponent(this);
             if (data.turn == opp.id) {
