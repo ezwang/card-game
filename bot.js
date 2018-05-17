@@ -269,6 +269,10 @@ Bot.prototype.doIntroduction = function() {
     });
 };
 
+Bot.prototype.handleError = function(data) {
+    console.warn(`Bot (error): ${data}`);
+};
+
 Bot.prototype.sendPacket = function(msg, data) {
     switch(msg) {
         case 'gameInit':
@@ -314,8 +318,8 @@ Bot.prototype.sendPacket = function(msg, data) {
             }
             break;
         case 'error':
-              console.warn(`Bot (error): ${data}`);
-              break;
+            this.handleError(data);
+            break;
         default:
             console.warn(`Bot (unhandled): ${msg} -> ${JSON.stringify(data)}`);
     }

@@ -11,10 +11,14 @@ describe('Bot', function() {
     before(function() {
         oldBotDelay = constants.game.BOT_DELAY;
         constants.game.BOT_DELAY = 0;
+        sinon.stub(Bot.prototype, 'handleError').callsFake(function(data) {
+            assert.fail(`Bot encountered error: ${data}`);
+        });
     });
 
     after(function() {
         constants.game.BOT_DELAY = oldBotDelay;
+        Bot.prototype.handleError.restore();
     });
 
     var game, bot1, bot2;
