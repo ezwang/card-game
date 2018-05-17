@@ -1273,6 +1273,11 @@ $(document).ready(function() {
         $("#login button[type=submit]").click();
     }
 
+    // warn mobile browsers
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        $("#login .error").text("Note: A desktop browser is recommended when playing this game. A mobile browser may experience issues.");
+    }
+
     $("body").mousemove(function() {
         var mousePos = game.pixi.renderer.plugins.interaction.mouse.global;
         if (game.targetIndicator) {
