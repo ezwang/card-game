@@ -204,7 +204,17 @@ Bot.prototype.playMove = function() {
             if (minion.hasAttack) {
                 if (targetObject) {
                     if (minion.health <= targetObject.attack) {
-                        if (minion.attack < targetObject.health / 4) {
+                        // don't attack if taunt and player has low health
+                        if (minion.hasAttribute('taunt') && bot.health <= 8) {
+                            if (!targetInfo.hasTaunt) {
+                                target = 'opponent';
+                                targetObject = null;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                        else if (minion.attack < targetObject.health / 4) {
                             // don't attack if attack won't do much
                             if (!targetInfo.hasTaunt) {
                                 target = 'opponent';
@@ -227,10 +237,6 @@ Bot.prototype.playMove = function() {
                             }
                         }
                     }
-                }
-                // don't attack if taunt and player has low health
-                if (minion.hasAttribute('taunt') && bot.health <= 8) {
-                    return true;
                 }
                 bot.doAttack(minion.minionInstanceId, target);
                 noActions = false;
