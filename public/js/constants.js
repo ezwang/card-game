@@ -200,7 +200,8 @@ var constants = {
             name: 'Lesser Demon',
             description: 'Discard a random card.',
             actions: [['discard', 1]],
-            spawn: [12]
+            spawn: [12],
+            image: 'lesser_demon.png'
         },
         '20': {
             mana: 9,
@@ -272,7 +273,8 @@ var constants = {
             type: 'minion',
             name: 'Imp Master',
             description: 'When damaged, summon a 1/1 imp.',
-            spawn: [18]
+            spawn: [18],
+            image: 'imp_master.png'
         },
         '29': {
             mana: 3,
@@ -389,7 +391,8 @@ var constants = {
             description: 'Do 3 damage to some object.',
             target: true,
             spawn: [27],
-            actions: [['damage', 3]]
+            actions: [['damage', 3]],
+            image: 'fire_golem.png'
         },
         '43': {
             mana: 9,
