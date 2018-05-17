@@ -611,7 +611,12 @@ Player.prototype.playCard = function(cardId, target, position) {
             return false;
         }
         if (cardInfo.target && typeof target !== 'number' && typeof target !== 'string') {
-            this.sendError("This card requires a target to be played on!");
+            if (typeof target === 'undefined') {
+                this.sendError("This card requires a target to be played on!");
+            }
+            else {
+                this.sendError("Invalid type passed to playCard function!");
+            }
             return false;
         }
         if (cardIndex <= -1) {

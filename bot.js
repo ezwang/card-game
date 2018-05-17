@@ -144,7 +144,7 @@ Bot.prototype.playMove = function() {
                                         return prev;
                                     }
                                     return curr;
-                                }));
+                                }).minionInstanceId);
                             }
                         }
                     }
