@@ -86,7 +86,8 @@ var constants = {
             type: 'minion',
             name: 'Charger',
             description: 'Gets an early chance to attack.',
-            spawn: [2]
+            spawn: [2],
+            image: 'charge.png'
         },
         '6': {
             mana: 10,
