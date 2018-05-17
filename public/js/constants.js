@@ -12,7 +12,7 @@ var constants = {
         NO_MOVE_DELAY: 500
     },
     game: {
-        LAST_CARD_DELAY: 2000,
+        LAST_CARD_DELAY: 3000,
         BOT_DELAY: 1000,
         TURN_TIME: 120,
         MULLIGAN_TIME: 60,

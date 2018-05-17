@@ -597,7 +597,8 @@ Player.prototype.playCard = function(cardId, target, position) {
     if (typeof position === 'undefined') {
         position = this.minions.length;
     }
-    if (this.game && !this.game.ended) {
+    const game = this.game;
+    if (game && !game.ended) {
         var cardInfo = constants.cards[cardId];
         var cardIndex = this.hand.indexOf(parseInt(cardId));
         if (this.game.turn != this.id) {
@@ -653,13 +654,10 @@ Player.prototype.playCard = function(cardId, target, position) {
                 console.warn('Unknown card type: ' + cardInfo.type);
                 break;
         }
-        if (!this.game) {
-            return false;
-        }
         this.hand.splice(cardIndex, 1);
         actions.forEach((x) => x());
         this.mana -= cardInfo.mana;
-        this.game.sendPacket("playCard", {
+        game.sendPacket("playCard", {
             playerMana: this.mana,
             playerId: this.id,
             cardId: cardId
