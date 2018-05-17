@@ -26,7 +26,11 @@ describe('Constants', function() {
                 var card = constants.cards[cardId];
                 if (card.type == 'minion') {
                     assert.notStrictEqual(card.spawn, undefined);
+                    assert.ok(Array.isArray(card.spawn));
                     card.spawn.forEach((x) => assert.notStrictEqual(constants.minions[x], undefined));
+                }
+                else {
+                    assert.strictEqual(card.spawn, undefined);
                 }
             });
         });
@@ -35,6 +39,7 @@ describe('Constants', function() {
                 var card = constants.cards[cardId];
                 if (card.type == 'spell') {
                     assert.notStrictEqual(card.actions, undefined);
+                    assert.ok(Array.isArray(card.actions));
                     assertValidActions(card.actions);
                 }
             });
@@ -58,6 +63,9 @@ describe('Constants', function() {
                 assert.strictEqual(typeof minion.name, 'string');
                 assert.strictEqual(typeof minion.health, 'number');
                 assert.strictEqual(typeof minion.attack, 'number');
+                if (typeof minion.attributes !== 'undefined') {
+                    assert.ok(Array.isArray(minion.attributes));
+                }
             });
         });
         it('should have valid events', function() {
