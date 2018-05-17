@@ -594,7 +594,7 @@ Player.prototype.playCard = function(cardId, target, position) {
     if (typeof position === 'undefined') {
         position = this.minions.length;
     }
-    if (this.game) {
+    if (this.game && !this.game.ended) {
         var cardInfo = constants.cards[cardId];
         var cardIndex = this.hand.indexOf(parseInt(cardId));
         if (this.game.turn != this.id) {

@@ -85,7 +85,7 @@ Bot.prototype.playMove = function() {
     }
     var processActionQueue = function() {
         // game ended, stop processing
-        if (!bot.game) {
+        if (!bot.game || bot.game.ended) {
             return;
         }
         // game almost ended, stop processing
@@ -118,6 +118,13 @@ Bot.prototype.playMove = function() {
                             noActions = false;
                             return false;
                         }
+                        if (hasAction(card, 'buff_attack_all') || hasAction(card, 'buff_health_all')) {
+                            if (bot.minions.length > 3) {
+                                bot.playCard(card.id);
+                                noActions = false;
+                                return false;
+                            }
+                        }
                     }
                     else {
                         if (hasAction(card, 'heal')) {
@@ -129,6 +136,16 @@ Bot.prototype.playMove = function() {
                         }
                         if (hasAction(card, 'damage')) {
                             bot.playCard(card.id, Bot.getTarget(bot.game, bot, opp).target);
+                        }
+                        if (bot.minions.length > 0) {
+                            if (hasAction(card, 'buff_attack') || hasAction(card, 'buff_health')) {
+                                bot.playCard(card.id, bot.minions.reduce(function(prev, curr) {
+                                    if (prev.health > curr.health) {
+                                        return prev;
+                                    }
+                                    return curr;
+                                }));
+                            }
                         }
                     }
                 }
