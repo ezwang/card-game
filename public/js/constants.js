@@ -253,7 +253,8 @@ var constants = {
             type: 'minion',
             name: 'The Giant',
             description: 'Gains +1 health at the start of every turn.',
-            spawn: [14]
+            spawn: [14],
+            image: 'giant.png'
         },
         '26': {
             mana: 2,
