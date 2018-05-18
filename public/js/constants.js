@@ -301,7 +301,8 @@ var constants = {
             name: 'Powerful Buff',
             description: 'Give a minion +4/+4.',
             target: true,
-            actions: [['buff_health', 4], ['buff_attack', 4]]
+            actions: [['buff_health', 4], ['buff_attack', 4]],
+            image: 'buff.png'
         },
         '32': {
             mana: 2,
