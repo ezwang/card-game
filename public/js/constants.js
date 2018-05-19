@@ -444,7 +444,8 @@ var constants = {
             name: 'Silence',
             description: 'Remove all special effects from a minion.',
             target: true,
-            actions: [['silence']]
+            actions: [['silence']],
+            image: 'silence.png'
         }
     },
     minions: {
