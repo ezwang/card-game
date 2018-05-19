@@ -412,7 +412,8 @@ var constants = {
             type: 'minion',
             name: 'The Magistrate',
             description: 'Whenever you play a card, gain +2 attack.',
-            spawn: [30]
+            spawn: [30],
+            image: 'magistrate.png'
         },
         '45': {
             mana: 4,
