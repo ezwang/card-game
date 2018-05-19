@@ -149,6 +149,11 @@ function createDamageEffect(item, x, y) {
     emitter.playOnceAndDestroy();
 }
 
+function titleize(str) {
+    if (str.length < 1) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function createCard(cardInfo) {
     var card = new PIXI.Container();
     card.id = cardInfo.id;
@@ -183,7 +188,7 @@ function createCard(cardInfo) {
     description.y = 140;
     background.width = 200;
     background.height = 250;
-    var type;
+    var type, subtype;
     if (cardInfo.type == 'minion') {
         type = 'Minion x ' + cardInfo.spawn.length;
     }
@@ -199,6 +204,21 @@ function createCard(cardInfo) {
     type.anchor.set(0.5, 0);
     type.x = 100;
     type.y = 210;
+
+    if (cardInfo.type == 'minion') {
+        subtype = titleize(constants.minions[cardInfo.spawn[0]].type || '');
+        if (subtype.length > 0) {
+            subtype = new PIXI.Text(subtype, new PIXI.TextStyle({
+                fontFamily: 'Pangolin',
+                fontSize: 12,
+                fill: '#666666'
+            }));
+            subtype.anchor.set(0.5, 0);
+            subtype.x = 100;
+            subtype.y = 197;
+        }
+    }
+
     var mana = new PIXI.Text(cardInfo.mana, new PIXI.TextStyle({
             fontFamily: 'Pangolin',
             fontSize: 32,
@@ -224,6 +244,7 @@ function createCard(cardInfo) {
     card.addChild(title);
     card.addChild(mana);
     card.addChild(description);
+    if (subtype) { card.addChild(subtype); }
     card.addChild(type);
     card.interative = true;
     card.buttonMode = true;

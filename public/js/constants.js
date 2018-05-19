@@ -672,7 +672,8 @@ var constants = {
         '32': {
             name: 'Dinosaur',
             health: 2,
-            attack: 3
+            attack: 3,
+            type: 'beast'
         }
     }
 };
