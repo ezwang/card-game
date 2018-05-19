@@ -151,6 +151,10 @@ Player.prototype.doMulligan = function(redos) {
 };
 
 Player.prototype.spawnMinion = function (minionId, cardId, position) {
+    const game = this.game;
+    if (!game || game.ended) {
+        return;
+    }
     var minionInfo = constants.minions[minionId];
     if (this.minions.length >= constants.player.MAX_MINIONS) {
         return false;
@@ -307,8 +311,8 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
         },
         set: copy.setHealth
     });
-    copy.minionInstanceId = this.game.minionIdCounter;
-    this.game.minionIdCounter++;
+    copy.minionInstanceId = game.minionIdCounter;
+    game.minionIdCounter++;
 
     // process minion_spawn event
     function process(minion, plr) {
@@ -324,7 +328,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
     opp.minions.filter((x) => x.events && x.events.minion_spawn).forEach((x) => process(x, opp));
 
     this.minions.splice(position, 0, copy);
-    this.game.sendPacket("addMinion", {
+    game.sendPacket("addMinion", {
         playerId: this.id,
         minionInstanceId: copy.minionInstanceId,
         minionId: minionInfo.id,
@@ -376,7 +380,7 @@ Player.prototype.doAttack = function(from, to) {
 
     if (to == "opponent") {
         if (!hasTaunt) {
-            this.game.getOpponent(this).damage(fromMinion.attack, fromMinion.minionInstanceId);
+            game.getOpponent(this).damage(fromMinion.attack, fromMinion.minionInstanceId);
         }
         else {
             this.sendError("You must attack a minion with taunt!");
@@ -384,7 +388,7 @@ Player.prototype.doAttack = function(from, to) {
         }
     }
     else {
-        var toMinion = this.game.getOpponent(this).minions.find((x) => x.minionInstanceId == to);
+        var toMinion = game.getOpponent(this).minions.find((x) => x.minionInstanceId == to);
         if (toMinion) {
             if (hasTaunt && !toMinion.hasAttribute('taunt')) {
                 this.sendError("You must attack a minion with taunt!");
@@ -671,7 +675,7 @@ Player.prototype.playCard = function(cardId, target, position) {
     if (game && !game.ended) {
         var cardInfo = constants.cards[cardId];
         var cardIndex = this.hand.indexOf(parseInt(cardId));
-        if (this.game.turn != this.id) {
+        if (game.turn != this.id) {
             this.sendError("It is not currently your turn!");
             return false;
         }
@@ -699,7 +703,6 @@ Player.prototype.playCard = function(cardId, target, position) {
             return false;
         }
         const plr = this;
-        const game = this.game;
         const opp = game.getOpponent(plr);
         var actions = plr.processActions(cardInfo.actions, target, cardId, position);
         if (actions === false) {

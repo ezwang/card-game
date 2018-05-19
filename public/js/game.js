@@ -116,6 +116,10 @@ var game = {
         cardsContainer.addChild(cardCollectionTitle);
 
         var backButton = createButton('Back', function() {
+            if (!game.editedDeck) {
+                game.setGameState("lobby");
+                return;
+            }
             if (game.playerDeckList.length != constants.player.DECK_SIZE) {
                 game.showError('Please add more cards to this deck! You need at least ' + constants.player.DECK_SIZE + ' cards.');
             }
@@ -639,6 +643,7 @@ var game = {
                 break;
             case 'cards':
                 game.cardsContainer.visible = true;
+                game.editedDeck = false;
                 game.sendPacket("loadCards");
                 break;
             case 'empty':
@@ -1023,6 +1028,7 @@ var game = {
                     game.showError('Cannot have more duplicates of this card!');
                 }
                 else {
+                    game.editedDeck = true;
                     game.playerDeckList.push(cardId);
                     game.renderCardCollection();
                 }
