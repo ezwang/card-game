@@ -468,6 +468,14 @@ var constants = {
             actions: [['if', (target) => target.isMinion && target.type === 'beast', [['buff_health', 2], ['buff_attack', 2]]]],
             image: 'nature_blessing.png',
             target: true
+        },
+        '51': {
+            mana: 2,
+            type: 'minion',
+            name: 'Bat',
+            description: 'Nothing special.',
+            spawn: [33],
+            image: 'bat.png'
         }
     },
     minions: {
@@ -682,6 +690,12 @@ var constants = {
             name: 'Dinosaur',
             health: 2,
             attack: 3,
+            type: 'beast'
+        },
+        '33': {
+            name: 'Bat',
+            health: 3,
+            attack: 2,
             type: 'beast'
         }
     }
