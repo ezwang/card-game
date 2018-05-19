@@ -686,31 +686,39 @@ Player.prototype.playCard = function(cardId, target, position) {
                 console.warn('Unknown card type: ' + cardInfo.type);
                 break;
         }
+
+        // remove card
         this.hand.splice(cardIndex, 1);
+
+        // process card events
+        this.minions.forEach(function(minion) {
+            if (minion.events && minion.events.player_play_card) {
+                var eventActions = plr.processActions(minion.events.player_play_card, minion.minionInstanceId, minion.cardId);
+                if (eventActions === false) {
+                    throw new Error('Error occured while processing minion -> player play card events!');
+                }
+                eventActions.forEach((x) => actions.push(x));
+            }
+        });
+        opp.minions.forEach(function(minion) {
+            if (minion.events && minion.events.opponent_play_card) {
+                var eventActions = opp.processActions(minion.events.opponent_play_card, minion.minionInstanceId, minion.cardId);
+                if (eventActions === false) {
+                    throw new Error('Error occured while processing opponent minion -> player play card events!');
+                }
+                eventActions.forEach((x) => actions.push(x));
+            }
+        });
+
+        // process card actions
         actions.forEach((x) => x());
+
+        // deduct mana cost
         this.mana -= cardInfo.mana;
         game.sendPacket("playCard", {
             playerMana: this.mana,
             playerId: this.id,
             cardId: cardId
-        });
-        this.minions.forEach(function(minion) {
-            if (minion.events && minion.events.player_play_card) {
-                actions = plr.processActions(minion.events.player_play_card, minion.minionInstanceId, minion.cardId);
-                if (actions === false) {
-                    throw new Error('Error occured while processing minion -> player play card events!');
-                }
-                actions.forEach((x) => x());
-            }
-        });
-        opp.minions.forEach(function(minion) {
-            if (minion.events && minion.events.opponent_play_card) {
-                actions = opp.processActions(minion.events.opponent_play_card, minion.minionInstanceId, minion.cardId);
-                if (actions === false) {
-                    throw new Error('Error occured while processing minion -> player play card events!');
-                }
-                actions.forEach((x) => x());
-            }
         });
         return true;
     }
