@@ -476,6 +476,14 @@ var constants = {
             description: 'Nothing special.',
             spawn: [33],
             image: 'bat.png'
+        },
+        '52': {
+            mana: 3,
+            type: 'spell',
+            name: 'Wolf Army',
+            description: 'For each opponent minion, summon a 1/1 wolf with charge.',
+            actions: [['spawn_matching_opponent', 34]],
+            image: 'wolf_army.png'
         }
     },
     minions: {
@@ -696,6 +704,13 @@ var constants = {
             name: 'Bat',
             health: 3,
             attack: 2,
+            type: 'beast'
+        },
+        '34': {
+            name: 'Wolf',
+            health: 1,
+            attack: 1,
+            attributes: ['charge'],
             type: 'beast'
         }
     }

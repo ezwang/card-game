@@ -604,6 +604,12 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                             });
                         });
                         break;
+                    case 'spawn_matching_opponent':
+                        actions.push(function() {
+                            for (var i = 0; i < opp.minions.length; i++) {
+                                plr.spawnMinion(action[1], cardId, position);
+                            }
+                        });
                     case 'card_copy':
                         actions.push(function() {
                             var toSteal = Math.min(action[1], opp.hand.length);
