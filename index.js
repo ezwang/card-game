@@ -63,7 +63,7 @@ wss.on('connection', function(ws) {
                 });
                 break;
             case 'saveCards':
-                var deck = data.data;
+                var deck = data.data.deck;
                 var cardCount = {};
                 deck.forEach((x) => cardCount[x] = (cardCount[x] || 0) + 1);
                 if (deck.length != constants.player.DECK_SIZE) {
