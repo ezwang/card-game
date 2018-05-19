@@ -150,7 +150,7 @@ var constants = {
             mana: 3,
             type: 'minion',
             name: 'The Field Mouse',
-            description: 'Spawns more allies on death.',
+            description: 'Spawns two 1/1 allies on death.',
             spawn: [9],
             image: 'mouse.png'
         },
@@ -201,7 +201,7 @@ var constants = {
             mana: 1,
             type: 'minion',
             name: 'Lesser Demon',
-            description: 'Discard a random card.',
+            description: 'Battlecry: Discard a random card.',
             actions: [['discard', 1]],
             spawn: [12],
             image: 'lesser_demon.png'
@@ -277,7 +277,7 @@ var constants = {
             mana: 3,
             type: 'minion',
             name: 'Imp Master',
-            description: 'When damaged, summon a 1/1 imp.',
+            description: 'When this minion is damaged, summon a 1/1 imp.',
             spawn: [18],
             image: 'imp_master.png'
         },
@@ -285,7 +285,7 @@ var constants = {
             mana: 3,
             type: 'minion',
             name: 'Shredder',
-            description: 'When damaged, discard a card from your hand.',
+            description: 'When this minion is damaged, discard a card from your hand.',
             spawn: [20],
             image: 'shredder.png'
         },
@@ -334,7 +334,7 @@ var constants = {
             mana: 1,
             type: 'minion',
             name: 'Archer',
-            description: 'Deal one damage.',
+            description: 'Battlecry: Deal one damage.',
             target: true,
             spawn: [23],
             actions: [['damage', 1]],
@@ -395,7 +395,7 @@ var constants = {
             mana: 6,
             type: 'minion',
             name: 'Fire Golem',
-            description: 'Do 3 damage to some object.',
+            description: 'Battlecry: Do 3 damage to some object.',
             target: true,
             spawn: [27],
             actions: [['damage', 3]],
