@@ -419,7 +419,8 @@ var constants = {
             type: 'minion',
             name: 'The Acolyte',
             description: 'Whenever another friendly minion dies, draw a card.',
-            spawn: [31]
+            spawn: [31],
+            image: 'acolyte.png'
         },
         '46': {
             mana: 4,
