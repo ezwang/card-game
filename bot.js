@@ -134,6 +134,7 @@ Bot.prototype.playMove = function() {
                     }
                     else {
                         if (hasAction(card, 'heal')) {
+                            // only heal player if none is wasted
                             var heal = card.actions.find((x) => x[0] === 'heal')[1];
                             if (bot.health <= constants.player.MAX_HEALTH - heal) {
                                 bot.playCard(card.id, "player");
@@ -142,8 +143,9 @@ Bot.prototype.playMove = function() {
                             }
                         }
                         if (hasAction(card, 'damage')) {
+                            // if opponent low on health, attack opponent, otherwise attack minion
                             var dmg = card.actions.find((x) => x[0] === 'damage')[1];
-                            if (dmg >= opp.health * 1.2) {
+                            if (dmg >= opp.health * 1.1) {
                                 bot.playCard(card.id, "opponent");
                             }
                             else {
