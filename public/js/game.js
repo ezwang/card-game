@@ -149,6 +149,16 @@ var game = {
         currentDeck.addChild(currentDeckBg);
         cardsContainer.currentDeck = currentDeck;
 
+        var currentDeckTitle = new PIXI.Text("Deck", new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 14,
+            fill: '#ffffff'
+        }));
+        currentDeckTitle.x = 10;
+        currentDeckTitle.y = -20;
+        cardsContainer.currentDeck.title = currentDeckTitle;
+        currentDeck.addChild(currentDeckTitle);
+
         cardsContainer.addChild(currentDeck);
         game.pixi.stage.addChild(cardsContainer);
         game.containers.push(cardsContainer);
@@ -929,8 +939,14 @@ var game = {
             fontSize: 18,
             fill: '#ff0000'
         }));
-        errorText.x = 5;
-        errorText.y = 72;
+        if (game.cardsContainer.visible) {
+            errorText.x = 10;
+            errorText.y = 58;
+        }
+        else {
+            errorText.x = 5;
+            errorText.y = 72;
+        }
         game.pixi.stage.addChild(errorText);
         setTimeout(function() {
             game.animations.push({
@@ -964,7 +980,17 @@ var game = {
             if (cardIndex >= game.playerCardList.length) {
                 break;
             }
-            var card = createCard(constants.cards[game.playerCardList[cardIndex]]);
+            const cardId = game.playerCardList[cardIndex];
+            var card = createCard(constants.cards[cardId]);
+            card.on('click', function() {
+                if (game.playerDeckList.length >= constants.player.DECK_SIZE) {
+                    game.showError('Maximum deck card limit reached!');
+                }
+                else {
+                    game.playerDeckList.push(cardId);
+                    game.renderCardCollection();
+                }
+            });
             card.width /= 1.6;
             card.height /= 1.6;
             card.x = 5 + (130 * (i % constants.cardcollection.CARDS_PER_ROW));
@@ -1005,6 +1031,7 @@ var game = {
             delete deckCounts[cardId];
             counter++;
         });
+        game.cardsContainer.currentDeck.title.text = 'Deck - Cards: ' + game.playerDeckList.length;
     },
     drawAction: function(from, to) {
         if (typeof from === 'number') {
