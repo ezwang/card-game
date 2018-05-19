@@ -19,6 +19,7 @@ function createButton(text, callback) {
 
 function createMinion(minionInfo, minionId) {
     var minion = new PIXI.Container();
+    minion.type = minionInfo.type;
     minion.id = minionInfo.id;
     minion._health = minionInfo.health;
     minion._attack = minionInfo.attack;
@@ -43,7 +44,7 @@ function createMinion(minionInfo, minionId) {
         set: function(x) { this._attributes = x; this.regenAttributes(); },
         get: function() { return this._attributes; }
     });
-    var background = PIXI.Sprite.fromImage('./img/minion.png');
+    var background = PIXI.Sprite.fromImage(minion.type === 'beast' ? './img/beast.png' : './img/minion.png');
     background.width = 80;
     background.height = 80;
 

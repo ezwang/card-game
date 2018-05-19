@@ -490,19 +490,22 @@ var constants = {
         '6': {
             health: 7,
             attack: 6,
-            name: 'Red Panda'
+            name: 'Red Panda',
+            type: 'beast'
         },
         '7': {
             health: 2,
             attack: 4,
             name: 'The Bunny',
-            attributes: ['charge']
+            attributes: ['charge'],
+            type: 'beast'
         },
         '8': {
             health: 3,
             attack: 3,
             name: 'The Wombat',
-            attributes: ['taunt']
+            attributes: ['taunt'],
+            type: 'beast'
         },
         '9': {
             health: 2,
@@ -510,12 +513,14 @@ var constants = {
             name: 'The Field Mouse',
             events: {
                 death: [['spawn', [10, 10]]]
-            }
+            },
+            type: 'beast'
         },
         '10': {
             health: 1,
             attack: 1,
-            name: 'Lesser Field Mice'
+            name: 'Lesser Field Mice',
+            type: 'beast'
         },
         '11': {
             health: 4,
@@ -637,7 +642,8 @@ var constants = {
         '29': {
             name: 'Rabbit',
             health: 2,
-            attack: 2
+            attack: 2,
+            type: 'beast'
         },
         '30': {
             name: 'The Magistrate',
