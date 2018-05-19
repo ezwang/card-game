@@ -10,7 +10,12 @@ Bot.prototype = Object.create(Player.prototype);
 
 function hasAction(card, action) {
     if (!card.actions) return false;
-    return card.actions.some((x) => x[0] == action);
+    return card.actions.some((x) => x[0] === action);
+}
+
+function getAction(card, action) {
+    if (!card.actions) return null;
+    return card.actions.find((x) => x[0] === action);
 }
 
 Bot.getTarget = function(game, bot, opp) {
@@ -99,13 +104,17 @@ Bot.prototype.playMove = function() {
             if (card.mana <= bot.mana) {
                 if (card.type == 'spell') {
                     if (hasAction(card, 'damage_player')) {
-                        // don't play card if it kills you
-                        if (card.actions.find((x) => x[0] === 'damage_player')[1] >= bot.health) {
+                        // don't play card if it kills bot
+                        if (getAction(card, 'damage_player')[1] >= bot.health) {
                             return true;
                         }
                     }
                     if (!card.target) {
                         if (hasAction(card, 'all_damage')) {
+                            // don't play card if it kills bot
+                            if (getAction(card, 'all_damage')[1] >= bot.health) {
+                                return true;
+                            }
                             if (opp.minions.length >= bot.minions.length + 2) {
                                 bot.playCard(card.id);
                                 noActions = false;
@@ -135,7 +144,7 @@ Bot.prototype.playMove = function() {
                     else {
                         if (hasAction(card, 'heal')) {
                             // only heal player if none is wasted
-                            var heal = card.actions.find((x) => x[0] === 'heal')[1];
+                            var heal = getAction(card, 'heal')[1];
                             if (bot.health <= constants.player.MAX_HEALTH - heal) {
                                 bot.playCard(card.id, "player");
                                 noActions = false;
@@ -144,7 +153,7 @@ Bot.prototype.playMove = function() {
                         }
                         if (hasAction(card, 'damage')) {
                             // if opponent low on health, attack opponent, otherwise attack minion
-                            var dmg = card.actions.find((x) => x[0] === 'damage')[1];
+                            var dmg = getAction(card, 'damage')[1];
                             if (dmg >= opp.health * 1.1) {
                                 bot.playCard(card.id, "opponent");
                             }
