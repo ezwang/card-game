@@ -369,7 +369,8 @@ var constants = {
             type: 'minion',
             name: 'Shieldmaster',
             description: 'Taunt',
-            spawn: [25]
+            spawn: [25],
+            image: 'shieldmaster.png'
         },
         '40': {
             mana: 7,
