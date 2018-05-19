@@ -134,14 +134,21 @@ Bot.prototype.playMove = function() {
                     }
                     else {
                         if (hasAction(card, 'heal')) {
-                            if (bot.health <= constants.player.MAX_HEALTH - 10) {
+                            var heal = card.actions.find((x) => x[0] === 'heal')[1];
+                            if (bot.health <= constants.player.MAX_HEALTH - heal) {
                                 bot.playCard(card.id, "player");
                                 noActions = false;
                                 return false;
                             }
                         }
                         if (hasAction(card, 'damage')) {
-                            bot.playCard(card.id, Bot.getTarget(bot.game, bot, opp).target);
+                            var dmg = card.actions.find((x) => x[0] === 'damage')[1];
+                            if (dmg >= opp.health * 1.2) {
+                                bot.playCard(card.id, "opponent");
+                            }
+                            else {
+                                bot.playCard(card.id, Bot.getTarget(bot.game, bot, opp).target);
+                            }
                         }
                         if (bot.minions.length > 0) {
                             if (hasAction(card, 'buff_attack') || hasAction(card, 'buff_health')) {
