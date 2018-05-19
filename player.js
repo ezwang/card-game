@@ -436,6 +436,13 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                             }
                         });
                         break;
+                    case 'opponent_draw':
+                        actions.push(function() {
+                            for (var i = 0; i < action[1]; i++) {
+                                opp.drawCard();
+                            }
+                        });
+                        break;
                     case 'heal':
                         action[1] = -action[1];
                         if (!targetObject) {
@@ -521,6 +528,12 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                         actions.push(function() {
                             opp.damage(action[1]);
                             opp.minions.slice().forEach((x) => x.health -= action[1]);
+                        });
+                        break;
+                    case 'all_damage_friendly':
+                        actions.push(function() {
+                            plr.damage(action[1]);
+                            plr.minions.slice().forEach((x) => x.health -= action[1]);
                         });
                         break;
                     case 'random_damage':
@@ -613,6 +626,13 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                         actions.push(function() {
                             action[1].forEach(function(minionId) {
                                 plr.spawnMinion(minionId, cardId, position);
+                            });
+                        });
+                        break;
+                    case 'spawn_opponent':
+                        actions.push(function() {
+                            action[1].forEach(function(minionId) {
+                                opp.spawnMinion(minionId, cardId, position);
                             });
                         });
                         break;
