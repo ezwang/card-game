@@ -59,7 +59,11 @@ wss.on('connection', function(ws) {
             case 'loadCards':
                 player.sendPacket("loadCards", {
                     deck: player.initialDeck,
-                    cards: player.getCards().sort((x, y) => constants.cards[x].mana - constants.cards[y].mana)
+                    cards: player.getCards().sort((x, y) => {
+                        const manaDiff = constants.cards[x].mana - constants.cards[y].mana;
+                        if (manaDiff != 0) return manaDiff;
+                        return constants.cards[x].name.localeCompare(constants.cards[y].name);
+                    })
                 });
                 break;
             case 'saveCards':
