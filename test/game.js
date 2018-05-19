@@ -709,14 +709,14 @@ describe('Game', function() {
 
             it('evaluates if true', function() {
                 plr.hand = [2];
-                constants.cards[2].actions = [['if', (target) => true, ['draw', 2]]];
+                constants.cards[2].actions = [['if', (target) => true, [['draw', 2]]]];
                 assert.ok(plr.playCard(2));
                 assert.notDeepEqual(plr.hand, [2]);
             });
 
             it('evaluates if false', function() {
                 plr.hand = [2];
-                constants.cards[2].actions = [['if', (target) => false, ['draw', 2]]];
+                constants.cards[2].actions = [['if', (target) => false, [['draw', 2]]]];
                 assert.ok(!plr.playCard(2));
                 assert.deepEqual(plr.hand, [2]);
             });
@@ -724,7 +724,7 @@ describe('Game', function() {
             it('evaluates if with target', function() {
                 plr.health = 2;
                 plr.hand = [2];
-                constants.cards[2].actions = [['if', (target) => target.isPlayer, ['heal', 2]]];
+                constants.cards[2].actions = [['if', (target) => target.isPlayer, [['heal', 2]]]];
                 assert.ok(plr.playCard(2, "player"));
                 assert.deepEqual(plr.health, 4);
             });

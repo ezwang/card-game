@@ -614,7 +614,7 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                         break;
                     case 'if':
                         if(action[1](targetObject)) {
-                            var subActions = plr.processActions([action[2]], target, cardId, position);
+                            var subActions = plr.processActions(action[2], target, cardId, position);
                             if (subActions === false) {
                                 playCard = false;
                             }
