@@ -270,7 +270,8 @@ var constants = {
             type: 'minion',
             name: 'Dr. Boom',
             description: 'Also spawns 2 explode bots.',
-            spawn: [17, 16, 17]
+            spawn: [17, 16, 17],
+            image: 'boom.png'
         },
         '28': {
             mana: 3,
