@@ -1030,13 +1030,31 @@ var game = {
             cardSmall.interactive = true;
             cardSmall.buttonMode = true;
             cardSmall.on('click', function() {
+                if (game.cardPreview) {
+                    game.pixi.stage.removeChild(game.cardPreview);
+                    game.cardPreview = null;
+                }
                 game.playerDeckList.splice(game.playerDeckList.indexOf(cardId), 1);
                 game.renderCardCollection();
             });
             cardSmall.on('mouseover', function() {
+                if (game.cardPreview) {
+                    game.pixi.stage.removeChild(game.cardPreview);
+                    game.cardPreview = null;
+                }
+                game.cardPreview = createCard(constants.cards[cardId]);
+                game.cardPreview.interactive = false;
+                game.cardPreview.x = (game.getScreenWidth() - game.cardPreview.width) / 2;
+                game.cardPreview.y = (game.getScreenHeight() - game.cardPreview.height) / 2;
+                game.cardPreview.filters = [ new PIXI.filters.GlowFilter(3, 2, 2, 0x00ff00, 0.5) ];
+                game.pixi.stage.addChild(game.cardPreview);
                 cardSmall.style.fill = '#cccccc';
             });
             cardSmall.on('mouseout', function() {
+                if (game.cardPreview) {
+                    game.pixi.stage.removeChild(game.cardPreview);
+                    game.cardPreview = null;
+                }
                 cardSmall.style.fill = '#ffffff';
             });
             cardSmall.x = 10;
@@ -1047,6 +1065,10 @@ var game = {
             counter++;
         });
         game.cardsContainer.currentDeck.title.text = 'Deck - Cards: ' + game.playerDeckList.length;
+        if (game.cardPreview) {
+            game.pixi.stage.removeChild(game.cardPreview);
+            game.cardPreview = null;
+        }
     },
     drawAction: function(from, to) {
         if (typeof from === 'number') {
