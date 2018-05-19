@@ -425,30 +425,34 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                         break;
                     case 'heal':
                         action[1] = -action[1];
-                        actions.push(function() {
-                            if (target == "opponent") {
-                                opp.damage(action[1]);
-                            }
-                            else if (target == "player") {
-                                plr.damage(action[1]);
-                            }
-                            else {
-                                targetObject.health -= action[1];
-                            }
-                        });
+                        if (!targetObject) {
+                            playCard = false;
+                        }
+                        else {
+                            actions.push(function() {
+                                if (targetObject.isPlayer) {
+                                    targetObject.damage(action[1]);
+                                }
+                                else {
+                                    targetObject.health -= action[1];
+                                }
+                            });
+                        }
                         break;
                     case 'damage':
-                        actions.push(function() {
-                            if (target == "opponent") {
-                                opp.damage(action[1]);
-                            }
-                            else if (target == "player") {
-                                plr.damage(action[1]);
-                            }
-                            else {
-                                targetObject.health -= action[1];
-                            }
-                        });
+                        if (!targetObject) {
+                            playCard = false;
+                        }
+                        else {
+                            actions.push(function() {
+                                if (targetObject.isPlayer) {
+                                    targetObject.damage(action[1]);
+                                }
+                                else {
+                                    targetObject.health -= action[1];
+                                }
+                            });
+                        }
                         break;
                     case 'replace':
                         var toMinionReplace = game.findMinion(target);
@@ -472,24 +476,24 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                         });
                         break;
                     case 'destroy':
-                        var toMinionDestroy = game.findMinion(target);
-                        if (typeof toMinionDestroy === 'undefined') {
+                        if (!targetObject || !targetObject.isMinion) {
                             playCard = false;
                         }
-                        actions.push(function() {
-                            toMinionDestroy.destroy(null, true);
-                        });
+                        else {
+                            actions.push(function() {
+                                targetObject.destroy(null, true);
+                            });
+                        }
                         break;
                     case 'attribute':
-                        var toMinion = game.findMinion(target);
-                        if (typeof toMinion === 'undefined') {
+                        if (!targetObject || !targetObject.isMinion) {
                             playCard = false;
                         }
-                        else if (toMinion.hasAttribute(action[1])) {
+                        else if (targetObject.hasAttribute(action[1])) {
                             playCard = false;
                         }
                         actions.push(function() {
-                            toMinion.addAttribute(action[1]);
+                            targetObject.addAttribute(action[1]);
                         });
                         break;
                     case 'all_damage':
