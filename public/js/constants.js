@@ -73,7 +73,7 @@ var constants = {
             image: 'card_search.png'
         },
         '4': {
-            mana: 2,
+            mana: 1,
             type: 'spell',
             name: 'Fireburst',
             description: 'Do two damage to some target.',
