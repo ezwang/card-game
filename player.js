@@ -234,7 +234,8 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
 
     copy.setHealth = function(amount, fromAttack) {
         // if game ended, don't do anything
-        if (!plr.game || plr.game.ended) {
+        const game = plr.game;
+        if (!game || game.ended) {
             return;
         }
         // if already dead, don't do further processing
@@ -282,7 +283,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
                     plr.processActions(this.events.self_damage, this.minionInstanceId).forEach((x) => x());
                 }
             }
-            plr.game.sendPacket("updateMinion", {
+            game.sendPacket("updateMinion", {
                 playerId: plr.id,
                 minionInstanceId: this.minionInstanceId,
                 health: this.health,
