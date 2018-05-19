@@ -986,6 +986,9 @@ var game = {
                 if (game.playerDeckList.length >= constants.player.DECK_SIZE) {
                     game.showError('Maximum deck card limit reached!');
                 }
+                else if (game.playerDeckList.reduce((acc, val) => acc + (val == cardId ? 1 : 0), 0) >= constants.player.MAX_DUPLICATES) {
+                    game.showError('Cannot have more duplicates of this card!');
+                }
                 else {
                     game.playerDeckList.push(cardId);
                     game.renderCardCollection();
