@@ -426,7 +426,8 @@ var constants = {
             name: 'Low Destruction',
             description: 'Destroy a minion with 3 or less health.',
             actions: [['if', (target) => target.isMinion && target.health <= 3, ['destroy']]],
-            target: true
+            target: true,
+            image: 'low_destruction.png'
         },
         '47': {
             mana: 4,
@@ -434,7 +435,8 @@ var constants = {
             name: 'High Destruction',
             description: 'Destroy a minion with 5 or more health.',
             actions: [['if', (target) => target.isMinion && target.health >= 5, ['destroy']]],
-            target: true
+            target: true,
+            image: 'high_destruction.png'
         },
         '48': {
             mana: 2,
