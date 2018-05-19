@@ -1038,7 +1038,7 @@ var game = {
                 game.renderCardCollection();
             });
             cardSmall.on('mouseover', function() {
-                if (game.cardPreview) {
+                if (game.cardPreview && game.cardPreview.id != cardId) {
                     game.pixi.stage.removeChild(game.cardPreview);
                     game.cardPreview = null;
                 }
@@ -1051,7 +1051,7 @@ var game = {
                 cardSmall.style.fill = '#cccccc';
             });
             cardSmall.on('mouseout', function() {
-                if (game.cardPreview) {
+                if (game.cardPreview && game.cardPreview.id == cardId) {
                     game.pixi.stage.removeChild(game.cardPreview);
                     game.cardPreview = null;
                 }
