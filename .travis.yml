@@ -5,5 +5,5 @@ before_script:
     - npm install
     - npm install jshint
 script:
-    - npm test
+    - mocha
     - jshint *.js
