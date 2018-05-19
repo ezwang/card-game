@@ -36,8 +36,8 @@ var constants = {
         ]
     },
     cardcollection: {
-        CARDS_PER_ROW: 6,
-        CARDS_PER_PAGE: 18
+        CARDS_PER_ROW: 5,
+        CARDS_PER_PAGE: 15
     },
     cards: {
         '0': {

@@ -57,7 +57,10 @@ wss.on('connection', function(ws) {
                 player.doAttack(data.data.from, data.data.to);
                 break;
             case 'loadCards':
-                player.sendPacket("loadCards", player.getCards().sort((x, y) => constants.cards[x].mana - constants.cards[y].mana));
+                player.sendPacket("loadCards", {
+                    deck: player.initialDeck,
+                    cards: player.getCards().sort((x, y) => constants.cards[x].mana - constants.cards[y].mana)
+                });
                 break;
             case 'ping':
                 break;

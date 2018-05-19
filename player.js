@@ -11,6 +11,7 @@ function Player(ws) {
     this.id = id_incr;
     this.isMinion = false;
     this.isPlayer = true;
+    this.initialDeck = this.getRandomizedDeck();
     player_dict[this.id] = this;
     id_incr++;
 }
@@ -63,13 +64,20 @@ Player.prototype.disconnect = function(errorMessage) {
     }
 };
 
+/**
+ * Returns a random deck created from a selection of all of the cards that the player has.
+ */
+Player.prototype.getRandomizedDeck = function() {
+    var cardIds = this.getCards();
+    Array.prototype.push.apply(cardIds, cardIds);
+    return cardIds.sort(() => 0.5 - Math.random()).slice(0, constants.player.DECK_SIZE);
+};
+
 /*
  * Returns the current player deck for the game, with the cards in randomized order.
  */
 Player.prototype.getDeck = function() {
-    var cardIds = this.getCards();
-    Array.prototype.push.apply(cardIds, cardIds);
-    return cardIds.sort(() => 0.5 - Math.random()).slice(0, constants.player.DECK_SIZE);
+    return this.initialDeck.sort(() => 0.5 - Math.random());
 };
 
 Player.prototype.getCards = function() {

@@ -138,8 +138,19 @@ var game = {
         cardsContainer.addChild(backButton);
         cardsContainer.addChild(nextPageButton);
         cardsContainer.addChild(prevPageButton);
-        game.pixi.stage.addChild(cardsContainer);
 
+        var currentDeck = new PIXI.Container();
+        currentDeck.x = game.getScreenWidth() - 150;
+        currentDeck.y = 75;
+        var currentDeckBg = new PIXI.Graphics();
+        currentDeckBg.alpha = 0.2;
+        currentDeckBg.beginFill(0xDDDDDD);
+        currentDeckBg.drawRect(5, 0, 140, game.getScreenHeight() - 120);
+        currentDeck.addChild(currentDeckBg);
+        cardsContainer.currentDeck = currentDeck;
+
+        cardsContainer.addChild(currentDeck);
+        game.pixi.stage.addChild(cardsContainer);
         game.containers.push(cardsContainer);
 
         // game screen
@@ -941,6 +952,13 @@ var game = {
             game.playerCardRender.forEach((x) => game.cardsContainer.removeChild(x));
             game.playerCardRender = [];
         }
+        if (!game.playerDeckRender) {
+            game.playerDeckRender = [];
+        }
+        else {
+            game.playerDeckRender.forEach((x) => game.cardsContainer.currentDeck.removeChild(x));
+            game.playerDeckRender = [];
+        }
         for (var i = 0; i < constants.cardcollection.CARDS_PER_PAGE; i++) {
             var cardIndex = i + game.playerCardRenderOffset * constants.cardcollection.CARDS_PER_PAGE;
             if (cardIndex >= game.playerCardList.length) {
@@ -954,6 +972,39 @@ var game = {
             game.playerCardRender.push(card);
             game.cardsContainer.addChild(card);
         }
+        var counter = 0;
+        var deckCounts = {};
+        for (var i = 0; i < game.playerDeckList.length; i++) {
+            var cardId = game.playerDeckList[i];
+            deckCounts[cardId] = (deckCounts[cardId] || 0) + 1;
+        }
+        game.playerDeckList.sort((x, y) => {
+            var manaDiff = constants.cards[x].mana - constants.cards[y].mana;
+            if (manaDiff != 0) return manaDiff;
+            return constants.cards[x].name.localeCompare(constants.cards[y].name);
+        });
+        game.playerDeckList.forEach(function(cardId) {
+            if (!deckCounts.hasOwnProperty(cardId)) {
+                return;
+            }
+            var cardSmall = new PIXI.Text(constants.cards[cardId].name + ' x ' + deckCounts[cardId], new PIXI.TextStyle({
+                fontFamily: 'Pangolin',
+                fontSize: 12,
+                fill: '#ffffff'
+            }));
+            cardSmall.interactive = true;
+            cardSmall.buttonMode = true;
+            cardSmall.on('click', function() {
+                game.playerDeckList.splice(game.playerDeckList.indexOf(cardId), 1);
+                game.renderCardCollection();
+            });
+            cardSmall.x = 10;
+            cardSmall.y = 16 * counter;
+            game.playerDeckRender.push(cardSmall);
+            game.cardsContainer.currentDeck.addChild(cardSmall);
+            delete deckCounts[cardId];
+            counter++;
+        });
     },
     drawAction: function(from, to) {
         if (typeof from === 'number') {
@@ -1243,7 +1294,8 @@ var game = {
                 game.spawnMinion(data.data.playerId, data.data.minionId, data.data.hasAttack, data.data.minionInstanceId, data.data.cardId, data.data.position);
                 break;
             case 'loadCards':
-                game.playerCardList = data.data;
+                game.playerCardList = data.data.cards;
+                game.playerDeckList = data.data.deck;
                 game.renderCardCollection();
                 break;
             case 'gameTimer':
