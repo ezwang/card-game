@@ -396,6 +396,25 @@ describe('Game', function() {
 
             assert.ok(spy.called);
         });
+
+        it('does not trigger with silence', function() {
+            constants.minions[0].events = {
+                opponent_play_card: [['draw', 1]]
+            };
+
+            var plr = game.getPlayerById(game.turn);
+            var opp = game.getOpponent(plr);
+            var spy = sinon.spy(opp, 'drawCard');
+
+            opp.spawnMinion(0);
+
+            plr.processActions([['silence']], opp.minions[0].minionInstanceId).forEach((x) => x());
+
+            plr.hand = [0];
+            plr.playCard(0);
+
+            assert.ok(!spy.called);
+        });
     });
 
     describe('Player', function() {
