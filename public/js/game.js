@@ -360,6 +360,21 @@ var game = {
         });
         gameContainer.addChild(playerMinions);
 
+        var playerManaVisual = new PIXI.Container();
+        playerManaVisual.y = game.playerMinionContainer.y + 110;
+        playerManaVisual.x = game.playerPortrait.x + 120;
+        playerManaVisual.manas = [];
+        for (var i = 0; i < 10; i++) {
+            var mana = PIXI.Sprite.fromImage('./img/mana.png');
+            mana.width = 16;
+            mana.height = 16;
+            mana.x = 18 * i;
+            playerManaVisual.manas.push(mana);
+            playerManaVisual.addChild(mana);
+            gameContainer.addChild(playerManaVisual);
+        }
+        gameContainer.playerManaVisual = playerManaVisual;
+
         var opponentMinions = new PIXI.Container();
         minionBg = new PIXI.Graphics();
         minionBg.beginFill(0xdddddd);
@@ -369,6 +384,21 @@ var game = {
         opponentMinions.y = game.getScreenHeight() / 2 - 150;
         game.opponentMinionContainer = opponentMinions;
         gameContainer.addChild(opponentMinions);
+
+        var opponentManaVisual = new PIXI.Container();
+        opponentManaVisual.y = game.opponentMinionContainer.y - 26;
+        opponentManaVisual.x = game.opponentPortrait.x + 120;
+        opponentManaVisual.manas = [];
+        for (var i = 0; i < 10; i++) {
+            var mana = PIXI.Sprite.fromImage('./img/mana.png');
+            mana.width = 16;
+            mana.height = 16;
+            mana.x = 18 * i;
+            opponentManaVisual.manas.push(mana);
+            opponentManaVisual.addChild(mana);
+            gameContainer.addChild(opponentManaVisual);
+        }
+        gameContainer.opponentManaVisual = opponentManaVisual;
 
         var targetIndicator = PIXI.Sprite.fromImage('./img/target.png');
         targetIndicator.anchor.set(0.5);
@@ -595,10 +625,14 @@ var game = {
             case 'player_mana':
                 game.playerMana = value;
                 game.statusText.playerMana.text = value;
+                game.gameContainer.playerManaVisual.manas.slice(0, value).forEach((x) => x.alpha = 1);
+                game.gameContainer.playerManaVisual.manas.slice(value).forEach((x) => x.alpha = 0.5);
                 break;
             case 'opponent_mana':
                 game.opponentMana = value;
                 game.statusText.opponentMana.text = value;
+                game.gameContainer.opponentManaVisual.manas.slice(0, value).forEach((x) => x.alpha = 1);
+                game.gameContainer.opponentManaVisual.manas.slice(value).forEach((x) => x.alpha = 0.5);
                 break;
             case 'player_turn':
                 if (value == -1) {
