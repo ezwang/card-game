@@ -981,7 +981,7 @@ var game = {
                 break;
             }
             const cardId = game.playerCardList[cardIndex];
-            var card = createCard(constants.cards[cardId]);
+            const card = createCard(constants.cards[cardId]);
             card.on('click', function() {
                 if (game.playerDeckList.length >= constants.player.DECK_SIZE) {
                     game.showError('Maximum deck card limit reached!');
@@ -993,6 +993,12 @@ var game = {
                     game.playerDeckList.push(cardId);
                     game.renderCardCollection();
                 }
+            });
+            card.on('mouseover', function() {
+                card.filters = [ new PIXI.filters.GlowFilter(3, 2, 2, 0x00ff00, 0.5) ];
+            });
+            card.on('mouseout', function() {
+                card.filters = [];
             });
             card.width /= 1.6;
             card.height /= 1.6;
@@ -1016,7 +1022,7 @@ var game = {
             if (!deckCounts.hasOwnProperty(cardId)) {
                 return;
             }
-            var cardSmall = new PIXI.Text(constants.cards[cardId].name + ' x ' + deckCounts[cardId], new PIXI.TextStyle({
+            const cardSmall = new PIXI.Text(constants.cards[cardId].name + ' x ' + deckCounts[cardId], new PIXI.TextStyle({
                 fontFamily: 'Pangolin',
                 fontSize: 12,
                 fill: '#ffffff'
@@ -1026,6 +1032,12 @@ var game = {
             cardSmall.on('click', function() {
                 game.playerDeckList.splice(game.playerDeckList.indexOf(cardId), 1);
                 game.renderCardCollection();
+            });
+            cardSmall.on('mouseover', function() {
+                cardSmall.style.fill = '#cccccc';
+            });
+            cardSmall.on('mouseout', function() {
+                cardSmall.style.fill = '#ffffff';
             });
             cardSmall.x = 10;
             cardSmall.y = 16 * counter;
