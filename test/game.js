@@ -611,6 +611,14 @@ describe('Game', function() {
                         mana: 10,
                         type: 'spell',
                         actions: [['damage_all', 1000]]
+                    },
+                    '2': {
+                        id: 2,
+                        mana: 0,
+                        name: 'Dummy Card',
+                        description: 'A dummy card.',
+                        type: 'spell',
+                        actions: []
                     }
                 };
             });
@@ -646,11 +654,12 @@ describe('Game', function() {
             });
 
             it('does not work if too many minions', function() {
+                var i;
                 plr.hand = [];
-                for (var i = 0; i < constants.player.MAX_MINIONS + 1; i++) {
+                for (i = 0; i < constants.player.MAX_MINIONS + 1; i++) {
                     plr.hand.push(0);
                 }
-                for (var i = 0; i < constants.player.MAX_MINIONS; i++) {
+                for (i = 0; i < constants.player.MAX_MINIONS; i++) {
                     assert.ok(plr.playCard(0));
                 }
                 assert.ok(!plr.playCard(0));
@@ -677,6 +686,28 @@ describe('Game', function() {
                 assert.ok(plr.playCard(0));
 
                 assert.equal(plr.minions.find((x) => x.id == 3).attack, 3);
+            });
+
+            it('evaluates if true', function() {
+                plr.hand = [2];
+                constants.cards[2].actions = [['if', (target) => true, ['draw', 2]]];
+                assert.ok(plr.playCard(2));
+                assert.notDeepEqual(plr.hand, [2]);
+            });
+
+            it('evaluates if false', function() {
+                plr.hand = [2];
+                constants.cards[2].actions = [['if', (target) => false, ['draw', 2]]];
+                assert.ok(!plr.playCard(2));
+                assert.deepEqual(plr.hand, [2]);
+            });
+
+            it('evaluates if with target', function() {
+                plr.health = 2;
+                plr.hand = [2];
+                constants.cards[2].actions = [['if', (target) => target.isPlayer, ['heal', 2]]];
+                assert.ok(plr.playCard(2, "player"));
+                assert.deepEqual(plr.health, 4);
             });
         });
 

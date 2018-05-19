@@ -419,6 +419,22 @@ var constants = {
             name: 'The Acolyte',
             description: 'Whenever another friendly minion dies, draw a card.',
             spawn: [31]
+        },
+        '46': {
+            mana: 4,
+            type: 'spell',
+            name: 'Low Destruction',
+            description: 'Destroy a minion with 3 or less health.',
+            actions: [['if', (target) => target.isMinion && target.health <= 3, ['destroy']]],
+            target: true
+        },
+        '47': {
+            mana: 4,
+            type: 'spell',
+            name: 'High Destruction',
+            description: 'Destroy a minion with 5 or more health.',
+            actions: [['if', (target) => target.isMinion && target.health >= 5, ['destroy']]],
+            target: true
         }
     },
     minions: {

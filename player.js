@@ -9,6 +9,8 @@ function Player(ws) {
     this.state = 'init';
     this.ws = ws;
     this.id = id_incr;
+    this.isMinion = false;
+    this.isPlayer = true;
     player_dict[this.id] = this;
     id_incr++;
 }
@@ -147,6 +149,8 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
     }
     var copy = deepcopy(minionInfo);
     copy.cardId = cardId;
+    copy.isPlayer = false;
+    copy.isMinion = true;
     copy._health = copy.health;
     copy._maxHealth = copy.health;
     copy._attack = copy.attack;
@@ -389,6 +393,16 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
     const opp = game.getOpponent(plr);
     var playCard = true;
     var actions = [];
+    var targetObject = null;
+    if (target == "opponent") {
+        targetObject = opp;
+    }
+    else if (target == "player") {
+        targetObject = plr;
+    }
+    else if (typeof target !== 'undefined') {
+        targetObject = game.findMinion(target);
+    }
     if (rawActions) {
         rawActions.forEach(function(action) {
             if (Array.isArray(action)) {
@@ -410,8 +424,7 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                                 plr.damage(action[1]);
                             }
                             else {
-                                var toMinion = game.findMinion(target);
-                                toMinion.health -= action[1];
+                                targetObject.health -= action[1];
                             }
                         });
                         break;
@@ -424,8 +437,7 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                                 plr.damage(action[1]);
                             }
                             else {
-                                var toMinion = game.findMinion(target);
-                                toMinion.health -= action[1];
+                                targetObject.health -= action[1];
                             }
                         });
                         break;
@@ -585,6 +597,20 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                                 plr.addCard(opp.hand[i]);
                             }
                         });
+                        break;
+                    case 'if':
+                        if(action[1](targetObject)) {
+                            var subActions = plr.processActions([action[2]], target, cardId, position);
+                            if (subActions === false) {
+                                playCard = false;
+                            }
+                            else {
+                                subActions.forEach((x) => actions.push(x));
+                            }
+                        }
+                        else {
+                            playCard = false;
+                        }
                         break;
                     default:
                         console.warn('Unknown spell card action: ' + action[0]);
