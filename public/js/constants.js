@@ -435,6 +435,14 @@ var constants = {
             description: 'Destroy a minion with 5 or more health.',
             actions: [['if', (target) => target.isMinion && target.health >= 5, ['destroy']]],
             target: true
+        },
+        '48': {
+            mana: 2,
+            type: 'spell',
+            name: 'Silence',
+            description: 'Remove all special effects from a minion.',
+            target: true,
+            actions: [['silence']]
         }
     },
     minions: {

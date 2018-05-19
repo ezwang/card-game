@@ -173,6 +173,15 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
             attributes: this.attributes
         });
     };
+    copy.removeAllAttributes = function() {
+        this.attributes = [];
+        this.events = {};
+        plr.game.sendPacket("updateMinion", {
+            playerId: plr.id,
+            minionInstanceId: this.minionInstanceId,
+            attributes: this.attributes
+        });
+    };
     copy.hasAttack = copy.hasAttribute('charge');
     delete copy.health;
     delete copy.attack;
@@ -607,6 +616,16 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                             else {
                                 subActions.forEach((x) => actions.push(x));
                             }
+                        }
+                        else {
+                            playCard = false;
+                        }
+                        break;
+                    case 'silence':
+                        if (targetObject.isMinion) {
+                            actions.push(function() {
+                                targetObject.removeAllAttributes();
+                            });
                         }
                         else {
                             playCard = false;
