@@ -451,6 +451,14 @@ var constants = {
             target: true,
             actions: [['silence']],
             image: 'silence.png'
+        },
+        '49': {
+            mana: 2,
+            type: 'minion',
+            name: 'Dinosaur',
+            description: 'Nothing special.',
+            spawn: [32],
+            image: 'dinosaur.png'
         }
     },
     minions: {
@@ -660,6 +668,11 @@ var constants = {
             events: {
                 friendly_death: [['draw', 1]]
             }
+        },
+        '32': {
+            name: 'Dinosaur',
+            health: 2,
+            attack: 3
         }
     }
 };
