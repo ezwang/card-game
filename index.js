@@ -62,6 +62,21 @@ wss.on('connection', function(ws) {
                     cards: player.getCards().sort((x, y) => constants.cards[x].mana - constants.cards[y].mana)
                 });
                 break;
+            case 'saveCards':
+                var deck = data.data;
+                var cardCount = {};
+                deck.forEach((x) => cardCount[x] = (cardCount[x] || 0) + 1);
+                if (deck.length != constants.player.DECK_SIZE) {
+                    player.sendError("Your deck is not the correct size! Must be " + constants.player.DECK_SIZE + " cards.");
+                }
+                else if (Object.values(cardCount).some((x) => x > constants.player.MAX_DUPLICATES)) {
+                    player.sendError("You have too many duplicates of a card!");
+                }
+                else {
+                    player.initialDeck = deck;
+                    player.setGameState("lobby");
+                }
+                break;
             case 'ping':
                 break;
             default:

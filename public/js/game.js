@@ -116,7 +116,7 @@ var game = {
         cardsContainer.addChild(cardCollectionTitle);
 
         var backButton = createButton('Back', function() {
-            game.setGameState('lobby');
+            game.sendPacket('saveCards', game.playerDeckList);
         });
         var prevPageButton = createButton('<<<', function() {
             game.playerCardRenderOffset = Math.max(0, game.playerCardRenderOffset - 1);
