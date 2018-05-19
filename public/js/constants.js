@@ -485,6 +485,15 @@ var constants = {
             description: 'For each opponent minion, summon a 1/1 wolf with charge.',
             actions: [['spawn_matching_opponent', 34]],
             image: 'wolf_army.png'
+        },
+        '53': {
+            mana: 3,
+            type: 'spell',
+            name: 'The Hunt',
+            description: 'Destroy a beast.',
+            actions: [['if', (target) => target.isMinion && target.type == 'beast'], [['destroy']]],
+            image: 'hunt.png',
+            target: true
         }
     },
     minions: {
