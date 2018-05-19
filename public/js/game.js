@@ -116,7 +116,13 @@ var game = {
         cardsContainer.addChild(cardCollectionTitle);
 
         var backButton = createButton('Back', function() {
-            game.sendPacket('saveCards', { deck: game.playerDeckList });
+            if (game.playerDeckList.length != constants.player.DECK_SIZE) {
+                game.showError('Please add more cards to this deck! You need at least ' + constants.player.DECK_SIZE + ' cards.');
+            }
+            else {
+                game.sendPacket('saveCards', { deck: game.playerDeckList });
+                localStorage.setItem("deck", JSON.stringify(game.playerDeckList));
+            }
         });
         var prevPageButton = createButton('<<<', function() {
             game.playerCardRenderOffset = Math.max(0, game.playerCardRenderOffset - 1);
@@ -581,6 +587,10 @@ var game = {
         game.lobbyContainer.userWelcome.text = "Logged in as: " + username;
         game.ws.onopen = function() {
             game.sendPacket("auth", username);
+            var savedDeck = localStorage.getItem('deck');
+            if (savedDeck) {
+                game.sendPacket("saveCards", { deck: JSON.parse(savedDeck) });
+            }
         };
         game.ws.onmessage = game.receivePacket;
         game.ws.onclose = function() {
