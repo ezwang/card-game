@@ -159,6 +159,29 @@ var game = {
         cardsContainer.currentDeck.title = currentDeckTitle;
         currentDeck.addChild(currentDeckTitle);
 
+        var currentDeckCancel = new PIXI.Text("✖", new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 14,
+            fill: '#cc0000'
+        }));
+        currentDeckCancel.interactive = true;
+        currentDeckCancel.buttonMode = true;
+        currentDeckCancel.on('mouseover', function() {
+            currentDeckCancel.style.fill = '#ff0000';
+        });
+        currentDeckCancel.on('mouseout', function() {
+            currentDeckCancel.style.fill = '#cc0000';
+        });
+        currentDeckCancel.on('click', function() {
+            if (confirm('Are you sure you want to clear all cards in this deck?')) {
+                game.playerDeckList = [];
+                game.renderCardCollection();
+            }
+        });
+        currentDeckCancel.x = 130;
+        currentDeckCancel.y = -20;
+        currentDeck.addChild(currentDeckCancel);
+
         cardsContainer.addChild(currentDeck);
         game.pixi.stage.addChild(cardsContainer);
         game.containers.push(cardsContainer);
