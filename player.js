@@ -622,6 +622,7 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                                 plr.spawnMinion(action[1], cardId, position);
                             }
                         });
+                        break;
                     case 'card_copy':
                         actions.push(function() {
                             var toSteal = Math.min(action[1], opp.hand.length);
