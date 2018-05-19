@@ -98,6 +98,12 @@ Bot.prototype.playMove = function() {
             var card = constants.cards[cardId];
             if (card.mana <= bot.mana) {
                 if (card.type == 'spell') {
+                    if (hasAction(card, 'damage_player')) {
+                        // don't play card if it kills you
+                        if (card.actions.find((x) => x[0] === 'damage_player')[1] >= bot.health) {
+                            return true;
+                        }
+                    }
                     if (!card.target) {
                         if (hasAction(card, 'all_damage')) {
                             if (opp.minions.length >= bot.minions.length + 2) {
@@ -106,7 +112,7 @@ Bot.prototype.playMove = function() {
                                 return false;
                             }
                         }
-                        if (hasAction(card, 'all_damage_opponent') || hasAction(card, 'random_damage_opponent')) {
+                        if (hasAction(card, 'all_damage_opponent') || hasAction(card, 'random_damage_opponent') || hasAction('spawn_matching_opponent')) {
                             if (opp.minions.length >= 2) {
                                 bot.playCard(card.id);
                                 noActions = false;
