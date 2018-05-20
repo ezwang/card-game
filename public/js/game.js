@@ -192,6 +192,26 @@ var game = {
         currentDeckCancel.y = -20;
         currentDeck.addChild(currentDeckCancel);
 
+        var currentDeckSearch = new PIXI.Text("🔍", new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 12,
+            fill: '#00cc00'
+        }));
+        currentDeckSearch.interactive = true;
+        currentDeckSearch.buttonMode = true;
+        currentDeckSearch.on('mouseover', function() {
+            currentDeckSearch.style.fill = '#00ff00';
+        });
+        currentDeckSearch.on('mouseout', function() {
+            currentDeckSearch.style.fill = '#00cc00';
+        });
+        currentDeckSearch.on('click', function() {
+            game.filterCardCollection(prompt('Enter your card search terms:'));
+        });
+        currentDeckSearch.x = 115;
+        currentDeckSearch.y = -20;
+        currentDeck.addChild(currentDeckSearch);
+
         cardsContainer.addChild(currentDeck);
         game.pixi.stage.addChild(cardsContainer);
         game.containers.push(cardsContainer);
