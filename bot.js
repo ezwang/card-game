@@ -167,6 +167,14 @@ Bot.prototype.playMove = function() {
                                 bot.playCard(card.id, Bot.getTarget(bot.game, bot, opp).target);
                             }
                         }
+                        if (hasAction(card, 'replace')) {
+                            var replaceMinion = constants.minions[getAction(card, 'replace')[1]];
+                            const target = Bot.getTarget(bot.game, bot, opp);
+                            const targetObject = target.targetObject;
+                            if (targetObject && targetObject.isMinion && targetObject.health >= (replaceMinion.health * 2) && targetObject.attack >= replaceMinion.attack) {
+                                bot.playCard(card.id, target.target);
+                            }
+                        }
                         if (bot.minions.length > 0) {
                             if (hasAction(card, 'buff_attack') || hasAction(card, 'buff_health')) {
                                 bot.playCard(card.id, bot.minions.reduce(function(prev, curr) {
@@ -194,7 +202,7 @@ Bot.prototype.playMove = function() {
 
         // try playing minion cards
         bot.hand.every(function(cardId) {
-            var card = constants.cards[cardId];
+            const card = constants.cards[cardId];
             if (card.mana <= bot.mana && bot.minions.length < constants.player.MAX_MINIONS) {
                 if (card.type == 'minion') {
                     if (!card.target) {
@@ -217,6 +225,39 @@ Bot.prototype.playMove = function() {
             setTimeout(processActionQueue, constants.game.BOT_DELAY);
             return;
         }
+
+        // play less important spell cards
+        bot.hand.every(function(cardId) {
+            const card = constants.cards[cardId];
+            if (card.mana <= bot.mana && card.type == 'spell') {
+                if (hasAction(card, 'attribute')) {
+                    var addedAttr = getAction(card, 'attribute')[1];
+                    if (addedAttr == 'taunt') {
+                        // give the highest health minion taunt
+                        var targetMinion = bot.minions.filter((x) => !x.hasAttribute('taunt')).sort((x, y) => y.health - x.health);
+                        if (targetMinion.length > 0) {
+                            bot.playCard(card.id, targetMinion[0].minionInstanceId);
+                        }
+                    }
+                    else if (addedAttr == 'shield') {
+                        // give special minions shield, and then the highest attack minions shield
+                        var targetMinion = bot.minions.filter((x) => !x.hasAttribute('shield')).sort((x, y) => {
+                            if (x.hasAttribute('special') && !y.hasAttribute('special')) {
+                                return -1;
+                            }
+                            if (!x.hasAttribute('special') && y.hasAttribute('special')) {
+                                return 1;
+                            }
+                            return y.attack - x.attack;
+                        });
+                        if (targetMinion.length > 0) {
+                            bot.playCard(card.id, targetMinion[0].minionInstanceId);
+                        }
+                    }
+                }
+            }
+        });
+
         // do minion attacks
         bot.minions.sort(function(x, y) {
             // have shielded minions attack first
