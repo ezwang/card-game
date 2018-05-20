@@ -414,6 +414,9 @@ Player.prototype.doAttack = function(from, to) {
 
 Player.prototype.processActions = function(rawActions, target, cardId, position) {
     const game = this.game;
+    if (!game || game.ended) {
+        return [];
+    }
     const plr = this;
     const opp = game.getOpponent(plr);
     var playCard = true;
@@ -780,9 +783,6 @@ Player.prototype.playCard = function(cardId, target, position) {
             cardId: cardId
         });
         return true;
-    }
-    else {
-        throw new Error("Tried to play card while not in game!");
     }
 };
 
