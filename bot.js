@@ -9,11 +9,17 @@ function Bot() {
 Bot.prototype = Object.create(Player.prototype);
 
 function hasAction(card, action) {
+    if (typeof card === 'undefined' || typeof action === 'undefined') {
+        throw new Error('Invalid arguments passed to hasAction!');
+    }
     if (!card.actions) return false;
     return card.actions.some((x) => x[0] === action);
 }
 
 function getAction(card, action) {
+    if (typeof card === 'undefined' || typeof action === 'undefined') {
+        throw new Error('Invalid arguments passed to getAction!');
+    }
     if (!card.actions) return null;
     return card.actions.find((x) => x[0] === action);
 }
@@ -121,14 +127,14 @@ Bot.prototype.playMove = function() {
                                 return false;
                             }
                         }
-                        if (hasAction(card, 'all_damage_opponent') || hasAction(card, 'random_damage_opponent') || hasAction('spawn_matching_opponent')) {
+                        if (hasAction(card, 'all_damage_opponent') || hasAction(card, 'random_damage_opponent') || hasAction(card, 'spawn_matching_opponent')) {
                             if (opp.minions.length >= 2) {
                                 bot.playCard(card.id);
                                 noActions = false;
                                 return false;
                             }
                         }
-                        if (hasAction(card, 'draw') || hasAction('card_copy')) {
+                        if (hasAction(card, 'draw') || hasAction(card, 'card_copy')) {
                             bot.playCard(card.id);
                             noActions = false;
                             return false;
