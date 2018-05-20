@@ -133,7 +133,7 @@ var game = {
             game.renderCardCollection();
         });
         var nextPageButton = createButton('>>>', function() {
-            game.playerCardRenderOffset = Math.min(game.playerCardRenderOffset + 1, Math.floor(game.playerCardList.length / constants.cardcollection.CARDS_PER_PAGE));
+            game.playerCardRenderOffset = Math.min(game.playerCardRenderOffset + 1, Math.floor(game.playerCardList.length / (constants.cardcollection.CARDS_PER_ROW * constants.cardcollection.CARDS_PER_COL)));
             game.renderCardCollection();
         });
         nextPageButton.anchor.set(0, 1);
@@ -1013,8 +1013,9 @@ var game = {
             game.playerDeckRender.forEach((x) => game.cardsContainer.currentDeck.removeChild(x));
             game.playerDeckRender = [];
         }
-        for (var i = 0; i < constants.cardcollection.CARDS_PER_PAGE; i++) {
-            var cardIndex = i + game.playerCardRenderOffset * constants.cardcollection.CARDS_PER_PAGE;
+        const cardsPerPage = constants.cardcollection.CARDS_PER_ROW * constants.cardcollection.CARDS_PER_COL;
+        for (var i = 0; i < cardsPerPage; i++) {
+            var cardIndex = i + game.playerCardRenderOffset * cardsPerPage;
             if (cardIndex >= game.playerCardList.length) {
                 break;
             }
