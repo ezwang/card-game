@@ -118,6 +118,12 @@ Player.prototype.addCard = function(newCard) {
         game.getOpponent(this).sendPacket("addCard", { player: this.id, cardsLeft: this.deck.length });
     }
     else {
+        this.minions.forEach(function(minion) {
+            minion.handleEvent('friendly_discard_card');
+        });
+        game.getOpponent(this).minions.forEach(function(minion) {
+            minion.handleEvent('opponent_discard_card');
+        });
         this.sendPacket("discardCard", { playerId: this.id, cardId: newCard });
     }
     return true;
@@ -604,6 +610,12 @@ Player.prototype.processActions = function(rawActions, target, cardId, position)
                                     game.sendPacket("discardCard", {
                                         playerId: plr.id,
                                         cardId: cardId
+                                    });
+                                    plr.minions.forEach(function(minion) {
+                                        minion.handleEvent('friendly_discard_card');
+                                    });
+                                    opp.minions.forEach(function(minion) {
+                                        minion.handleEvent('opponent_discard_card');
                                     });
                                 }
                             }
