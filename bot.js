@@ -4,6 +4,7 @@ var constants = require('./public/js/constants.js');
 function Bot() {
     Player.call(this, null);
     this.username = 'Tutorial Bot';
+    this.initialDeck = [3, 11, 11, 13, 13, 23, 23, 24, 24, 26, 26, 27, 27, 28, 28, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 36, 36, 38, 43, 43];
 }
 
 Bot.prototype = Object.create(Player.prototype);
