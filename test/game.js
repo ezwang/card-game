@@ -541,6 +541,14 @@ describe('Game', function() {
                     assert.equal(player1.hand.length, numCards + 3);
                 });
 
+                it('opponent_draw correct', function() {
+                    var numCards = player2.hand.length;
+
+                    player1.processActions([['opponent_draw', 3]]).forEach((x) => x());
+
+                    assert.equal(player2.hand.length, numCards + 3);
+                });
+
                 it('discard correct', function() {
                     player1.processActions([['discard', 10]]).forEach((x) => x());
 
