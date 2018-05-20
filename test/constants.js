@@ -7,6 +7,12 @@ describe('Constants', function() {
         assert.ok(Array.isArray(actions));
         actions.forEach(function(action) {
             assert.ok(Array.isArray(action));
+            if (action[0] == 'if') {
+                // make sure no errors with null
+                action[1](null);
+
+                assertValidActions(action[2]);
+            }
         });
     }
 

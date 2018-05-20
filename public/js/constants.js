@@ -431,7 +431,7 @@ var constants = {
             type: 'spell',
             name: 'Low Destruction',
             description: 'Destroy a minion with 3 or less health.',
-            actions: [['if', (target) => target.isMinion && target.health <= 3, [['destroy']]]],
+            actions: [['if', (target) => target && target.isMinion && target.health <= 3, [['destroy']]]],
             target: true,
             image: 'low_destruction.png'
         },
@@ -440,7 +440,7 @@ var constants = {
             type: 'spell',
             name: 'High Destruction',
             description: 'Destroy a minion with 5 or more health.',
-            actions: [['if', (target) => target.isMinion && target.health >= 5, [['destroy']]]],
+            actions: [['if', (target) => target && target.isMinion && target.health >= 5, [['destroy']]]],
             target: true,
             image: 'high_destruction.png'
         },
@@ -466,7 +466,7 @@ var constants = {
             type: 'spell',
             name: "Nature's Blessing",
             description: 'Give a beast +2/+2.',
-            actions: [['if', (target) => target.isMinion && target.type === 'beast', [['buff_health', 2], ['buff_attack', 2]]]],
+            actions: [['if', (target) => target && target.isMinion && target.type === 'beast', [['buff_health', 2], ['buff_attack', 2]]]],
             image: 'nature_blessing.png',
             target: true
         },
@@ -491,7 +491,7 @@ var constants = {
             type: 'spell',
             name: 'The Hunt',
             description: 'Destroy a beast.',
-            actions: [['if', (target) => target.isMinion && target.type == 'beast'], [['destroy']]],
+            actions: [['if', (target) => target && target.isMinion && target.type == 'beast', [['destroy']]]],
             image: 'hunt.png',
             target: true
         }
