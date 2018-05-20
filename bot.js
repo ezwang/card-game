@@ -255,8 +255,24 @@ Bot.prototype.playMove = function() {
                         }
                     }
                 }
+                if (hasAction(card, 'silence')) {
+                    // silence opponent minions with special attributes
+                    const targetMinion = opp.minions.filter((x) => x.hasAttribute('special') || x.hasAttribute('deathrattle'));
+                    if (targetMinion.length > 0) {
+                        bot.playCard(card.id, targetMinion[0].minionInstanceId);
+                    }
+                }
+                if (hasAction(card, 'damage_opponent') && !card.target) {
+                    // play non-targeting cards that damage opponent
+                    bot.playCard(card.id);
+                }
             }
         });
+
+        // recompute attack target
+        targetInfo = Bot.getTarget(bot.game, bot, opp);
+        target = targetInfo.target;
+        targetObject = targetInfo.targetObject;
 
         // do minion attacks
         bot.minions.sort(function(x, y) {
