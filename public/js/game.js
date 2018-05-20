@@ -206,7 +206,7 @@ var game = {
             currentDeckSearch.style.fill = '#00cc00';
         });
         currentDeckSearch.on('click', function() {
-            game.filterCardCollection(prompt('Enter your card search terms:'));
+            game.filterCardCollection(prompt('Enter your card search terms:\nLeave this field blank to show all cards.'));
         });
         currentDeckSearch.x = 115;
         currentDeckSearch.y = -20;
@@ -1028,6 +1028,9 @@ var game = {
                 if (card.type == 'minion') {
                     var attrs = [].concat.apply([], card.spawn.map((minionId) => constants.minions[minionId].attributes || []));
                     terms += ' ' + attrs.join(' ');
+
+                    var types = card.spawn.map((minionId) => constants.minions[minionId].type).filter((x) => x);
+                    terms += ' ' + types.join(' ');
                 }
                 return terms.indexOf(term) > -1
             });
