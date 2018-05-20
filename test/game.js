@@ -599,6 +599,20 @@ describe('Game', function() {
 
                     assert.equal(player1.minions.length, 0);
                 });
+
+                it('spawn_opponent correct', function() {
+                    player1.processActions([['spawn_opponent', [0]]]).forEach((x) => x());
+
+                    assert.equal(player2.minions.length, 1);
+                });
+
+                it('spawn_matching_opponent correct', function() {
+                    assert.equal(player2.minions.length, 0);
+
+                    player2.processActions([['spawn_matching_opponent', 0]]).forEach((x) => x());
+
+                    assert.equal(player2.minions.length, player1.minions.length);
+                });
             });
         });
 
@@ -736,6 +750,12 @@ describe('Game', function() {
                 assert.ok(plr.playCard(2, "player"));
                 assert.deepEqual(plr.health, 4);
             });
+
+            it('evaluates if without necessary target', function() {
+                plr.hand = [2];
+                constants.cards[2].actions = [['if', (target) => true, [['destroy']]]];
+                assert.ok(!plr.playCard(2));
+            });
         });
 
         describe('#addToQueue()', function() {
@@ -760,17 +780,47 @@ describe('Game', function() {
             });
         });
 
+        describe('#drawCard()', function() {
+            it('discards card when max reached', function() {
+                player1.hand = [];
+                for (var i = 0; i < constants.player.MAX_CARDS; i++) {
+                    player1.hand.push(0);
+                }
+
+                player1.drawCard();
+
+                assert.equal(player1.hand.length, constants.player.MAX_CARDS);
+            });
+
+            it('does not draw when deck is gone', function() {
+                player1.hand = [];
+                player1.deck = [];
+
+                player1.drawCard();
+
+                assert.deepEqual(player1.hand, []);
+            });
+        });
+
         describe('#authenticate(username)', function() {
             it('rejects empty usernames', function() {
                 assert.ok(!player1.authenticate(''));
             });
         });
 
-        it('#removeFromQueue()', function() {
-            game.end(player1.id);
-            player1.addToQueue();
-            player1.removeFromQueue();
-            assert.ok(!player1.isInQueue());
+        describe('#removeFromQueue()', function() {
+            it('is in queue', function() {
+                game.end(player1.id);
+                player1.addToQueue();
+                player1.removeFromQueue();
+                assert.ok(!player1.isInQueue());
+            });
+
+            it('is not in queue', function() {
+                game.end(player1.id);
+                assert.ok(!player1.removeFromQueue());
+                assert.ok(!player1.isInQueue());
+            });
         });
 
         it('#disconnect() removes player from queue', function() {
@@ -778,6 +828,41 @@ describe('Game', function() {
             player1.addToQueue();
             player1.disconnect();
             assert.ok(!player1.isInQueue());
+        });
+
+        describe('handles sudden game interrupts well', function() {
+            beforeEach(function() {
+                player1.game = null;
+                player2.game = null;
+            });
+
+            it('#drawCard()', function() {
+                assert.ok(!player1.drawCard());
+            });
+
+            it('#addCard()', function() {
+                assert.ok(!player1.addCard());
+            });
+
+            it('#doMulligan()', function() {
+                assert.ok(!player1.doMulligan());
+            });
+
+            it('#spawnMinion()', function() {
+                assert.ok(!player1.spawnMinion());
+            });
+
+            it('#doAttack()', function() {
+                assert.ok(!player1.doAttack());
+            });
+
+            it('#processActions()', function() {
+                assert.deepEqual(player1.processActions(), []);
+            });
+
+            it('#playCard()', function() {
+                assert.ok(!player1.playCard());
+            });
         });
     });
 });

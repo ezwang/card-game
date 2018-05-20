@@ -130,7 +130,11 @@ Player.prototype.addCard = function(newCard) {
 };
 
 Player.prototype.doMulligan = function(redos) {
-    if (this.game.turn != -1) {
+    const game = this.game;
+    if (!game || game.ended) {
+        return false;
+    }
+    if (game.turn != -1) {
         this.sendError('You cannot mulligan after the beginning phase!');
         return false;
     }
@@ -158,11 +162,11 @@ Player.prototype.doMulligan = function(redos) {
     }
 
     // if both players done with choosing cards, start the game
-    if (this.game.playerMulliganDone) {
-        this.game.initTurn();
+    if (game.playerMulliganDone) {
+        game.initTurn();
     }
     else {
-        this.game.playerMulliganDone = true;
+        game.playerMulliganDone = true;
         this.playerMulliganDone = true;
     }
     return true;

@@ -22,14 +22,16 @@ describe('Bot', function() {
         Bot.prototype.handleError.restore();
     });
 
+    this.timeout(0);
+
     var game, bot1, bot2;
     beforeEach(function() {
         bot1 = new Bot();
         bot2 = new Bot();
         game = new Game(bot1, bot2);
 
-        this.timeout(0);
         timeout = setTimeout(() => {
+            Game.prototype.end.restore();
             throw new Error(`Timeout exceeded! bot1 hand: ${bot1.hand}, bot1 deck: ${bot1.deck}, bot2 hand: ${bot2.hand}, bot2 deck: ${bot2.deck}`);
         }, 5 * 1000);
     });
@@ -80,10 +82,10 @@ describe('Bot', function() {
             return deck;
         });
 
-        var stub = sinon.stub(Game.prototype, 'end').callsFake(function() {
+        sinon.stub(Game.prototype, 'end').callsFake(function() {
             assert.ok(game.turnCounter >= 3, game.turnCounter);
             assert.ok(bot1.health <= 0 || bot2.health <= 0, `Bot1 Health: ${bot1.health}, Bot2 Health: ${bot2.health}`);
-            stub.restore();
+            Game.prototype.end.restore();
             cardStub.restore();
             game.end(bot1.id);
             done();
@@ -93,10 +95,10 @@ describe('Bot', function() {
     });
 
     it('plays against self correctly (normal behavior)', function(done) {
-        var stub = sinon.stub(Game.prototype, 'end').callsFake(function() {
+        sinon.stub(Game.prototype, 'end').callsFake(function() {
             assert.ok(game.turnCounter >= 3, game.turnCounter);
             assert.ok(bot1.health <= 0 || bot2.health <= 0, `Bot1 Health: ${bot1.health}, Bot2 Health: ${bot2.health}`);
-            stub.restore();
+            Game.prototype.end.restore();
             game.end(bot1.id);
             done();
         });
@@ -109,10 +111,10 @@ describe('Bot', function() {
             return bot1.getRandomizedDeck();
         });
 
-        var stub = sinon.stub(Game.prototype, 'end').callsFake(function() {
+        sinon.stub(Game.prototype, 'end').callsFake(function() {
             assert.ok(game.turnCounter >= 3, game.turnCounter);
             assert.ok(bot1.health <= 0 || bot2.health <= 0, `Bot1 Health: ${bot1.health}, Bot2 Health: ${bot2.health}`);
-            stub.restore();
+            Game.prototype.end.restore();
             game.end(bot1.id);
             Bot.prototype.getDeck.restore();
             done();
@@ -126,8 +128,8 @@ describe('Bot', function() {
             return [];
         });
 
-        var stub = sinon.stub(Game.prototype, 'end').callsFake(function(gameEnd) {
-            stub.restore();
+        sinon.stub(Game.prototype, 'end').callsFake(function(gameEnd) {
+            Game.prototype.end.restore();
             game.end(gameEnd);
             done();
         });
