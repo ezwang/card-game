@@ -73,6 +73,9 @@ wss.on('connection', function(ws) {
                 if (deck.length != constants.player.DECK_SIZE) {
                     player.sendError("Your deck is not the correct size! Must be " + constants.player.DECK_SIZE + " cards.");
                 }
+                else if (deck.some((x) => constants.cards[x].obtainable == false)) {
+                    player.sendError("Invalid cards are included in your deck!");
+                }
                 else if (Object.values(cardCount).some((x) => x > constants.player.MAX_DUPLICATES)) {
                     player.sendError("You have too many duplicates of a card!");
                 }
