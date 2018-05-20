@@ -194,6 +194,17 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
             attributes: this.attributes
         });
     };
+    copy.handleEvent = function(name) {
+        if (copy.events && copy.events[name]) {
+            var actions = plr.processActions(copy.events[name], this.minionInstanceId, this.cardId);
+            if (actions === false) {
+                throw new Error(`Error occured while handling minion event '${name}'!`);
+            }
+            actions.forEach((x) => x());
+            return true;
+        }
+        return false;
+    };
     copy.hasAttack = copy.hasAttribute('charge');
     delete copy.health;
     delete copy.attack;
@@ -228,18 +239,12 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
         });
         // process death events
         if (doEvents) {
-            if (this.events && this.events.death) {
-                plr.processActions(this.events.death).forEach((x) => x());
-            }
+            this.handleEvent('death');
             plr.minions.forEach(function(minion) {
-                if (minion.events && minion.events.friendly_death) {
-                    plr.processActions(minion.events.friendly_death).forEach((x) => x());
-                }
+                minion.handleEvent('friendly_death');
             });
             opp.minions.forEach(function(minion) {
-                if (minion.events && minion.events.opponent_death) {
-                    opp.processActions(minion.events.opponent_death).forEach((x) => x());
-                }
+                minion.handleEvent('opponent_death');
             });
         }
     };
@@ -274,26 +279,15 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
 
         if (doingDamage) {
             // process minion_damage event
-            var process = function(minion, plr) {
-                var actions = plr.processActions(minion.events.minion_damage, minion.minionInstanceId);
-                if (actions !== false) {
-                    actions.forEach((x) => x());
-                }
-                else {
-                    throw new Error('Failed when processing minion events, this should not happen!');
-                }
-            };
-            plr.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, plr));
-            opp.minions.filter((x) => x.events && x.events.minion_damage).forEach((x) => process(x, opp));
+            plr.minions.forEach((x) => x.handleEvent('minion_damage'));
+            opp.minions.forEach((x) => x.handleEvent('minion_damage'));
         }
         if (this.health <= 0) {
             this.destroy(fromAttack, true);
         }
         else {
             if (doingDamage) {
-                if (this.events && this.events.self_damage) {
-                    plr.processActions(this.events.self_damage, this.minionInstanceId).forEach((x) => x());
-                }
+                this.handleEvent('self_damage');
             }
             game.sendPacket("updateMinion", {
                 playerId: plr.id,
@@ -315,17 +309,8 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
     game.minionIdCounter++;
 
     // process minion_spawn event
-    function process(minion, plr) {
-        var actions = plr.processActions(minion.events.minion_spawn, minion.minionInstanceId);
-        if (actions !== false) {
-            actions.forEach((x) => x());
-        }
-        else {
-            throw new Error('Failed when processing minion events, this should not happen!');
-        }
-    }
-    plr.minions.filter((x) => x.events && x.events.minion_spawn).forEach((x) => process(x, plr));
-    opp.minions.filter((x) => x.events && x.events.minion_spawn).forEach((x) => process(x, opp));
+    plr.minions.forEach((x) => x.handleEvent('minion_spawn'));
+    opp.minions.forEach((x) => x.handleEvent('minion_spawn'));
 
     this.minions.splice(position, 0, copy);
     game.sendPacket("addMinion", {
@@ -754,22 +739,10 @@ Player.prototype.playCard = function(cardId, target, position) {
 
         // process card events
         this.minions.forEach(function(minion) {
-            if (minion.events && minion.events.player_play_card) {
-                var eventActions = plr.processActions(minion.events.player_play_card, minion.minionInstanceId, minion.cardId);
-                if (eventActions === false) {
-                    throw new Error('Error occured while processing minion -> player play card events!');
-                }
-                eventActions.forEach((x) => actions.push(x));
-            }
+            minion.handleEvent('player_play_card');
         });
         opp.minions.forEach(function(minion) {
-            if (minion.events && minion.events.opponent_play_card) {
-                var eventActions = opp.processActions(minion.events.opponent_play_card, minion.minionInstanceId, minion.cardId);
-                if (eventActions === false) {
-                    throw new Error('Error occured while processing opponent minion -> player play card events!');
-                }
-                eventActions.forEach((x) => actions.push(x));
-            }
+            minion.handleEvent('opponent_play_card');
         });
 
         // process card actions
