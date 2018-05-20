@@ -5,7 +5,7 @@ before_script:
     - npm install
     - npm install jshint
 script:
-    - mocha
+    - npm test
     - jshint *.js
 after_success:
     - npm run coverage
