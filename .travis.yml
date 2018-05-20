@@ -7,3 +7,5 @@ before_script:
 script:
     - mocha
     - jshint *.js
+after_success:
+    - npm run coverage

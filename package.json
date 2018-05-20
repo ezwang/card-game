@@ -4,7 +4,8 @@
   "description": "A multiplayer websocket based card game. Includes matchmaking, a tutorial against an AI, and a card viewer.",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=html --reporter=text mocha"
+    "test": "nyc --reporter=html --reporter=text mocha",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Eric Wang",
   "dependencies": {
@@ -13,6 +14,7 @@
     "ws": "^5.1.1"
   },
   "devDependencies": {
+    "coveralls": "^3.0.1",
     "jshint": "^2.9.5",
     "mocha": "^5.1.1",
     "nyc": "^11.7.3",
