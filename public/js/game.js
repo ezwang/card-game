@@ -169,7 +169,7 @@ var game = {
         cardsContainer.currentDeck.title = currentDeckTitle;
         currentDeck.addChild(currentDeckTitle);
 
-        var currentDeckCancel = new PIXI.Text("✖", new PIXI.TextStyle({
+        var currentDeckCancel = new PIXI.Text("X", new PIXI.TextStyle({
             fontFamily: 'Pangolin',
             fontSize: 14,
             fill: '#cc0000'
@@ -192,9 +192,9 @@ var game = {
         currentDeckCancel.y = -20;
         currentDeck.addChild(currentDeckCancel);
 
-        var currentDeckSearch = new PIXI.Text("🔍", new PIXI.TextStyle({
+        var currentDeckSearch = new PIXI.Text("S", new PIXI.TextStyle({
             fontFamily: 'Pangolin',
-            fontSize: 12,
+            fontSize: 14,
             fill: '#00cc00'
         }));
         currentDeckSearch.interactive = true;
@@ -1157,7 +1157,7 @@ var game = {
             delete deckCounts[cardId];
             counter++;
         });
-        game.cardsContainer.currentDeck.title.text = 'Deck - Cards: ' + game.playerDeckList.length;
+        game.cardsContainer.currentDeck.title.text = 'Deck - ' + game.playerDeckList.length + ' Cards';
         if (game.cardPreview) {
             game.pixi.stage.removeChild(game.cardPreview);
             game.cardPreview = null;
