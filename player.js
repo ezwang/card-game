@@ -89,10 +89,22 @@ Player.prototype.getCards = function() {
  * Transfer a card from the player's deck to their hand.
  */
 Player.prototype.drawCard = function() {
+    const game = this.game;
+    if (!game || game.ended) {
+        return false;
+    }
     if (this.deck.length > 0) {
         var newCard = this.deck.pop();
+        this.minions.forEach(function(minion) {
+            minion.handleEvent('friendly_draw_card');
+        });
+        game.getOpponent(this).minions.forEach(function(minion) {
+            minion.handleEvent('opponent_draw_card');
+        });
         this.addCard(newCard);
+        return true;
     }
+    return false;
 };
 
 Player.prototype.addCard = function(newCard) {
