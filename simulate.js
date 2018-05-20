@@ -33,6 +33,9 @@ function done() {
     console.log(`Average Turns per Game: ${(turns/iters).toFixed(2)}`);
     var end = Date.now();
     console.log(`Time Taken: ${((end-start)/1000).toFixed(2)} sec`);
+
+    Game.prototype.end.restore();
+    Game.prototype.switchTurns.restore();
 }
 
 var originalEnd = Game.prototype.end;
