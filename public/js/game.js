@@ -133,7 +133,7 @@ var game = {
             game.renderCardCollection();
         });
         var nextPageButton = createButton('>>>', function() {
-            game.playerCardRenderOffset = Math.min(game.playerCardRenderOffset + 1, Math.floor(game.playerCardList.length / (constants.cardcollection.CARDS_PER_ROW * constants.cardcollection.CARDS_PER_COL)));
+            game.playerCardRenderOffset = Math.min(game.playerCardRenderOffset + 1, Math.floor(game.filteredPlayerCardList.length / (constants.cardcollection.CARDS_PER_ROW * constants.cardcollection.CARDS_PER_COL)));
             game.renderCardCollection();
         });
         nextPageButton.anchor.set(0, 1);
@@ -997,6 +997,24 @@ var game = {
             });
         }, 1000);
     },
+    filterCardCollection: function(query) {
+        game.filteredPlayerCardList = game.playerCardList;
+        if (query) {
+            var term = query.toLowerCase();
+            game.filteredPlayerCardList = game.filteredPlayerCardList.filter((x) => {
+                const card = constants.cards[x];
+                var terms = card.name.toLowerCase();
+                terms += ' ' + card.type + ' ' + card.mana;
+                if (card.type == 'minion') {
+                    var attrs = [].concat.apply([], card.spawn.map((minionId) => constants.minions[minionId].attributes || []));
+                    terms += ' ' + attrs.join(' ');
+                }
+                return terms.indexOf(term) > -1
+            });
+            game.playerCardRenderOffset = 0;
+        }
+        game.renderCardCollection();
+    },
     renderCardCollection: function() {
         if (!game.playerCardRender) {
             game.playerCardRender = [];
@@ -1016,10 +1034,10 @@ var game = {
         const cardsPerPage = constants.cardcollection.CARDS_PER_ROW * constants.cardcollection.CARDS_PER_COL;
         for (var i = 0; i < cardsPerPage; i++) {
             var cardIndex = i + game.playerCardRenderOffset * cardsPerPage;
-            if (cardIndex >= game.playerCardList.length) {
+            if (cardIndex >= game.filteredPlayerCardList.length) {
                 break;
             }
-            const cardId = game.playerCardList[cardIndex];
+            const cardId = game.filteredPlayerCardList[cardIndex];
             const card = createCard(constants.cards[cardId]);
             card.on('click', function() {
                 if (game.playerDeckList.length >= constants.player.DECK_SIZE) {
@@ -1399,6 +1417,7 @@ var game = {
                 break;
             case 'loadCards':
                 game.playerCardList = data.data.cards;
+                game.filteredPlayerCardList = game.playerCardList.slice();
                 game.playerDeckList = data.data.deck;
                 game.renderCardCollection();
                 break;
