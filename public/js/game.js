@@ -1053,11 +1053,23 @@ var game = {
                 }
             });
             card.on('mouseover', function() {
-                card.filters = [ new PIXI.filters.GlowFilter(3, 2, 2, 0x00ff00, 0.5) ];
+                card.oldFilters = card.filters;
+                card.filters = card.filters.concat([ new PIXI.filters.GlowFilter(3, 2, 2, 0x00ff00, 0.5) ]);
             });
             card.on('mouseout', function() {
-                card.filters = [];
+                card.filters = card.oldFilters;
             });
+            if (game.playerDeckList.indexOf(cardId) > -1) {
+                let colorMatrix = new PIXI.filters.ColorMatrixFilter();
+                card.filters = [ colorMatrix ];
+                if (game.playerDeckList.filter((x) => x == cardId).length <= 1) {
+                    colorMatrix.alpha = 0.5;
+                }
+                colorMatrix.greyscale(0.3);
+            }
+            else {
+                card.filters = [];
+            }
             card.width /= 1.6;
             card.height /= 1.6;
             card.x = 5 + (130 * (i % constants.cardcollection.CARDS_PER_ROW));
