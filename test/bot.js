@@ -92,12 +92,29 @@ describe('Bot', function() {
         game.init();
     });
 
-    it('plays against self correctly', function(done) {
+    it('plays against self correctly (normal behavior)', function(done) {
         var stub = sinon.stub(Game.prototype, 'end').callsFake(function() {
             assert.ok(game.turnCounter >= 3, game.turnCounter);
             assert.ok(bot1.health <= 0 || bot2.health <= 0, `Bot1 Health: ${bot1.health}, Bot2 Health: ${bot2.health}`);
             stub.restore();
             game.end(bot1.id);
+            done();
+        });
+
+        game.init();
+    });
+
+    it('plays against self correctly (randomized deck)', function(done) {
+        sinon.stub(Bot.prototype, 'getDeck').callsFake(function() {
+            return bot1.getRandomizedDeck();
+        });
+
+        var stub = sinon.stub(Game.prototype, 'end').callsFake(function() {
+            assert.ok(game.turnCounter >= 3, game.turnCounter);
+            assert.ok(bot1.health <= 0 || bot2.health <= 0, `Bot1 Health: ${bot1.health}, Bot2 Health: ${bot2.health}`);
+            stub.restore();
+            game.end(bot1.id);
+            Bot.prototype.getDeck.restore();
             done();
         });
 
