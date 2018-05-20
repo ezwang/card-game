@@ -679,7 +679,7 @@ var constants = {
             health: 5,
             attack: 4,
             events: {
-                player_play_card: [['spawn', [29]]]
+                friendly_play_card: [['spawn', [29]]]
             }
         },
         '29': {
@@ -693,7 +693,7 @@ var constants = {
             health: 5,
             attack: 4,
             events: {
-                player_play_card: [['buff_attack', 2]]
+                friendly_play_card: [['buff_attack', 2]]
             }
         },
         '31': {

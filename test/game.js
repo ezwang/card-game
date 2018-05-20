@@ -45,7 +45,7 @@ describe('Game', function() {
                 health: 1,
                 attack: 1,
                 events: {
-                    player_play_card: [['buff_attack', 2]]
+                    friendly_play_card: [['buff_attack', 2]]
                 }
             }
         };
@@ -364,9 +364,9 @@ describe('Game', function() {
             assert.ok(spy.called);
         });
 
-        it('player_play_card triggers', function() {
+        it('friendly_play_card triggers', function() {
             constants.minions[0].events = {
-                player_play_card: [['draw', 1]]
+                friendly_play_card: [['draw', 1]]
             };
 
             var plr = game.getPlayerById(game.turn);

@@ -309,8 +309,8 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
     game.minionIdCounter++;
 
     // process minion_spawn event
-    plr.minions.forEach((x) => x.handleEvent('minion_spawn'));
-    opp.minions.forEach((x) => x.handleEvent('minion_spawn'));
+    plr.minions.forEach((x) => { x.handleEvent('minion_spawn'); x.handleEvent('friendly_minion_spawn'); });
+    opp.minions.forEach((x) => { x.handleEvent('minion_spawn'); x.handleEvent('opponent_minion_spawn'); });
 
     this.minions.splice(position, 0, copy);
     game.sendPacket("addMinion", {
@@ -739,7 +739,7 @@ Player.prototype.playCard = function(cardId, target, position) {
 
         // process card events
         this.minions.forEach(function(minion) {
-            minion.handleEvent('player_play_card');
+            minion.handleEvent('friendly_play_card');
         });
         opp.minions.forEach(function(minion) {
             minion.handleEvent('opponent_play_card');
