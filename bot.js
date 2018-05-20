@@ -234,14 +234,14 @@ Bot.prototype.playMove = function() {
                     var addedAttr = getAction(card, 'attribute')[1];
                     if (addedAttr == 'taunt') {
                         // give the highest health minion taunt
-                        var targetMinion = bot.minions.filter((x) => !x.hasAttribute('taunt')).sort((x, y) => y.health - x.health);
+                        const targetMinion = bot.minions.filter((x) => !x.hasAttribute('taunt')).sort((x, y) => y.health - x.health);
                         if (targetMinion.length > 0) {
                             bot.playCard(card.id, targetMinion[0].minionInstanceId);
                         }
                     }
                     else if (addedAttr == 'shield') {
                         // give special minions shield, and then the highest attack minions shield
-                        var targetMinion = bot.minions.filter((x) => !x.hasAttribute('shield')).sort((x, y) => {
+                        const targetMinion = bot.minions.filter((x) => !x.hasAttribute('shield')).sort((x, y) => {
                             if (x.hasAttribute('special') && !y.hasAttribute('special')) {
                                 return -1;
                             }
