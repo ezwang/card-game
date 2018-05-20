@@ -277,7 +277,7 @@ Bot.prototype.playMove = function() {
             setTimeout(processActionQueue, constants.game.BOT_DELAY);
         }
     };
-    processActionQueue();
+    setTimeout(processActionQueue, 0);
 };
 
 Bot.prototype.cleanup = function() {

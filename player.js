@@ -185,7 +185,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
     copy._maxHealth = copy.health;
     copy._attack = copy.attack;
     const plr = this;
-    const opp = plr.game.getOpponent(plr);
+    const opp = game.getOpponent(plr);
     copy.hasAttribute = function(attr) {
         if (!copy.attributes) {
             return false;
@@ -197,7 +197,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
             this.attributes = [];
         }
         this.attributes.push(attr);
-        plr.game.sendPacket("updateMinion", {
+        game.sendPacket("updateMinion", {
             playerId: plr.id,
             minionInstanceId: this.minionInstanceId,
             attributes: this.attributes
@@ -206,7 +206,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
     copy.removeAllAttributes = function() {
         this.attributes = [];
         this.events = {};
-        plr.game.sendPacket("updateMinion", {
+        game.sendPacket("updateMinion", {
             playerId: plr.id,
             minionInstanceId: this.minionInstanceId,
             attributes: this.attributes
@@ -235,7 +235,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
             if (this._attack < 0) {
                 this._attack = 0;
             }
-            plr.game.sendPacket("updateMinion", {
+            game.sendPacket("updateMinion", {
                 playerId: plr.id,
                 minionInstanceId: this.minionInstanceId,
                 attack: this.attack
@@ -249,7 +249,7 @@ Player.prototype.spawnMinion = function (minionId, cardId, position) {
 
     copy.destroy = function(fromAttack, doEvents) {
         plr.minions.splice(plr.minions.indexOf(copy), 1);
-        plr.game.sendPacket("removeMinion", {
+        game.sendPacket("removeMinion", {
             playerId: plr.id,
             minionInstanceId: copy.minionInstanceId,
             health: this.health,
