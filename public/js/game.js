@@ -212,6 +212,27 @@ var game = {
         currentDeckSearch.y = -20;
         currentDeck.addChild(currentDeckSearch);
 
+        var currentDeckIndicator = new PIXI.Text("U", new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 14,
+            fill: '#0000cc'
+        }));
+        currentDeckIndicator.interactive = true;
+        currentDeckIndicator.buttonMode = true;
+        currentDeckIndicator.on('mouseover', function() {
+            currentDeckIndicator.style.fill = '#0000ff';
+        });
+        currentDeckIndicator.on('mouseout', function() {
+            currentDeckIndicator.style.fill = '#0000cc';
+        });
+        currentDeckIndicator.on('click', function() {
+            game.showUsedCards = !game.showUsedCards;
+            game.renderCardCollection();
+        });
+        currentDeckIndicator.x = 130;
+        currentDeckIndicator.y = -40;
+        currentDeck.addChild(currentDeckIndicator);
+
         cardsContainer.addChild(currentDeck);
         game.pixi.stage.addChild(cardsContainer);
         game.containers.push(cardsContainer);
@@ -1082,7 +1103,7 @@ var game = {
             card.on('mouseout', function() {
                 card.filters = card.oldFilters;
             });
-            if (game.playerDeckList.indexOf(cardId) > -1) {
+            if (game.showUsedCards && game.playerDeckList.indexOf(cardId) > -1) {
                 let colorMatrix = new PIXI.filters.ColorMatrixFilter();
                 card.filters = [ colorMatrix ];
                 if (game.playerDeckList.filter((x) => x == cardId).length <= 1) {
@@ -1454,6 +1475,7 @@ var game = {
                 game.playerCardList = data.data.cards;
                 game.filteredPlayerCardList = game.playerCardList.slice();
                 game.playerDeckList = data.data.deck;
+                game.showUsedCards = true;
                 game.renderCardCollection();
                 break;
             case 'gameTimer':
