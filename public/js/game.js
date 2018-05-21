@@ -1185,6 +1185,9 @@ var game = {
         }
     },
     drawAction: function(from, to) {
+        if (from === to) {
+            return false;
+        }
         if (typeof from === 'number') {
             from = game.findMinion(from);
         }
