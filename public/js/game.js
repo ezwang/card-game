@@ -517,6 +517,34 @@ var game = {
         }
         gameContainer.opponentManaVisual = opponentManaVisual;
 
+        // card overlay (tutorial)
+        var cardOverlay = new PIXI.Container();
+        cardOverlay.visible = false;
+        cardOverlay.x = game.getScreenWidth() / 2;
+        cardOverlay.y = game.getScreenHeight() / 2;
+
+        var manaOverlay = new PIXI.Container();
+        manaOverlay.addChild(new PIXI.Text('<= Mana Cost', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 32,
+            fill: '#0000cc',
+        })));
+        var manaOverlayDetails = new PIXI.Text('Indicates how much mana it costs to play the current card. You cannot play cards that have a mana cost higher than your current mana.', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 16,
+            fill: '#0000cc',
+            wordWrap: true,
+            wordWrapWidth: 250
+        }));
+        manaOverlayDetails.y = 35;
+        manaOverlay.addChild(manaOverlayDetails);
+        manaOverlay.x = 100;
+        manaOverlay.y = -120;
+        cardOverlay.addChild(manaOverlay);
+
+        gameContainer.cardOverlay = cardOverlay;
+
+        // target indicator
         var targetIndicator = PIXI.Sprite.fromImage('./img/target.png');
         targetIndicator.anchor.set(0.5);
         targetIndicator.visible = false;
@@ -558,6 +586,7 @@ var game = {
         gameContainer.addChild(turnStatus);
         gameContainer.addChild(endTurn);
         gameContainer.addChild(surrender);
+        gameContainer.addChild(cardOverlay);
         gameContainer.addChild(targetIndicator);
 
         // mulligan screen
@@ -835,11 +864,15 @@ var game = {
                 card.oldFilters = card.filters;
                 card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x00ff00, 0.5) ];
                 game.pixi.stage.addChild(game.cardPreview);
+                if (game.isTutorial) {
+                    game.gameContainer.cardOverlay.visible = true;
+                }
             });
             card.on('mousedown', function() {
                 if (game.cardPreview) {
                     game.pixi.stage.removeChild(game.cardPreview);
                     game.cardPreview = null;
+                    game.gameContainer.cardOverlay.visible = false;
                 }
                 card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x0000ff, 0.5) ];
                 if (card.target) {
@@ -856,6 +889,7 @@ var game = {
                     game.pixi.stage.removeChild(game.cardPreview);
                     game.cardPreview = null;
                     card.filters = card.oldFilters;
+                    game.gameContainer.cardOverlay.visible = false;
                 }
             });
             game.playerHand.push(card);
