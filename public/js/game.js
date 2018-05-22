@@ -465,6 +465,18 @@ var game = {
         });
         gameContainer.addChild(playerMinions);
 
+        var playerMinionsHelp = new PIXI.Text("(Drag and Drop Minion Cards Here)", new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 20,
+            fill: '#999999'
+        }));
+        playerMinionsHelp.anchor.set(0.5);
+        playerMinionsHelp.x = playerMinions.width / 2;
+        playerMinionsHelp.y = playerMinions.height / 2;
+        gameContainer.playerMinionsHelp = playerMinionsHelp;
+        playerMinionsHelp.visible = false;
+        playerMinions.addChild(playerMinionsHelp);
+
         var playerManaVisual = new PIXI.Container();
         playerManaVisual.y = game.playerMinionContainer.y + 110;
         playerManaVisual.x = game.playerPortrait.x + 120;
@@ -1333,6 +1345,11 @@ var game = {
                     game.gameContainer.mulliganContainer.addChild(card);
                     i++;
                 });
+
+                if (data.data.isTutorial) {
+                    game.isTutorial = true;
+                    game.gameContainer.playerMinionsHelp.visible = true;
+                }
                 break;
             case 'updatePlayer':
                 ['health', 'mana'].forEach(function(item) {

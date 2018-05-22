@@ -35,7 +35,7 @@ wss.on('connection', function(ws) {
                 break;
             case 'playBot':
                 var game = new Game(player, new Bot());
-                game.init();
+                game.init(true);
                 break;
             case 'dequeue':
                 player.removeFromQueue();

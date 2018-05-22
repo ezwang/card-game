@@ -22,7 +22,8 @@ function initPlayer(plr) {
     plr.minions = [];
 }
 
-Game.prototype.init = function() {
+Game.prototype.init = function(isTutorial) {
+    isTutorial = isTutorial || false;
     initPlayer(this.p1);
     initPlayer(this.p2);
 
@@ -65,7 +66,8 @@ Game.prototype.init = function() {
         opponentDeckSize: this.p2.deck.length,
         opponentHandSize: this.p2.hand.length,
         turn: this.turn,
-        turnTimer: this.turnTimer
+        turnTimer: this.turnTimer,
+        isTutorial: isTutorial
     });
     this.p2.sendPacket('gameInit', {
         player: p2info,
@@ -75,7 +77,8 @@ Game.prototype.init = function() {
         opponentDeckSize: this.p1.deck.length,
         opponentHandSize: this.p1.hand.length,
         turn: this.turn,
-        turnTimer: this.turnTimer
+        turnTimer: this.turnTimer,
+        isTutorial: isTutorial
     });
 };
 
