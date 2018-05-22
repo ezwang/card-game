@@ -233,6 +233,16 @@ var game = {
         currentDeckIndicator.y = -40;
         currentDeck.addChild(currentDeckIndicator);
 
+        var helpText = new PIXI.Text('Click cards to add them to your deck. Click cards in your deck (on the right) to remove them from your deck.', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 14,
+            fill: '#ffffff'
+        }));
+        helpText.x = 10;
+        helpText.y = 60;
+        cardsContainer.helpText = helpText;
+        cardsContainer.addChild(helpText);
+
         cardsContainer.addChild(currentDeck);
         game.pixi.stage.addChild(cardsContainer);
         game.containers.push(cardsContainer);
@@ -684,6 +694,7 @@ var game = {
                 break;
             case 'cards':
                 game.cardsContainer.visible = true;
+                game.cardsContainer.helpText.visible = true;
                 game.editedDeck = false;
                 game.sendPacket("loadCards");
                 break;
@@ -1019,6 +1030,7 @@ var game = {
             fill: '#ff0000'
         }));
         if (game.cardsContainer.visible) {
+            game.cardsContainer.helpText.visible = false;
             errorText.x = 10;
             errorText.y = 58;
         }
