@@ -542,6 +542,46 @@ var game = {
         manaOverlay.y = -120;
         cardOverlay.addChild(manaOverlay);
 
+        var healthOverlay = new PIXI.Container();
+        healthOverlay.addChild(new PIXI.Text('<= Minion Health', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 32,
+            fill: '#cc0000'
+        })));
+        var healthOverlayDetails = new PIXI.Text('Only minion cards have this. Indicates how much health the spawned minion will have.', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 16,
+            fill: '#cc0000',
+            wordWrap: true,
+            wordWrapWidth: 250
+        }));
+        healthOverlayDetails.y = 35;
+        healthOverlay.addChild(healthOverlayDetails);
+        healthOverlay.x = 100;
+        healthOverlay.y = 75;
+        cardOverlay.addChild(healthOverlay);
+
+        var attackOverlay = new PIXI.Container();
+        attackOverlay.addChild(new PIXI.Text('Minion Attack =>', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 32,
+            fill: '#cccc00'
+        })));
+        var attackOverlayDetails = new PIXI.Text('Only minion cards have this. Indicates how much attack the spawned minion will have.', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 16,
+            fill: '#cccc00',
+            wordWrap: true,
+            wordWrapWidth: 250
+        }));
+        attackOverlayDetails.y = 35;
+        attackOverlay.addChild(attackOverlayDetails);
+        attackOverlay.x = -350;
+        attackOverlay.y = 75;
+        cardOverlay.addChild(attackOverlay);
+
+        cardOverlay.healthText = healthOverlay;
+        cardOverlay.attackText = attackOverlay;
         gameContainer.cardOverlay = cardOverlay;
 
         // target indicator
@@ -866,6 +906,8 @@ var game = {
                 game.pixi.stage.addChild(game.cardPreview);
                 if (game.isTutorial) {
                     game.gameContainer.cardOverlay.visible = true;
+                    game.gameContainer.cardOverlay.healthText.visible = card.type == 'minion';
+                    game.gameContainer.cardOverlay.attackText.visible = card.type == 'minion';
                 }
             });
             card.on('mousedown', function() {

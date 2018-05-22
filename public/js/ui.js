@@ -157,6 +157,7 @@ function titleize(str) {
 function createCard(cardInfo) {
     var card = new PIXI.Container();
     card.id = cardInfo.id;
+    card.type = cardInfo.type;
     card.target = cardInfo.target;
     card._mana = cardInfo.mana;
     Object.defineProperty(card, 'mana', {
