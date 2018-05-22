@@ -381,7 +381,12 @@ Player.prototype.doAttack = function(from, to) {
 
     // check if minion has attack
     if (!fromMinion.hasAttack) {
-        this.sendError("This minion does not have an attack!");
+        if (game.turn != this.id) {
+            this.sendError("It is not currently your turn!");
+        }
+        else {
+            this.sendError("This minion does not have an attack right now!");
+        }
         return;
     }
 
