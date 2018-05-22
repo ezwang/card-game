@@ -517,6 +517,47 @@ var game = {
         }
         gameContainer.opponentManaVisual = opponentManaVisual;
 
+        // minion overlay (tutorial)
+        var minionOverlay = new PIXI.Container();
+        minionOverlay.visible = false;
+        gameContainer.minionOverlay = minionOverlay;
+
+        var minionOpponentOverlay = new PIXI.Text('Alternatively, you can attack your opponent (the yellow box) if there are no taunt minions. ==>', new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 16,
+            fill: '#cccc00',
+            wordWrap: true,
+            wordWrapWidth: 200,
+            align: 'right'
+        }));
+        minionOpponentOverlay.x = 150;
+        minionOpponentOverlay.y = 75;
+        minionOverlay.addChild(minionOpponentOverlay);
+
+        var opponentInfoOverlay = new PIXI.Text("Once your opponent's health is less than or equal to 0, you win!", new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 16,
+            fill: '#cc0000',
+            wordWrap: true,
+            wordWrapWidth: 200,
+            align: 'center'
+        }));
+        opponentInfoOverlay.x = game.getScreenWidth() / 2;
+        opponentInfoOverlay.y = 160;
+        minionOverlay.addChild(opponentInfoOverlay);
+
+        var opponentMinionOverlay = new PIXI.Text("Drag and drop your minions onto your opponent's minions to attack them.", new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 16,
+            fill: '#00cc00',
+            wordWrap: true,
+            wordWrapWidth: 200,
+            align: 'center'
+        }));
+        opponentMinionOverlay.x = game.getScreenWidth() / 2 - 220;
+        opponentMinionOverlay.y = 160;
+        minionOverlay.addChild(opponentMinionOverlay);
+
         // card overlay (tutorial)
         var cardOverlay = new PIXI.Container();
         cardOverlay.visible = false;
@@ -627,6 +668,7 @@ var game = {
         gameContainer.addChild(endTurn);
         gameContainer.addChild(surrender);
         gameContainer.addChild(cardOverlay);
+        gameContainer.addChild(minionOverlay);
         gameContainer.addChild(targetIndicator);
 
         // mulligan screen
@@ -956,6 +998,7 @@ var game = {
         }
     },
     doAttack: function(from, to) {
+        game.hasAttackedOnce = true;
         game.sendPacket("doAttack", { from: from.attackData, to: to.attackData });
         setTimeout(game.checkCanMove, constants.player.NO_MOVE_DELAY);
     },
@@ -1002,6 +1045,9 @@ var game = {
                     game.cardPreview = card;
                     game.gameContainer.addChild(card);
                 }
+                if (game.isTutorial && !game.hasAttackedOnce) {
+                    game.gameContainer.minionOverlay.visible = true;
+                }
             }
             else {
                 if (game.cardPreview) {
@@ -1018,6 +1064,7 @@ var game = {
                 game.gameContainer.removeChild(game.cardPreview);
                 game.cardPreview = null;
             }
+            game.gameContainer.minionOverlay.visible = false;
         });
         minion.hasAttack = hasAttack;
         if (game.playerId == playerId) {
