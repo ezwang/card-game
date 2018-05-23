@@ -34,7 +34,8 @@ var constants = {
             "Some cards require a target to be played on.",
             "In that case, start dragging at the card and let go of your mouse at the target you want to play your card on.",
             "Good luck, and enjoy the game!"
-        ]
+        ],
+        TUTORIAL_DEFEAT_HELP: 'Trouble defeating the tutorial bot? Try customizing your deck in the "Your Cards" menu!'
     },
     cardcollection: {
         CARDS_PER_ROW: 5,

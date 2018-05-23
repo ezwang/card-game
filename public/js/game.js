@@ -653,6 +653,17 @@ var game = {
         endContainer.addChild(fadedBg);
         endContainer.addChild(game.statusText.endText);
 
+        tipMessage = new PIXI.Text('Tip: ' + constants.game.TUTORIAL_DEFEAT_HELP, new PIXI.TextStyle({
+            fontFamily: 'Pangolin',
+            fontSize: 16,
+            fill: '#f0e68c'
+        }));
+        tipMessage.anchor.set(0.5);
+        tipMessage.x = game.getScreenWidth() / 2;
+        tipMessage.y = game.getScreenHeight() - 150;
+        endContainer.tipMessage = tipMessage;
+        endContainer.addChild(tipMessage);
+
         var endButton = createButton('End Game', function() {
             endContainer.visible = false;
             game.setGameState('lobby');
@@ -1609,6 +1620,7 @@ var game = {
                 game.ended = true;
                 game.statusText.endText.text = data.data.winner == game.playerId ? 'Victory!' : 'Defeat!';
                 game.endContainer.visible = true;
+                game.endContainer.tipMessage.visible = data.data.winner != game.playerId && game.isTutorial;
                 break;
             case 'discardCard':
                 game.removeCard(data.data.playerId, data.data.cardId, true);
