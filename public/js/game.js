@@ -969,6 +969,16 @@ var game = {
                     game.cardPreview = null;
                     game.gameContainer.cardOverlay.visible = false;
                 }
+                if (game.selectedCard) {
+                    game.selectedCard.filters = game.selectedCard.oldFilters;
+                    if (game.selectedCard == card) {
+                        game.selectedCard = null;
+                        return;
+                    }
+                    else {
+                        game.selectedCard = null;
+                    }
+                }
                 card.filters = [ new PIXI.filters.GlowFilter(5, 2, 2, 0x0000ff, 0.5) ];
                 if (card.target) {
                     game.targetIndicator.visible = true;
@@ -976,8 +986,7 @@ var game = {
                 game.selectedCard = card;
             });
             card.on('mouseup', function() {
-                card.filters = card.oldFilters;
-                game.selectedCard = null;
+                game.doneClick = true;
             });
             card.on('mouseout', function() {
                 if (game.cardPreview && card.id == game.cardPreview.id) {
@@ -1017,19 +1026,26 @@ var game = {
         var minion = createMinion(constants.minions[minionId], minionInstanceId);
         minion.cardId = cardId;
         minion.on('mousedown', function() {
+            if (game.selectedMinion) {
+                game.lastSelectedMinion = game.selectedMinion;
+                game.selectedMinion.filters = game.selectedMinion.oldFilters;
+                game.selectedMinion = null;
+            }
             game.selectedMinion = minion;
             minion.oldFilters = minion.filters;
             minion.filters = [new PIXI.filters.GlowFilter(2, 2, 2, 0x0000ff, 0.5)];
+            game.doneClick = true;
         });
         minion.on('mouseup', function() {
-            if (game.selectedMinion && game.selectedMinion != minion) {
-                game.doAttack(game.selectedMinion, minion);
+            if (game.lastSelectedMinion && game.lastSelectedMinion != minion) {
+                game.doAttack(game.lastSelectedMinion, minion);
             }
             else if (game.selectedCard) {
                 game.selectedCard.filters = game.selectedCard.oldFilters;
                 game.playCard(game.selectedCard, minion.minionInstanceId);
                 game.selectedCard = null;
             }
+            game.lastSelectedMinion = null;
         });
         minion.on('mouseover', function() {
             if (game.targetIndicator) {
@@ -1683,19 +1699,20 @@ $(document).ready(function() {
         }
     });
     $("body").mouseup(function() {
-        if (game.selectedCard) {
+        if (game.selectedCard && !game.doneClick) {
             game.selectedCard.filters = game.selectedCard.oldFilters;
             game.playCard(game.selectedCard);
             game.selectedCard = null;
         }
-        if (game.selectedMinion) {
+        if (game.selectedMinion && !game.doneClick) {
             game.selectedMinion.filters = game.selectedMinion.oldFilters;
             game.selectedMinion = null;
         }
-        if (game.targetIndicator) {
+        if (game.targetIndicator && !game.doneClick) {
             game.targetIndicator.visible = false;
             game.targetIndicator.alpha = 0.5;
         }
+        game.doneClick = false;
     });
 
     // if username was saved in localstorage, automatically fill
