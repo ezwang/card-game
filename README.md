@@ -5,9 +5,9 @@
 
 A multiplayer websocket based card game heavily inspired by [Hearthstone](https://playhearthstone.com/en-us/). Includes multiplayer with matchmaking, a tutorial against an AI, a card viewer, and a deck editor.
 
-![Title Page](screenshots/screenshot1.png "Title Screen")
-![Cards Screen](screenshots/screenshot2.png "Cards Screen")
-![Game Screen](screenshots/screenshot3.png "Game Screen")
+<img src="screenshots/screenshot1.png" height="400" title="Title Screen" />
+<img src="screenshots/screenshot2.png" height="400" title="Cards Screen" />
+<img src="screenshots/screenshot3.png" height="400" title="Game Screen" />
 
 ## Setup
 
