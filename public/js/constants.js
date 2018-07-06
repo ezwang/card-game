@@ -209,7 +209,7 @@ var constants = {
             image: 'lesser_demon.png'
         },
         '20': {
-            mana: 9,
+            mana: 6,
             type: 'spell',
             name: 'Mass Heal',
             description: 'Heal a unit for 10 health.',
