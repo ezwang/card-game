@@ -571,6 +571,24 @@ describe('Game', function() {
                     assert.equal(player2.hand.length, numCardsOpp);
                 });
 
+                it('card_copy correct with no opponent cards', function() {
+                    var numCards = player1.hand.length;
+                    player2.hand = [];
+
+                    player1.processActions([['card_copy', 3]]).forEach((x) => x());
+
+                    assert.equal(player1.hand.length, numCards);
+                });
+
+                it('card_copy correct with partial opponent cards', function() {
+                    var numCards = player1.hand.length;
+                    player2.hand = [player2.deck[0]];
+
+                    player1.processActions([['card_copy', 3]]).forEach((x) => x());
+
+                    assert.equal(player1.hand.length, numCards + 1);
+                });
+
                 it('damage_opponent correct', function() {
                     var oldHealth = player2.health;
 
